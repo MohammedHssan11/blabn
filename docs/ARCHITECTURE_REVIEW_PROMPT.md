@@ -43,7 +43,8 @@ Current proposal:
 - A separate camera-verification service only after the operational core and a real device test.
 
 Important constraints:
-- The repository intentionally does not contain Abdo's original workbooks, report photos, audio, credentials, or biometric data. They are local reference material under ignored archive/ and must never be committed.
+- Original Excel workbooks and approved Foodics report images are available in `source-material/` because the private development repository needs them for implementation and validation.
+- Do not rename, delete, publish, or copy `source-material/` outside the private repository. Do not commit archive material, credentials, or real employee biometric data.
 - Foodics direct integration is not confirmed. Manual entry is required in version one.
 - The first replenishment algorithm must be explainable, not an unsupported machine-learning claim.
 - Use PostgreSQL-level data integrity and auditability. Do not use the browser as the source of truth for financial or stock calculations.

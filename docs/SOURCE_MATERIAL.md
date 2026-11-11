@@ -2,17 +2,15 @@
 
 ## Purpose
 
-This document describes the branch material received from Abdo. The original files are intentionally stored only in the local ignored `archive/` directory. They are not included in GitHub because they may contain real operational and financial data.
+This document describes the branch material received from Abdo. The approved original Excel workbooks and report photographs are included in this private repository because the development team needs them to build and validate the system. The repository must remain private.
 
-## Where the original files are stored locally
+## Where the original files are stored
 
 ```text
-archive/
-└─ source-material/
-   ├─ workbooks/     # Eleven original Excel workbooks
-   └─ images/
-      └─ sources/
-         └─ 2026-11-07/  # Three Foodics report photographs and one transcription summary
+source-material/
+├─ workbooks/        # Eleven original Excel workbooks, renamed with English filenames
+└─ images/
+   └─ 2026-11-07/    # Three Foodics report photographs and one transcription summary
 ```
 
 ## Workbook inventory
@@ -42,12 +40,13 @@ archive/
 
 ## Rules for the development team
 
+- Keep the repository private; the source material contains real operational data.
 - Do not add `archive/` to Git or upload its contents to GitHub.
 - Do not alter original workbooks or report images.
 - Do not treat an empty spreadsheet value as a confirmed zero.
 - Use anonymized fixtures in `sample-data/` for automated tests.
-- A Codex or Claude review performed from GitHub can review the architecture and documentation, but cannot inspect the raw workbooks or images. Give it a sanitized sample only when data-level validation is required.
+- A Codex or Claude agent with repository access can inspect `source-material/` read-only. It must not rename, delete, edit, publish, or copy the material outside the private repository without explicit approval.
 
 ## Current availability
 
-The development team can start the application from the English documentation immediately. Before production report sign-off, a team member with local archive access must validate one real branch day against the original workbooks.
+The development team can start the application from the English documentation and the source material immediately. Before production report sign-off, validate one real branch day against the approved workbook templates.

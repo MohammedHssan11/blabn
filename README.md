@@ -34,8 +34,9 @@ Planning and repository setup. No production code has been started yet.
 
 ## Repository rules
 
-- Keep source code, migrations, tests, and English documentation in Git.
-- Do **not** commit credentials, production exports, employee face data, raw voice notes, original workbooks, or archived material.
+- Keep source code, migrations, tests, English documentation, and the approved private source material in Git.
+- `source-material/` contains Abdo's original Excel workbooks and approved report images. It is included because the development team needs it to build and validate the application.
+- Keep the repository private. Do **not** commit credentials, employee face data, raw biometric templates, or unrelated production exports.
 - Work on a feature branch, open a pull request, and merge only after review.
 - Keep `main` runnable at all times.
 

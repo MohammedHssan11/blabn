@@ -30,7 +30,7 @@ Attendance is not part of the first core delivery. The intended later flow is a 
 
 ## Current source material
 
-Historical Excel workbooks, report photographs, and voice-note transcription are preserved locally in `archive/` and excluded from Git. They are reference evidence, not application data or seed data.
+The approved historical Excel workbooks and report photographs are tracked in the private repository under `source-material/` so the development team can inspect and validate them. The files are reference evidence, not application seed data. Legacy analysis outputs and unrelated drafts remain local in ignored `archive/`.
 
 ## Known constraints
 
