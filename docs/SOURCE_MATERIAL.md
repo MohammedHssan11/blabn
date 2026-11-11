@@ -1,0 +1,53 @@
+# Source Material Map
+
+## Purpose
+
+This document describes the branch material received from Abdo. The original files are intentionally stored only in the local ignored `archive/` directory. They are not included in GitHub because they may contain real operational and financial data.
+
+## Where the original files are stored locally
+
+```text
+archive/
+└─ source-material/
+   ├─ workbooks/     # Eleven original Excel workbooks
+   └─ images/
+      └─ sources/
+         └─ 2026-11-07/  # Three Foodics report photographs and one transcription summary
+```
+
+## Workbook inventory
+
+| Source ID | Description | Period | Intended use |
+|---|---|---|---|
+| SRC-01 | Replenishment order workbook | November 2026 | Order layout, items, units, and quantities. |
+| SRC-02 | Daily Sales workbook | October 2026 | Daily revenue, orders, average, cash, expenses, and card values. |
+| SRC-03 | Daily Sales workbook | November 2026 | Same report family for a later period. |
+| SRC-04 | Daily statement workbook | October 2026 | Financial statement layout and daily values. |
+| SRC-05 | Daily statement workbook | November 2026 | Same report family for a later period. |
+| SRC-06 | Inventory workbook | October 2026 | Product Mix, stock rows, physical counts, and recipe/BOM formulas. |
+| SRC-07 | Inventory workbook | November 2026 | Same inventory report family for a later period. |
+| SRC-08 | Sales comparison workbook | October 2026 | Day-by-day period comparison. |
+| SRC-09 | Sales comparison workbook | November 2026 | Day-by-day period comparison. |
+| SRC-10 | Daily ledger workbook | October 2026 | Expenses, cash counting, revenue, and card entries. |
+| SRC-11 | Daily ledger workbook | November 2026 | Same report family for a later period. |
+
+## Image inventory
+
+| Source ID | Date | Description | Verified value |
+|---|---|---|---|
+| IMG-01 | 2026-11-07 | Foodics Orders Summary | Net sales 100,605 MAD; 1,185 orders; cash 55,105 MAD; card 45,500 MAD. |
+| IMG-02 | 2026-11-07 | Product Mix, upper section | Part of the Product Mix report. |
+| IMG-03 | 2026-11-07 | Product Mix, lower section | Completes the same Product Mix report. |
+| IMG-04 | 2026-11-07 | Manual transcription summary | Reference-only transcription of the photographed reports. |
+
+## Rules for the development team
+
+- Do not add `archive/` to Git or upload its contents to GitHub.
+- Do not alter original workbooks or report images.
+- Do not treat an empty spreadsheet value as a confirmed zero.
+- Use anonymized fixtures in `sample-data/` for automated tests.
+- A Codex or Claude review performed from GitHub can review the architecture and documentation, but cannot inspect the raw workbooks or images. Give it a sanitized sample only when data-level validation is required.
+
+## Current availability
+
+The development team can start the application from the English documentation immediately. Before production report sign-off, a team member with local archive access must validate one real branch day against the original workbooks.
