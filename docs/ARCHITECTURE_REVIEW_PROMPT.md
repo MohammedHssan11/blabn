@@ -1,13 +1,23 @@
-# Architecture Review Prompt for Codex or Claude
+# First-Agent Prompt for Codex or Claude
 
-Copy the prompt below into Codex or Claude after cloning this repository.
+Copy the complete prompt below into Codex or Claude. It tells the agent exactly how to get the repository, what to read, what to review, and when it is allowed to start implementation.
 
 ```text
-You are a senior software architect reviewing an early-stage internal operations application for a restaurant branch.
+You are joining an existing private GitHub repository as a senior software architect and implementation partner.
 
-Repository: Balaban Branch Operations
+Repository URL: https://github.com/MohammedHssan11/blabn
 
-Your task is to understand the entire project and independently review whether the proposed architecture matches the actual product goal. Do not implement product code in this review.
+First, confirm that your GitHub account has access. Then clone and enter the project:
+
+```bash
+git clone https://github.com/MohammedHssan11/blabn.git
+cd blabn
+git status
+```
+
+Do not create a Python virtual environment. The current project is a planned TypeScript/Next.js web application; no application dependencies have been installed yet.
+
+Your first task is architecture review only. Understand the entire project and independently decide whether the proposed architecture matches the product goal. Do not implement product code, install packages, create a database project, create a branch, or modify existing documents during this review.
 
 Read these files in this exact order:
 1. README.md
@@ -38,7 +48,9 @@ Important constraints:
 - The first replenishment algorithm must be explainable, not an unsupported machine-learning claim.
 - Use PostgreSQL-level data integrity and auditability. Do not use the browser as the source of truth for financial or stock calculations.
 
-Return a written review with these exact sections:
+Create exactly one new file: `docs/ARCHITECTURE_REVIEW.md`.
+
+The file must contain these exact sections:
 1. Verdict: APPROVE, APPROVE WITH CHANGES, or CHANGE REQUIRED.
 2. Requirement-to-architecture fit: identify every important requirement that is covered, partly covered, or missing.
 3. Data model review: organization/branch boundary, business-day close, payments, expenses, Product Mix, stock movements, physical counts, recipes, purchase orders, reports, audit logs, and future attendance events.
@@ -54,6 +66,8 @@ Rules:
 - Be concrete. Do not give generic advice.
 - Do not invent Foodics fields, recipe quantities, report rules, or employee policies.
 - Do not modify code or existing documents during this first review.
-- If changes are needed, propose exact edits or a concise replacement architecture; wait for approval before editing anything.
-- Write the review in English and save it as docs/ARCHITECTURE_REVIEW.md.
+- Do not commit or push anything during this first review.
+- If changes are needed, propose exact edits or a concise replacement architecture; wait for the project owner to approve changes before editing anything.
+- Write the review in English.
+- At the end of your response, state: `REVIEW COMPLETE — WAITING FOR APPROVAL TO IMPLEMENT.`
 ```
