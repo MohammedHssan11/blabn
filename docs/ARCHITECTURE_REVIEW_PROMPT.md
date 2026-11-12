@@ -30,6 +30,8 @@ Read these files in this exact order:
 
 Business goal:
 - Replace repeated daily Excel data entry with one web workflow for daily closing, Product Mix, inventory, recipes/BOM consumption, replenishment suggestions, and five Excel report families.
+- Preserve the monthly daily-ledger behavior: carried-forward cash and purchasing-custody balances, cash counting, cancellation records, and query-derived monthly summaries.
+- The initial order lead time is two calendar days. A Wednesday-evening order is expected Friday, not Thursday. Planning must compare the same weekday across a rolling three months.
 - Abdo is the System Admin inside the deployed client application. He is not the repository or GitHub administrator.
 - Branch staff work below Abdo with limited permissions.
 - Camera attendance is a later phase, using one branch kiosk device. It must not be treated as complete merely because a UI exists.
@@ -54,7 +56,7 @@ Create exactly one new file: `docs/ARCHITECTURE_REVIEW.md`.
 The file must contain these exact sections:
 1. Verdict: APPROVE, APPROVE WITH CHANGES, or CHANGE REQUIRED.
 2. Requirement-to-architecture fit: identify every important requirement that is covered, partly covered, or missing.
-3. Data model review: organization/branch boundary, business-day close, payments, expenses, Product Mix, stock movements, physical counts, recipes, purchase orders, reports, audit logs, and future attendance events.
+3. Data model review: organization/branch boundary, business-day close, payments, expenses, cash and purchasing-custody ledger events, counted cash, cancellations, Product Mix, stock movements, physical counts, recipes, purchase orders with separate created/expected/actual receipt dates, reports, audit logs, and future attendance events.
 4. Security and authorization review: Abdo System Admin, staff roles, Supabase RLS, server-only secrets, audit trails, and biometric-data boundaries.
 5. Reliability review: source-of-truth calculations, idempotency for imports/exports, duplicate prevention, daylight/timezone handling, offline strategy, and report reconciliation.
 6. Excel/reporting review: how to preserve the five report families without duplicating business data.

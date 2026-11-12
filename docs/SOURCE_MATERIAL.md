@@ -8,7 +8,7 @@ This document describes the branch material received from Abdo. The approved ori
 
 ```text
 source-material/
-├─ workbooks/        # Eleven original Excel workbooks, renamed with English filenames
+├─ workbooks/        # Eleven original Excel workbooks plus one added Arabic-named monthly daily-ledger workbook
 └─ images/
    └─ 2026-11-07/    # Three Foodics report photographs and one transcription summary
 ```
@@ -28,6 +28,7 @@ source-material/
 | SRC-09 | Sales comparison workbook | November 2026 | Day-by-day period comparison. |
 | SRC-10 | Daily ledger workbook | October 2026 | Expenses, cash counting, revenue, and card entries. |
 | SRC-11 | Daily ledger workbook | November 2026 | Same report family for a later period. |
+| SRC-12 | `مقارنه يوميه المغرب (3) (1).xlsx` | Not confirmed | Monthly daily-ledger reference: 31 daily sheets, ledger and purchasing-custody balances, cash counts, cancellation records, and monthly summaries. |
 
 ## Image inventory
 
@@ -49,4 +50,4 @@ source-material/
 
 ## Current availability
 
-The development team can start the application from the English documentation and the source material immediately. Before production report sign-off, validate one real branch day against the approved workbook templates.
+The development team can start the application from the English documentation and the source material immediately. The added SRC-12 workbook confirms that the daily-ledger workflow must preserve daily balance roll-forwards, counted cash, cancellation detail, and a separate purchasing-custody ledger. Before production report sign-off, validate one real branch day against the approved workbook templates.
