@@ -10,8 +10,10 @@
 | Staff use least-privilege roles | Staff should not see or change unrestricted financial and configuration data. |
 | Manual entry first | Foodics import/API availability is not yet verified. |
 | Explainable replenishment first | Historical demand plus safety stock is auditable; AI comes only after clean data exists. |
+| Two-calendar-day replenishment lead time | An order created Wednesday evening is planned for Friday receipt, not Thursday. The expected receipt date is explicit and auditable. |
+| Three-month same-weekday planning view | Demand is reviewed against matching weekdays across prior weeks, which is more useful than comparing unrelated weekdays. |
 | Camera attendance later | Operational closing, inventory, and reports are the MVP priority. |
-| Archive reference data outside Git | Legacy workbooks, photos, audio, and analysis must not be published. |
+| Keep approved reference material in the private repository | Legacy workbooks and report images used for development are tracked privately. Do not publish them or add unrelated archives, audio, credentials, or biometric data. |
 
 ## Open decisions
 
@@ -19,6 +21,7 @@
 - Final approved recipe, unit, and yield catalog.
 - Whether bank remittance is an expense or a separate cash-flow item in each report template.
 - Supplier lead times, safety stock, pack sizes, and order constraints.
+- Whether the two-calendar-day receipt rule has supplier-, cutoff-, weekend-, or holiday-specific exceptions.
 - Attendance policy: shifts, breaks, late arrival, overtime, correction workflow, and camera device.
 - Hosting budget and production domain.
 
@@ -31,7 +34,7 @@
 5. Build recipe/BOM consumption.
 6. Export the five reports to Excel.
 7. Validate with one real operational day.
-8. Add replenishment suggestion.
+8. Add the three-month same-weekday planning view and delivery-date-aware replenishment suggestion.
 9. Add camera attendance after the core workflow is stable.
 
 ## Collaboration rules

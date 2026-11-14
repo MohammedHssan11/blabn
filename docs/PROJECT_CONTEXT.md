@@ -14,7 +14,8 @@ The Maarif branch currently copies the same daily figures from Foodics/POS closi
 2. Enter or import the daily sales, order count, payment split, expenses, remittance, and counted cash.
 3. Add Product Mix quantities and received stock.
 4. Let the system calculate cash reconciliation, theoretical inventory consumption, stock variance, and a replenishment suggestion.
-5. Review and export the five Excel report families.
+5. Review the three-month planning view. It compares the same weekday across prior weeks and separates the business date from the expected delivery date.
+6. Review and export the five Excel report families.
 
 ## Confirmed report families
 
@@ -42,4 +43,10 @@ The approved historical Excel workbooks and report photographs are tracked in th
 
 ## Definition of success for the MVP
 
-For one real business day, the branch can enter all required data once, reconcile cash, calculate inventory consumption and variance, review the next-day order, and export the five reports without retyping the same figures.
+For one real business day, the branch can enter all required data once, reconcile cash, calculate inventory consumption and variance, review an order against its expected receipt date, and export the five reports without retyping the same figures.
+
+## Replenishment timing rule
+
+The order date and expected receipt date are separate fields. The initial operational rule is a two-calendar-day lead time: an order prepared on Wednesday evening is expected on Friday, not Thursday. The planned receipt date must be visible in the order and in the planning view; it must not be inferred as “tomorrow”.
+
+The planning view covers three months and makes same-weekday history easy to compare. For example, a Wednesday view can show earlier Wednesdays, the current Wednesday's demand, and the expected receipt date for a new order. This is a decision aid; it does not replace the recorded demand, stock, or order data.

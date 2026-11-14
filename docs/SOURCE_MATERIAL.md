@@ -8,7 +8,7 @@ This document describes the branch material received from Abdo. The approved ori
 
 ```text
 source-material/
-├─ workbooks/        # Eleven original Excel workbooks, renamed with English filenames
+├─ workbooks/        # Twelve Excel reference workbooks
 └─ images/
    └─ 2026-11-07/    # Three Foodics report photographs and one transcription summary
 ```
@@ -26,8 +26,9 @@ source-material/
 | SRC-07 | Inventory workbook | November 2026 | Same inventory report family for a later period. |
 | SRC-08 | Sales comparison workbook | October 2026 | Day-by-day period comparison. |
 | SRC-09 | Sales comparison workbook | November 2026 | Day-by-day period comparison. |
-| SRC-10 | Daily ledger workbook | October 2026 | Expenses, cash counting, revenue, and card entries. |
+| SRC-10 | Daily ledger workbook | October 2026 | Daily cash and purchasing-custody ledgers, cash counts, cancellations, and monthly summary layout. |
 | SRC-11 | Daily ledger workbook | November 2026 | Same report family for a later period. |
+| SRC-12 | `مقارنه يوميه المغرب (3) (1).xlsx` | November 2026 example | One worksheet comparing current and prior weeks for three branches, including Maarif, with an aggregate section. Reference for the comparison layout. |
 
 ## Image inventory
 
@@ -49,4 +50,4 @@ source-material/
 
 ## Current availability
 
-The development team can start the application from the English documentation and the source material immediately. Before production report sign-off, validate one real branch day against the approved workbook templates.
+The development team can use the documentation and source files to understand the workflow. See SRC-10 and SRC-11 for the daily-ledger layout and SRC-12 for the weekly comparison layout. Validate one real branch day against the agreed templates before production report sign-off.

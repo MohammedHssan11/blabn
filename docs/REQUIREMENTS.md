@@ -55,6 +55,15 @@ recommended quantity = forecast demand + safety stock - current usable stock - c
 
 The forecast can start from same-weekday historical sales/consumption. Abdo or an authorized staff member can edit the suggested order before approval.
 
+### Three-month planning view
+
+- Show a rolling three-month planning view for each inventory item.
+- Compare demand and consumption on the same weekday across prior weeks. A Wednesday should be comparable with prior Wednesdays, not automatically with Tuesday or Thursday.
+- Show the business date, the order-created date, the expected receipt date, the suggested quantity, the final ordered quantity, and the actual receipt date when known.
+- Default the expected receipt date to two calendar days after the order is created. Example: an order made Wednesday evening has an expected receipt date of Friday.
+- Allow an authorized user to change the expected receipt date and require a reason for the override. The system must retain both the original calculated date and the override in the audit log.
+- Do not convert the two-day rule into “next business day” unless the branch later supplies a holiday/weekend calendar and explicitly approves that policy.
+
 ## 5. Reports
 
 The system must create the five report families from the same saved business-day data. It must not require the user to copy values from one report into another.
@@ -65,7 +74,18 @@ The system must create the five report families from the same saved business-day
 - Excel/CSV import is added only after the actual export shape from Foodics is verified.
 - Excel export must be validated against a real approved branch day and the current report templates.
 
-## 7. Attendance — later phase
+## 7. Daily ledger details from the monthly workbooks
+
+The daily-ledger workflow must retain the information found in the October and November daily-ledger workbooks (SRC-10 and SRC-11):
+
+- A business date, branch, cashier, and the employee and role responsible for the cash count for each daily close.
+- Morning and evening sales entries, a sales total, card/Visa and other payment rows, receipts, expenses, and narrative notes.
+- A counted-cash breakdown by denomination, plus a reconciliation result that identifies a match, shortage, or overage.
+- Separate cash and purchasing-custody ledgers. Each ledger carries its closing balance forward to the next day.
+- Cancellation records with branch, date, original order start/time and identifier, cancellation time, old and replacement order values/identifiers, cancellation reason, customer name, and customer phone when supplied.
+- Monthly summaries by day and account/category. The web application must calculate these from saved entries rather than copying a monthly total into daily rows.
+
+## 8. Attendance — later phase
 
 - One branch kiosk device with a camera.
 - Employee check-in/check-out.
@@ -73,7 +93,7 @@ The system must create the five report families from the same saved business-day
 - Missing punches, duplicate punches, and manager corrections must be visible in an audit trail.
 - No employee face images, templates, or biometric secrets may be committed to Git.
 
-## 8. Out of scope for the MVP
+## 9. Out of scope for the MVP
 
 - A direct Foodics API integration.
 - A machine-learning demand model.

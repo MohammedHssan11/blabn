@@ -12,7 +12,8 @@ Planning and repository setup. No production code has been started yet.
 - Calculate order average, card ratio, expected cash, and cash variance.
 - Record Product Mix sales and turn them into recipe/BOM consumption.
 - Track stock, receipts, waste, hospitality, physical counts, and variances.
-- Generate a transparent replenishment suggestion for the next day.
+- Generate a transparent replenishment suggestion for the correct receipt day. A purchase order created on Wednesday evening, for example, is planned for Friday delivery, not Thursday.
+- Plan replenishment over three months with same-weekday comparisons, so a Wednesday can be reviewed against earlier Wednesdays rather than an unrelated day.
 - Export the five existing report families to Excel.
 - Add camera-based attendance on a dedicated branch device in a later phase.
 
@@ -30,7 +31,7 @@ Planning and repository setup. No production code has been started yet.
 - [Data and reports](docs/DATA_AND_REPORTS.md)
 - [Decisions and backlog](docs/DECISIONS.md)
 - [Source-material map](docs/SOURCE_MATERIAL.md)
-- [Architecture review prompt](docs/ARCHITECTURE_REVIEW_PROMPT.md)
+- [Onboarding prompt for Claude or Codex](docs/ARCHITECTURE_REVIEW_PROMPT.md)
 
 ## Repository rules
 
@@ -46,5 +47,5 @@ Planning and repository setup. No production code has been started yet.
 2. Build daily closing and cash reconciliation.
 3. Add Product Mix, inventory movements, and recipes.
 4. Produce the five Excel report exports and compare them with a real branch day.
-5. Add replenishment suggestions.
+5. Add three-month replenishment planning and delivery-date-aware purchase orders.
 6. Add the camera attendance module after the operational core is stable.
