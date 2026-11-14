@@ -31,7 +31,7 @@ Planning and repository setup. No production code has been started yet.
 - [Data and reports](docs/DATA_AND_REPORTS.md)
 - [Decisions and backlog](docs/DECISIONS.md)
 - [Source-material map](docs/SOURCE_MATERIAL.md)
-- [Architecture review prompt](docs/ARCHITECTURE_REVIEW_PROMPT.md)
+- [Onboarding prompt for Claude or Codex](docs/ARCHITECTURE_REVIEW_PROMPT.md)
 
 ## Repository rules
 
