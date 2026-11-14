@@ -74,11 +74,11 @@ The system must create the five report families from the same saved business-day
 - Excel/CSV import is added only after the actual export shape from Foodics is verified.
 - Excel export must be validated against a real approved branch day and the current report templates.
 
-## 7. Daily ledger details from the monthly workbook
+## 7. Daily ledger details from the monthly workbooks
 
-The daily-ledger workflow must retain the information found in the added monthly workbook:
+The daily-ledger workflow must retain the information found in the October and November daily-ledger workbooks (SRC-10 and SRC-11):
 
-- A business date, branch, cashier, and stock-counting employee/role for each daily close.
+- A business date, branch, cashier, and the employee and role responsible for the cash count for each daily close.
 - Morning and evening sales entries, a sales total, card/Visa and other payment rows, receipts, expenses, and narrative notes.
 - A counted-cash breakdown by denomination, plus a reconciliation result that identifies a match, shortage, or overage.
 - Separate cash and purchasing-custody ledgers. Each ledger carries its closing balance forward to the next day.

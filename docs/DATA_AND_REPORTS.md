@@ -5,12 +5,12 @@
 The private repository contains these approved reference sources:
 
 - October and November sales comparison workbooks.
+- A weekly sales comparison workbook with sections for Maarif and two other branches.
 - October and November daily-ledger workbooks.
 - October and November daily-statement workbooks.
 - October and November Daily Sales workbooks.
 - October and November inventory workbooks, including Product Mix, stock, and recipes.
 - A replenishment-order workbook.
-- A monthly daily-ledger workbook with 31 daily sheets, a summary sheet, cash-code reference data, cash counting, cancellation records, and a purchasing-custody ledger.
 - A photographed Foodics Orders Summary and photographed Product Mix example for 7 November 2026.
 
 These sources are tracked only in this private repository because the development team needs them for implementation and validation. They may contain sensitive operational data and must not be published or copied to a public repository.
@@ -40,17 +40,15 @@ The 7 November 2026 Foodics sample shows:
 
 | Report family | Core inputs/outputs |
 |---|---|
-| Sales comparison | Same-day prior/current period revenue and order count. |
-| Daily ledger | Revenue, card/Visa, expenses, cash count, and remittance-related entries. |
+| Sales comparison | Revenue and order counts by day. The monthly and weekly references use different comparison periods. |
+| Daily ledger | Revenue, card/Visa, expenses, remittances, cash counts, purchasing custody, cancellations, and monthly summaries. |
 | Daily statement | Revenue, expenses, card/Visa, cash for bank, and reconciliation. |
 | Daily Sales | Revenue, orders, average order, cash/bank, expenses, card ratio. |
-| Inventory | Product Mix, opening stock, receipts, theoretical consumption, waste, physical count, variance, and recipes. |
-| Replenishment order | Items, units, and proposed/order quantities. |
-| Monthly daily ledger | One daily close per calendar day, cash and purchasing-custody balances, counted denominations, cancellation detail, and monthly account summaries. |
+| Inventory and replenishment order | Product Mix, stock movements, recipe consumption, physical counts, variances, and order lines with items, units, and quantities. |
 
-## Monthly daily-ledger workbook: verified structure
+## Monthly daily-ledger layout
 
-The added workbook is an operational reference for daily-ledger behavior. It has a classification/reference sheet, daily sheets numbered 1–31, a summary sheet, and supporting reference sheets. It is not application seed data.
+The October and November daily-ledger workbooks (SRC-10 and SRC-11) have daily sheets numbered 1–31, a monthly summary, and classification and reference sheets. Use these files as layout references.
 
 Each daily sheet combines:
 

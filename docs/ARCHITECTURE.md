@@ -72,7 +72,9 @@ Core entities:
 - Store biometric templates separately from general employee data; avoid storing raw face images unless a later approved policy requires them.
 - Keep `.env`, `.env.local`, and production exports out of Git.
 
-## Repository layout
+## Planned repository layout
+
+The repository currently contains documentation, reference material, and placeholder directories. The tree below shows the planned application layout.
 
 ```text
 .

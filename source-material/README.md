@@ -4,7 +4,7 @@ This directory contains Abdo's approved development reference material. It is tr
 
 ## Contents
 
-- `workbooks/`: eleven original Excel workbooks from October and November 2026, plus the added Arabic-named monthly daily-ledger workbook (`مقارنه يوميه المغرب (3) (1).xlsx`).
+- `workbooks/`: eleven original Excel workbooks from October and November 2026, plus a weekly sales comparison workbook (`مقارنه يوميه المغرب (3) (1).xlsx`).
 - `images/2026-11-07/`: Foodics Orders Summary, Product Mix report photographs, and a manual transcription summary.
 
 ## Handling rules

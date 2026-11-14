@@ -6,15 +6,15 @@ Copy the block below into Claude or Codex in a session with GitHub access.
 Help me get oriented in the Balaban Maarif branch operations project. Open the private GitHub repository and read its project documentation.
 
 Repository: https://github.com/MohammedHssan11/blabn
-Branch with the current documentation: codex/daily-ledger-planning
+Branch with the current documentation: main
 
 Use my authorized GitHub account. If you have a terminal and the repository is not downloaded, run:
 
-    git clone --branch codex/daily-ledger-planning https://github.com/MohammedHssan11/blabn.git
+    git clone --branch main https://github.com/MohammedHssan11/blabn.git
     cd blabn
     git status -sb
 
-If a checkout already exists, use it and read the latest files on the named branch while preserving any local work. If the session only has a GitHub connection, read that branch there and report that the repository was opened through GitHub. If access fails, tell me which account or GitHub connection needs attention.
+If a checkout already exists, fetch `origin main` and read `origin/main` while preserving local work. If the session only has a GitHub connection, read `main` through it and say how you accessed the files. If access fails, report the error and identify which GitHub account or connection needs attention.
 
 Read these Markdown files:
 1. README.md
