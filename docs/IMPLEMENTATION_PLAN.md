@@ -579,18 +579,18 @@ After Phase 1 closes, development can use the reviewed source material. The 2 No
 | Does "every available source" cover only `source-material/`, or also local archive files and material Abdo has not yet supplied? | Abdo and project owner | Phase 1 source inventory |
 | Where is the signed-off decision workbook stored, and who controls its versions? | Project owner | Phase 1 acceptance checks |
 | May real reference days be entered by hand in a private test environment, with automated fixtures kept anonymized? | Abdo and project owner | Working scope, Phases 2, 4, and 10 |
-| Are the desktop application, three-branch sales comparison, and Arabic and English interface approved scope? | Abdo and project owner | Updates to the requirements, architecture, and decision records |
 | Does planning history start at the first live business date, or should selected historical consumption seed the three-month view? | Abdo | Phase 8 and the Phase 11 live cycle |
 
 ## Related document updates
 
-This plan supersedes the build order in [README](../README.md) and the initial backlog in [Decisions](DECISIONS.md). After the scope decisions above are confirmed, update:
+This plan replaces the earlier build order in the [README](../README.md) and the initial backlog in [Decisions](DECISIONS.md). On 18 November 2026 the following documents were updated to match it:
 
-- [Requirements](REQUIREMENTS.md): add the Arabic and English requirement, the Comparison Editor role, cross-branch sales comparison as reporting-only data, and the attendance Excel export. Narrow the out-of-scope items to a desktop application before web live verification and operational rollout to other branches.
-- [Architecture](ARCHITECTURE.md): record web first and desktop later on the same backend, and add localization to the technology choices.
-- [Decisions](DECISIONS.md): add the web, desktop, then camera attendance delivery order.
-- [Source-material inventory](SOURCE_MATERIAL.md): add the anonymized-fixture and private-test-environment rule.
-- [README](../README.md): list this plan and the architecture review under Active documentation, and point the implementation order to this plan.
+- [Requirements](REQUIREMENTS.md): Arabic and English, the Comparison Editor role, cross-branch sales comparison as reporting-only data, planning history from the first live business date, reporting-only historical figures, the attendance Excel export, the delivery order, and narrower out-of-scope items.
+- [Architecture](ARCHITECTURE.md): web first and desktop later on the same backend, and localization in the technology choices.
+- [Decisions](DECISIONS.md): the confirmed delivery decisions, and the delivery sequence in place of the initial backlog.
+- [Source-material inventory](SOURCE_MATERIAL.md): the private-test-environment rule for real reference days.
+- [README](../README.md): the product scope, this plan and the architecture review under Active documentation, and the implementation order.
+- [Architecture review](ARCHITECTURE_REVIEW.md): a note pointing to the later delivery decisions.
 
 ## Optional later improvement — Foodics import
 

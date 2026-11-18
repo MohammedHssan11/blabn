@@ -1,5 +1,7 @@
 # Architecture Review
 
+> Delivery decisions made after this review, including the Phase 1 source review, the Arabic and English web release, the later desktop application, and three-branch sales comparison, are recorded in the [Implementation Plan](IMPLEMENTATION_PLAN.md) and [Decisions](DECISIONS.md).
+
 ## 1. Verdict
 
 **APPROVE WITH CHANGES**

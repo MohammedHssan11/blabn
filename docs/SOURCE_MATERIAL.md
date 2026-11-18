@@ -46,6 +46,7 @@ source-material/
 - Do not alter original workbooks or report images.
 - Do not treat an empty spreadsheet value as a confirmed zero.
 - Use anonymized fixtures in `sample-data/` for automated tests.
+- Real reference days may be entered by hand only in a private test environment restricted to the project team. Never commit them as fixtures or store original files in application storage. Omit or mask customer contact details from cancellation records.
 - A Codex or Claude agent with repository access can inspect `source-material/` read-only. It must not rename, delete, edit, publish, or copy the material outside the private repository without explicit approval.
 
 ## Current availability

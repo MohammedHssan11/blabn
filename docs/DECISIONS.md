@@ -13,6 +13,11 @@
 | Two-calendar-day replenishment lead time | An order created Wednesday evening is planned for Friday receipt, not Thursday. The expected receipt date is explicit and auditable. |
 | Three-month same-weekday planning view | Demand is reviewed against matching weekdays across prior weeks, which is more useful than comparing unrelated weekdays. |
 | Camera attendance later | Operational closing, inventory, and reports are the MVP priority. |
+| Web first, then desktop, then camera attendance | The Arabic and English web release is installed, tested end to end, and verified in live use before desktop work starts. Camera attendance follows the desktop release. |
+| Arabic and English interface | Abdo and the staff work in both languages. Both languages produce the same saved values and report figures. |
+| Three-branch sales comparison as reporting data | Al Quds, Maarif, Bourgogne, and their total are compared. Al Quds and Bourgogne figures are entered by authorized users; this is not an operational rollout to those branches. |
+| Phase 1 source review before development | Every available workbook, worksheet, and supporting source is reviewed, and Abdo's decision on every finding is recorded before the web foundation starts. |
+| Abdo selects the first live business date at handover | Old workbooks are references and test inputs. Selected historical sales figures are added later only when a report needs them. |
 | Keep approved reference material in the private repository | Legacy workbooks and report images used for development are tracked privately. Do not publish them or add unrelated archives, audio, credentials, or biometric data. |
 
 ## Open decisions
@@ -24,18 +29,11 @@
 - Whether the two-calendar-day receipt rule has supplier-, cutoff-, weekend-, or holiday-specific exceptions.
 - Attendance policy: shifts, breaks, late arrival, overtime, correction workflow, and camera device.
 - Hosting budget and production domain.
+- Decisions needed before Phase 1 and confirmations needed during delivery, listed in the [Implementation Plan](IMPLEMENTATION_PLAN.md#decisions-needed-before-phase-1).
 
-## Initial backlog
+## Delivery sequence
 
-1. Create Supabase development project and database migrations.
-2. Implement Abdo System Admin login and staff role model.
-3. Build business-day closing and cash reconciliation.
-4. Build Product Mix and inventory movements.
-5. Build recipe/BOM consumption.
-6. Export the five reports to Excel.
-7. Validate with one real operational day.
-8. Add the three-month same-weekday planning view and delivery-date-aware replenishment suggestion.
-9. Add camera attendance after the core workflow is stable.
+Delivery follows the 15 phases in the [Implementation Plan](IMPLEMENTATION_PLAN.md). Each phase closes, after its acceptance checks pass, before the next phase starts.
 
 ## Collaboration rules
 
