@@ -5,6 +5,8 @@ import { isLocale } from "@/i18n/config";
 import { createTranslator } from "@/i18n/dictionary";
 import { formatEventTime, formatMad, formatMadSigned } from "@/i18n/format";
 import { first, type SearchParams } from "@/lib/search-params";
+import { requireAccess } from "@/modules/access/guard";
+import { OPERATING_BRANCH_CODE } from "@/modules/access/catalog";
 import type { CashCountSnapshot } from "@/modules/closing/calc";
 import { getCashCountView } from "@/modules/closing/service";
 import { awaitingPhase, requireField } from "@/modules/reports/field-map";
@@ -35,6 +37,11 @@ export default async function CashCountPage({
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   const sp = await searchParams;
+  // The branch is part of every request: a person needs the permission for THAT branch.
+  const branchCode = first(sp.branch) ?? OPERATING_BRANCH_CODE;
+  await requireAccess({ locale, path: `/${locale}/cash-count`, require: { permission: "daily_close.view", branch: branchCode } });
+  // Only the operating branch has daily-close data.
+  if (branchCode !== OPERATING_BRANCH_CODE) notFound();
   const t = createTranslator(locale);
   const view = await getCashCountView(first(sp.date), first(sp.counted));
   const { branch, saved, preview } = view;

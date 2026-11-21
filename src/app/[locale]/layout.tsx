@@ -6,6 +6,9 @@ import { directions, isLocale, locales, otherLocale } from "@/i18n/config";
 import { createTranslator } from "@/i18n/dictionary";
 import { LanguageSwitch } from "@/components/LanguageSwitch";
 import { MainNav } from "@/components/MainNav";
+import { getAccessContext, holds } from "@/modules/access/session";
+import { ALL_BRANCH_CODES, OPERATING_BRANCH_CODE } from "@/modules/access/catalog";
+import { signOutAction } from "@/modules/access/auth-actions";
 
 export const dynamicParams = false;
 
@@ -39,13 +42,29 @@ export default async function LocaleLayout({
   // The label is the name of the other language, written in that language.
   const switchLabel = t("nav.switchTo");
 
-  const items = [
-    { href: `/${locale}`, label: t("nav.home") },
-    { href: `/${locale}/daily-close`, label: t("nav.dailyClose") },
-    { href: `/${locale}/cash-count`, label: t("nav.cashCount") },
-    { href: `/${locale}/comparison`, label: t("nav.comparison") },
-    { href: `/${locale}/reports`, label: t("nav.reportMap") },
-  ];
+  // Menu entries are a convenience: they only list what the person holds. Every page checks again.
+  const access = await getAccessContext();
+  const items =
+    access.state === "active"
+      ? [
+          { href: `/${locale}`, label: t("nav.home") },
+          ...(holds(access, "daily_close.view", OPERATING_BRANCH_CODE)
+            ? [
+                { href: `/${locale}/daily-close`, label: t("nav.dailyClose") },
+                { href: `/${locale}/cash-count`, label: t("nav.cashCount") },
+              ]
+            : []),
+          ...(ALL_BRANCH_CODES.every((code) => holds(access, "comparison.view", code))
+            ? [{ href: `/${locale}/comparison`, label: t("nav.comparison") }]
+            : []),
+          ...(holds(access, "reports.view", OPERATING_BRANCH_CODE) ? [{ href: `/${locale}/reports`, label: t("nav.reportMap") }] : []),
+          ...(holds(access, "inventory.adjust", OPERATING_BRANCH_CODE)
+            ? [{ href: `/${locale}/inventory/adjustments`, label: t("nav.inventoryAdjustments") }]
+            : []),
+          ...(holds(access, "admin.users.manage") ? [{ href: `/${locale}/admin/staff`, label: t("nav.staff") }] : []),
+          ...(holds(access, "admin.audit.view") ? [{ href: `/${locale}/admin/audit`, label: t("nav.audit") }] : []),
+        ]
+      : [];
 
   return (
     <html lang={locale} dir={directions[locale]}>
@@ -63,6 +82,17 @@ export default async function LocaleLayout({
               <small>{t("app.tagline")}</small>
             </a>
             <MainNav items={items} label={t("nav.label")} />
+            {access.state === "active" ? (
+              <form className="account" action={signOutAction} data-form="sign-out">
+                <input type="hidden" name="locale" value={locale} />
+                <span className="who" data-testid="signed-in-as">
+                  {t("auth.signedInAs", { name: access.fullName })}
+                </span>
+                <button type="submit" className="link">
+                  {t("auth.signOut")}
+                </button>
+              </form>
+            ) : null}
             <LanguageSwitch target={other} label={switchLabel} title={t("nav.language")} />
           </div>
         </header>

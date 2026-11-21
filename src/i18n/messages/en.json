@@ -15,7 +15,12 @@
     "comparison": "Branch comparison",
     "reportMap": "Report map",
     "language": "Language",
-    "switchTo": "العربية"
+    "switchTo": "العربية",
+    "signIn": "Sign in",
+    "staff": "Staff accounts",
+    "audit": "Audit history",
+    "inventoryAdjustments": "Inventory adjustments",
+    "account": "Account"
   },
   "common": {
     "blank": "Blank",
@@ -40,7 +45,18 @@
     "calculatedOnServer": "Calculated on the server",
     "businessDate": "Business date",
     "eventTime": "Event time",
-    "timezone": "Timezone"
+    "timezone": "Timezone",
+    "save": "Save",
+    "name": "Name",
+    "email": "Email",
+    "status": "Status",
+    "time": "Time",
+    "actions": "Actions",
+    "back": "Back",
+    "optional": "optional",
+    "none": "None",
+    "yes": "Yes",
+    "no": "No"
   },
   "validation": {
     "invalidAmount": "Enter a valid amount in MAD, for example 603 or 603.50.",
@@ -59,16 +75,45 @@
     "modulesTitle": "Application areas",
     "modulesIntro": "The structure is in place; each area is built in the phase shown.",
     "modules": {
-      "access": { "name": "Access control", "description": "Branches, users, roles and permissions" },
-      "closing": { "name": "Daily closing", "description": "Business days, payments, expenses, remittances, cash counts" },
-      "ledgers": { "name": "Ledgers", "description": "Cash and purchasing-custody entries" },
-      "catalog": { "name": "Catalog and recipes", "description": "Products, units and recipe versions" },
-      "inventory": { "name": "Inventory", "description": "Product Mix, stock movements, counts, variance" },
-      "comparisons": { "name": "Comparisons", "description": "Cross-branch sales comparison" },
-      "replenishment": { "name": "Replenishment", "description": "Planning, purchase orders and receiving" },
-      "reports": { "name": "Reports", "description": "The five Excel report families" },
-      "attendance": { "name": "Attendance", "description": "Employee IDs, kiosk and hours (future)" }
-    }
+      "access": {
+        "name": "Access control",
+        "description": "Branches, users, roles and permissions"
+      },
+      "closing": {
+        "name": "Daily closing",
+        "description": "Business days, payments, expenses, remittances, cash counts"
+      },
+      "ledgers": {
+        "name": "Ledgers",
+        "description": "Cash and purchasing-custody entries"
+      },
+      "catalog": {
+        "name": "Catalog and recipes",
+        "description": "Products, units and recipe versions"
+      },
+      "inventory": {
+        "name": "Inventory",
+        "description": "Product Mix, stock movements, counts, variance"
+      },
+      "comparisons": {
+        "name": "Comparisons",
+        "description": "Cross-branch sales comparison"
+      },
+      "replenishment": {
+        "name": "Replenishment",
+        "description": "Planning, purchase orders and receiving"
+      },
+      "reports": {
+        "name": "Reports",
+        "description": "The five Excel report families"
+      },
+      "attendance": {
+        "name": "Attendance",
+        "description": "Employee IDs, kiosk and hours (future)"
+      }
+    },
+    "welcome": "Welcome, {name}.",
+    "noAccess": "Your account has no permissions yet. Ask Abdo to assign a permission group."
   },
   "dailyClose": {
     "title": "Daily close",
@@ -95,7 +140,10 @@
     "dayNoRecord": "No business day was recorded for this date.",
     "expenseLines": "Cash movements of the day",
     "noMovements": "No expense or remittance recorded.",
-    "kind": { "expense": "Expense", "bank_remittance": "Bank remittance" },
+    "kind": {
+      "expense": "Expense",
+      "bank_remittance": "Bank remittance"
+    },
     "totalExpenses": "Total expenses (cash)",
     "viewDay": "Open day"
   },
@@ -197,5 +245,231 @@
       "Sales comparison": "Sales comparison",
       "Inventory and order": "Inventory and replenishment"
     }
+  },
+  "auth": {
+    "signedInAs": "Signed in as {name}",
+    "signOut": "Sign out",
+    "signIn": {
+      "title": "Sign in",
+      "intro": "Use the email and password Abdo gave you.",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Sign in",
+      "forgot": "Forgot your password?"
+    },
+    "forgot": {
+      "title": "Reset your password",
+      "intro": "Enter your email. If it belongs to an account, we send a link to choose a new password.",
+      "email": "Email",
+      "submit": "Send reset link",
+      "sent": "If that email belongs to an account, a reset link is on its way. Check your inbox and open the link on this device.",
+      "back": "Back to sign in"
+    },
+    "password": {
+      "title": "Choose a new password",
+      "introRequired": "Your password was set by an administrator. Choose your own password to continue.",
+      "introRecovery": "Choose a new password for your account.",
+      "intro": "Choose a new password for your account.",
+      "newPassword": "New password",
+      "confirm": "Repeat the new password",
+      "hint": "At least {min} characters.",
+      "submit": "Save password"
+    },
+    "notices": {
+      "signed_out": "You are signed out.",
+      "session_ended": "Your session ended because your account is not active. Ask Abdo if this is a mistake."
+    }
+  },
+  "errors": {
+    "missing": "Enter your email and password.",
+    "invalid": "The email or password is not correct.",
+    "not_allowed": "This account cannot sign in. Ask Abdo to check that it is active.",
+    "rate_limited": "Too many attempts. Wait a few minutes and try again.",
+    "invalid_email": "Enter a valid email address.",
+    "link_invalid": "This reset link is not valid or has expired. Request a new one.",
+    "forbidden": "You do not have permission to do that.",
+    "invalid_input": "Check the fields and try again.",
+    "email_in_use": "That email is already used by another account.",
+    "employee_number_in_use": "That employee number is already used.",
+    "weak_password": "The password must be at least 10 characters and not too easy to guess.",
+    "password_mismatch": "The two passwords are not the same.",
+    "same_password": "Choose a password different from the current one.",
+    "last_admin": "The organization must keep at least one active System Admin.",
+    "self_disable": "You cannot disable your own account.",
+    "not_found": "That staff account was not found.",
+    "invalid_access": "That branch and group combination is not allowed.",
+    "unavailable": "The service did not answer. Nothing was changed. Try again in a moment.",
+    "unexpected": "Something went wrong. Nothing was changed. Try again."
+  },
+  "notices": {
+    "created": "The account was created. Give the temporary password to the person privately.",
+    "updated": "The details were saved.",
+    "access_saved": "The access was saved.",
+    "disabled": "The account is disabled. The person is signed out and cannot sign in.",
+    "reactivated": "The account is active again.",
+    "password_reset": "The temporary password was set. The person must choose their own at the next sign-in.",
+    "password_changed": "Your password was changed.",
+    "adjustment_saved": "The adjustment was recorded."
+  },
+  "warnings": {
+    "auth_not_updated": "The change was saved, but the sign-in service did not confirm it. Every request from this person is already refused; try the same action again to finish."
+  },
+  "access": {
+    "branchKind": {
+      "operational": "Operating branch",
+      "comparison": "Comparison only"
+    },
+    "organizationTitle": "Whole organization",
+    "organizationHelp": "Applies to every branch and does not need a branch.",
+    "memberOf": "Member of this branch",
+    "branchHelpOperational": "Groups here work on the daily operation of this branch.",
+    "branchHelpComparison": "Figures of this branch are for comparison only. Only comparison permissions apply here.",
+    "groupsGrant": "What this group allows",
+    "groups": {
+      "system_admin": {
+        "name": "System Admin",
+        "description": "Manages users, configuration, recipes, approvals, reports and the audit history."
+      },
+      "cashier": {
+        "name": "Cashier",
+        "description": "Daily-close drafts, sales, payments, expenses, cash counts and permitted draft exports."
+      },
+      "storekeeper": {
+        "name": "Storekeeper",
+        "description": "Receipts, stock counts, waste, hospitality and purchase-order proposals."
+      },
+      "manager": {
+        "name": "Manager",
+        "description": "Closes the business day and approves adjustments when Abdo grants it."
+      },
+      "comparison_editor": {
+        "name": "Comparison Editor",
+        "description": "Enters comparison figures for the assigned branch. Cannot view or export them."
+      },
+      "attendance_kiosk": {
+        "name": "Attendance Kiosk",
+        "description": "Future: creates attendance events for its own branch only."
+      }
+    },
+    "permission": {
+      "admin_users_manage": "Manage staff accounts and access",
+      "admin_audit_view": "Read the audit history",
+      "admin_config_manage": "Change configuration",
+      "recipes_manage": "Manage recipes",
+      "daily_close_view": "View daily close and cash counts",
+      "daily_close_draft": "Enter daily-close drafts",
+      "daily_close_close": "Close a business day",
+      "daily_close_export_draft": "Download daily-close drafts",
+      "cash_count_enter": "Record cash counts",
+      "inventory_view": "View inventory",
+      "inventory_receive": "Record stock receipts",
+      "inventory_count": "Record stock counts",
+      "inventory_waste": "Record waste",
+      "inventory_hospitality": "Record hospitality",
+      "inventory_adjust": "Record inventory adjustments",
+      "inventory_adjust_approve": "Approve inventory adjustments",
+      "purchase_order_propose": "Propose purchase orders",
+      "purchase_order_approve": "Approve purchase orders",
+      "reports_view": "View reports",
+      "reports_export": "Download reports",
+      "comparison_enter": "Enter comparison figures",
+      "comparison_view": "View comparison figures",
+      "comparison_export": "Download comparison figures",
+      "attendance_event_create": "Create attendance events"
+    }
+  },
+  "staff": {
+    "title": "Staff accounts",
+    "intro": "Create staff accounts, choose their branches and permission groups, and disable an account when someone leaves. Changes take effect on the person's next request, even if they are signed in.",
+    "add": "Add a staff member",
+    "empty": "There are no staff accounts yet.",
+    "active": "Active",
+    "disabled": "Disabled",
+    "mustChange": "Must choose a password",
+    "employeeNumber": "Employee number",
+    "branchesAndGroups": "Branches and groups",
+    "noAccess": "No access",
+    "manage": "Manage",
+    "detailsTitle": "Details",
+    "fullName": "Full name",
+    "newTitle": "Add a staff member",
+    "newIntro": "This creates the sign-in account and the employee record together. Choose a temporary password and give it to the person privately; they choose their own at the first sign-in.",
+    "temporaryPassword": "Temporary password",
+    "temporaryPasswordHint": "At least 10 characters. It is never stored by this application or shown again.",
+    "create": "Create account",
+    "accessTitle": "Branches and permission groups",
+    "accessIntro": "A person can hold several groups. A group works only for the branch it is chosen under.",
+    "saveAccess": "Save access",
+    "statusTitle": "Account status",
+    "statusActive": "This account is active.",
+    "statusDisabled": "This account is disabled.",
+    "disabledOn": "Disabled on {date}",
+    "disabledReason": "Reason: {reason}",
+    "reason": "Reason",
+    "disable": "Disable account",
+    "reactivate": "Reactivate account",
+    "disableHelp": "A disabled person is signed out at once and cannot sign in. Their records and history are kept.",
+    "passwordTitle": "Temporary password",
+    "passwordHelp": "Sets a new temporary password. The person must choose their own at the next sign-in. Give it to them privately.",
+    "setTemporary": "Set temporary password",
+    "historyTitle": "History of this account",
+    "historyEmpty": "No history yet.",
+    "openAudit": "Open the full audit history",
+    "back": "Back to staff accounts"
+  },
+  "audit": {
+    "title": "Audit history",
+    "intro": "Administrative and operating changes are recorded here with who made them and when. Entries cannot be edited or deleted.",
+    "filterLabel": "Show",
+    "all": "All entries",
+    "category": {
+      "administration": "Administration",
+      "operation": "Operations",
+      "security": "Security"
+    },
+    "columns": {
+      "time": "Time",
+      "actor": "Done by",
+      "action": "Action",
+      "target": "Concerning",
+      "details": "Details"
+    },
+    "empty": "No entries match.",
+    "showing": "Showing the latest {n} entries.",
+    "system": "System",
+    "details": "Show details",
+    "action": {
+      "bootstrap_system_admin": "First System Admin set up",
+      "staff_created": "Staff account created",
+      "staff_updated": "Staff details changed",
+      "staff_access_changed": "Branches or groups changed",
+      "staff_disabled": "Staff account disabled",
+      "staff_reactivated": "Staff account reactivated",
+      "staff_password_reset_issued": "Temporary password issued",
+      "account_password_changed": "Own password changed",
+      "business_days_created": "Business day started",
+      "business_days_updated": "Business day changed",
+      "cash_movements_created": "Cash movement recorded",
+      "cash_counts_created": "Cash count recorded",
+      "comparison_figures_created": "Comparison figure entered",
+      "inventory_adjustments_created": "Inventory adjustment recorded"
+    }
+  },
+  "forbidden": {
+    "title": "Access denied",
+    "body": "You do not have permission to open this page. If you need it, ask Abdo to add it to your access.",
+    "home": "Back to the home page"
+  },
+  "adjustments": {
+    "title": "Inventory adjustments",
+    "intro": "Record a stock adjustment for the branch. Products, units and quantities arrive in Phase 6; for now the reason is recorded and audited.",
+    "branch": "Branch",
+    "date": "Business date",
+    "reason": "Reason",
+    "note": "Note",
+    "submit": "Record adjustment",
+    "recent": "Recent adjustments",
+    "none": "No adjustments yet.",
+    "invalid": "Enter a valid date and a reason."
   }
 }

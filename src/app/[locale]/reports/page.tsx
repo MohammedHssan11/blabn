@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isLocale } from "@/i18n/config";
+import { requireAccess } from "@/modules/access/guard";
+import { OPERATING_BRANCH_CODE } from "@/modules/access/catalog";
 import { createTranslator, type MessageKey } from "@/i18n/dictionary";
 import { PROTOTYPE_FIELDS, prototypesUsing, type PrototypeId } from "@/modules/reports/contracts";
 import { awaitingPhase, FIELD_MAP, FIELD_MAP_FINDINGS_VERSION, isPending, type FieldDef } from "@/modules/reports/field-map";
@@ -20,6 +22,7 @@ const PROTOTYPE_PATH: Record<PrototypeId, { path: string; label: MessageKey }> =
 export default async function ReportMapPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
+  await requireAccess({ locale, path: `/${locale}/reports`, require: { permission: "reports.view", branch: OPERATING_BRANCH_CODE } });
   const t = createTranslator(locale);
 
   const reports = [...new Set(FIELD_MAP.map((f) => f.report))];

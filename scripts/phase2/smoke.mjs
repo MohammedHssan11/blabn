@@ -1,9 +1,14 @@
 // HTTP-level smoke test of the PRODUCTION build: language routing and persistence, page direction,
 // and the synthetic examples as rendered in both languages.
+// Since Phase 3 every page needs a signed-in person, so this test creates a synthetic System Admin in the
+// LOCAL Supabase database (random password, removed at the end) and sends its session with each request.
+// Prerequisite: `npx supabase start` and `.env.local` (node scripts/phase3/write-local-env.mjs).
 // Usage: npm run build && npm run test:smoke
 import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+import { randomBytes } from "node:crypto";
+import { directSession, loadEnv, serviceClient } from "../phase3/lib.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 const port = process.env.SMOKE_PORT ?? "3199";
@@ -43,7 +48,37 @@ async function waitUp() {
 }
 
 const NAV = { "sec-fetch-dest": "document", accept: "text/html" };
-const get = (p, headers = {}) => fetch(`${base}${p}`, { redirect: "manual", headers: { ...NAV, ...headers } });
+let authCookie = "";
+const get = (p, headers = {}) => {
+  const cookie = [headers.cookie, authCookie].filter(Boolean).join("; ");
+  return fetch(`${base}${p}`, { redirect: "manual", headers: { ...NAV, ...headers, ...(cookie ? { cookie } : {}) } });
+};
+
+/** Creates a synthetic System Admin directly in the local database and returns its session cookies and a cleanup. */
+async function signInSyntheticAdmin() {
+  const env = loadEnv();
+  const service = serviceClient(env);
+  const email = `smoke.${randomBytes(4).toString("hex")}@example.test`;
+  const password = `${randomBytes(9).toString("base64url")}-Aa1`;
+  const created = await service.auth.admin.createUser({ email, password, email_confirm: true });
+  if (created.error) throw new Error(`Cannot create the synthetic account (is local Supabase running?): ${created.error.message}`);
+  const userId = created.data.user.id;
+  const org = (await service.from("organizations").select("id").limit(1)).data?.[0]?.id;
+  const employee = await service.from("employees").insert({ organization_id: org, full_name: "Smoke Admin" }).select("id").single();
+  await service.from("staff_accounts").insert({ user_id: userId, employee_id: employee.data.id, organization_id: org, email });
+  await service.from("staff_group_assignments").insert({ staff_id: userId, group_key: "system_admin" });
+  const { jar } = await directSession(env, email, password);
+  return {
+    cookie: jar.header(),
+    async cleanup() {
+      await service.from("staff_group_assignments").delete().eq("staff_id", userId);
+      await service.from("staff_accounts").delete().eq("user_id", userId);
+      await service.from("employees").delete().eq("id", employee.data.id);
+      await service.auth.admin.deleteUser(userId);
+    },
+  };
+}
+let cleanupAccount = async () => {};
 const plain = (html) =>
   html
     .replace(/<script[\s\S]*?<\/script>/g, " ")
@@ -55,6 +90,9 @@ const setCookie = (res) => res.headers.getSetCookie().join(" | ");
 
 try {
   await waitUp();
+  const account = await signInSyntheticAdmin();
+  authCookie = account.cookie;
+  cleanupAccount = account.cleanup;
 
   console.log("Language routing and persistence");
   let res = await get("/");
@@ -171,6 +209,7 @@ try {
   console.error(error);
 } finally {
   server.kill();
+  await cleanupAccount().catch((error) => console.error(`cleanup failed: ${error.message}`));
 }
 
 console.log(`\n${checks - failures}/${checks} smoke checks passed.`);
