@@ -16,10 +16,16 @@
     "seed:build": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/phase2/build-seed.mjs",
     "seed:check": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/phase2/build-seed.mjs --check",
     "db:check": "node scripts/phase2/db-check.mjs",
-    "check": "npm run typecheck && npm run test && npm run build"
+    "check": "npm run typecheck && npm run test && npm run build",
+    "db:check:phase3": "node scripts/phase3/db-check.mjs phase3_checks.sql",
+    "db:upgrade-test": "node scripts/phase3/upgrade-test.mjs",
+    "test:phase3": "node scripts/phase3/e2e.mjs",
+    "test:browser": "node scripts/phase3/browser-check.mjs",
+    "test:concurrency": "node scripts/phase3/concurrency-test.mjs"
   },
   "dependencies": {
     "@fontsource-variable/noto-sans-arabic": "^5.3.0",
+    "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.119.2",
     "next": "^16.4.6",
     "react": "^19.3.1",
@@ -30,6 +36,7 @@
     "@types/node": "^26.6.6",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
+    "playwright-core": "^1.65.1",
     "typescript": "^7.0.2",
     "vitest": "^5.1.1"
   }

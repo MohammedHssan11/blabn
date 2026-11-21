@@ -83,3 +83,17 @@ export function formatEventTime(instant: Blank<string>, locale: Locale, timeZone
     hourCycle: "h23",
   }).format(new Date(instant));
 }
+
+/** Date and time of an event (audit history, account changes), in the given timezone. */
+export function formatEventDateTime(instant: Blank<string>, locale: Locale, timeZone: string): string {
+  if (instant === null) return BLANK;
+  return new Intl.DateTimeFormat(INTL_TAG[locale], {
+    timeZone,
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).format(new Date(instant));
+}

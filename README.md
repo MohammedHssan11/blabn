@@ -6,6 +6,8 @@ An internal Arabic and English application for the Maarif branch. It replaces re
 
 Phase 1 closed on 21 November 2026 after the source audit, six recorded answers and workbook checks. Phase 2 has the [report contracts](docs/phase2/REPORT_CONTRACTS.md), a bilingual Next.js application with three prototypes on synthetic data, and Supabase migrations; its acceptance checks passed on 21 November 2026 (see the handover record). See the [closure checklist](docs/phase1/CLOSURE.md) and [handover record](docs/HANDOFF.md) for the three scheduled follow-ups.
 
+Phase 3 local acceptance is complete. It adds sign-in, password recovery, staff accounts, permission groups, branch isolation and an append-only audit history. See [accounts and permissions](docs/phase3/ACCOUNTS_AND_PERMISSIONS.md) and the [handover record](docs/HANDOFF.md) for verification and production setup.
+
 ## Product scope
 
 - Enter a business day once: sales, orders, cash, card/Visa, expenses, bank remittance, and counted cash.

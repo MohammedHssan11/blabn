@@ -6,7 +6,8 @@ import { buildSeedSql } from "../scripts/phase2/seed-sql";
 
 describe("database seed", () => {
   it("supabase/seed.sql is generated from the synthetic fixture and is up to date", () => {
-    const current = readFileSync(path.resolve(__dirname, "../supabase/seed.sql"), "utf8");
+    // Git on Windows may check the file out with CRLF line endings; compare the content.
+    const current = readFileSync(path.resolve(__dirname, "../supabase/seed.sql"), "utf8").split("\r\n").join("\n");
     expect(current).toBe(buildSeedSql(fixture));
   });
 

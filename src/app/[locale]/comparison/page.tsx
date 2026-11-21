@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { isLocale } from "@/i18n/config";
 import { createTranslator } from "@/i18n/dictionary";
 import { first, type SearchParams } from "@/lib/search-params";
+import { requireAccess } from "@/modules/access/guard";
+import { ALL_BRANCH_CODES } from "@/modules/access/catalog";
 import { isBusinessDate } from "@/lib/dates";
 import { getComparisonView, SAMPLE_CURRENT_DATES } from "@/modules/comparisons/service";
 import { DateText, Mad, Ratio, TraceTag } from "@/components/values";
@@ -24,6 +26,12 @@ export default async function ComparisonPage({
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   const sp = await searchParams;
+  // The comparison covers every branch and their total, so it needs permission to view each of them.
+  await requireAccess({
+    locale,
+    path: `/${locale}/comparison`,
+    require: ALL_BRANCH_CODES.map((branch) => ({ permission: "comparison.view" as const, branch })),
+  });
   const t = createTranslator(locale);
   const requested = first(sp.current);
   const view = await getComparisonView(requested);

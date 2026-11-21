@@ -4,7 +4,10 @@
 
 begin;
 
--- 1. Every public table has row-level security on, and the API roles have no direct table access.
+-- 1. Every public table has row-level security on. (The deny-all assertion of the Phase 2 baseline,
+-- "the API roles have no direct table access", is specific to the state before Phase 3 and now
+-- lives in phase2_boundary_checks.sql, which runs at the Phase 2 migration boundary only. The
+-- Phase 3 policies are tested in phase3_checks.sql.)
 do $$
 declare
   t record;
@@ -19,10 +22,11 @@ begin
       raise exception 'RLS is off for public.%', t.relname;
     end if;
   end loop;
+  -- Valid before and after Phase 3: anonymous visitors never have table access.
   if has_table_privilege('anon', 'public.business_days', 'select')
-     or has_table_privilege('authenticated', 'public.cash_counts', 'select')
+     or has_table_privilege('anon', 'public.cash_counts', 'select')
      or has_table_privilege('anon', 'public.branch_daily_figures', 'select') then
-    raise exception 'API roles must not have direct access before Phase 3 policies exist';
+    raise exception 'anon must not have direct table access';
   end if;
 end $$;
 
@@ -240,7 +244,7 @@ begin
   assert rejected, 'invalid timezone must be rejected';
 end $$;
 
--- 8. The API roles cannot read the tables before Phase 3 policies exist.
+-- 8. Anonymous visitors cannot read the tables (true before and after Phase 3).
 set local role anon;
 do $$
 declare

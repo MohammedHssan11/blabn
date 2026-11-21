@@ -2,13 +2,16 @@ import "server-only";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 /**
- * Server-side Supabase client with the service role. It bypasses row-level
- * security, so it may only be used inside server commands that have already
- * checked the user, branch and permission (Phase 3 onward). Never import this
- * from a client component; the key has no NEXT_PUBLIC_ prefix on purpose.
- *
- * Phase 2 screens read the synthetic fixtures (src/lib/repository.ts) instead,
- * so nothing calls this yet.
+ * Server-side Supabase client with the service role. It bypasses row-level security, so it is used
+ * only for what a user session cannot do, and only AFTER the caller was authorized against the
+ * database:
+ *   - creating, re-emailing, banning or unbanning Supabase Auth accounts, and setting temporary
+ *     passwords (src/modules/access/staff-actions.ts);
+ *   - the one-time first-administrator bootstrap (scripts/phase3/bootstrap-admin.mjs, which has
+ *     its own client).
+ * Reads and writes of business data must use the signed-in person's client (server.ts) so the
+ * row-level policies apply. tests/architecture.test.ts lists the files allowed to import this one.
+ * Never import it from a client component; the key has no NEXT_PUBLIC_ prefix on purpose.
  */
 let client: SupabaseClient | undefined;
 

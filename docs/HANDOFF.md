@@ -2,23 +2,21 @@
 
 Read this first in every session, then compare it with the actual repository state (`git status`, `git log -3`, `git fetch` and the PR list) before continuing. Update it after each meaningful task and before ending a session.
 
-_Last updated: 21 November 2026. Phase 1 closed with documented deferrals. Phase 2 complete: application baseline, migrations and prototypes built and every acceptance check passed. Phase 3 not started._
+_Last updated: 21 November 2026. Phase 1 closed with documented deferrals. Phase 2 complete (merged to `main` as `2d21e31`). **Phase 3 (accounts, permissions, audit history) is complete for local development. See "Phase 3 status" for the acceptance and audit results. Production provisioning of Abdo's account is pending.**_
 
 ## Where things are
 
 | Item | Value |
 |---|---|
 | Repository | https://github.com/MohammedHssan11/blabn (private) |
-| Local checkout used | `C:\Users\mh978\Downloads\abdo\blabn` (Git root; remote `origin` = the repository above) |
-| Other checkout | `C:\Users\mh978\Downloads\abdo` is an **older** checkout on `codex/daily-ledger-planning` (`1ddc240`). Its 12 workbooks and 3 photos are byte-identical to `blabn/source-material/`. Do not work there. |
-| Branch | `feature/implementation-plan-review` |
-| Planning baseline | `8207374` |
-| Pull request | [PR #2](https://github.com/MohammedHssan11/blabn/pull/2) contains the Phase 1 and Phase 2 work for review. |
+| Phase 3 branch | `codex/phase-3-accounts-permissions`, based on `main` at the Phase 2 merge (`2d21e31`). |
+| Development baseline | Fetch `origin/main` before starting Phase 4. |
+| Phase 2 pull request | [PR #2](https://github.com/MohammedHssan11/blabn/pull/2), merged. |
 | Local-only material | `C:\Users\mh978\Downloads\abdo\abdo temp\`, `...\outputs\`, `...\archive\`, `...\screenshot\` — outside Git; keep them out of commits. |
 
 ## Current phase and status
 
-**Phase 1 closed on 21 November 2026. Phase 2 is complete (21 November 2026); Phase 3 has not started.** All six answers are recorded and the [closure checklist](phase1/CLOSURE.md) passes. Phase 2 delivers the [report contracts](phase2/REPORT_CONTRACTS.md), a bilingual Next.js application with three prototypes on synthetic data, and Supabase migrations checked on a local database (see "Phase 2 status" below).
+**Phase 1 closed on 21 November 2026. Phase 2 is complete (21 November 2026); Phase 3 is implemented and locally accepted (see "Phase 3 status").** All six answers are recorded and the [closure checklist](phase1/CLOSURE.md) passes. Phase 2 delivers the [report contracts](phase2/REPORT_CONTRACTS.md), a bilingual Next.js application with three prototypes on synthetic data, and Supabase migrations checked on a local database (see "Phase 2 status" below).
 
 | Part | Status |
 |---|---|
@@ -48,6 +46,102 @@ The owner moved the final confirmation of the six recorded answers to the Phase 
 **How the database check went.** The first `npx supabase start` filled the C: drive while pulling images, and Docker's engine then stopped answering. With the project owner's approval Docker Desktop and its WSL distro were restarted (the owner's other containers came back on their own; nothing was deleted). The rerun applied the three migrations and the seed. The first `db:check` failed on one assertion of mine (below), which was corrected; the check then passed, again after `db reset`.
 
 **Time-zone caveat for Phase 4 (found by the database check).** This local PostgreSQL 17.12 gives `Africa/Casablanca` an offset of +00:00 on 3 Nov 2026, while Node (tzdata 2025b) gives +01:00 (Morocco's actual offset since 2018, except during Ramadan). The two server-side layers can therefore disagree about the business date of an instant near midnight. The synthetic data is far from midnight, so Phase 2 results are unaffected, and the rollover assertion in `phase2_checks.sql` now builds its instant from local time so it tests the logic only. Before Phase 4 stores real event times, compute the business date in one place only (preferably the database, with its time-zone data updated and verified against a known Moroccan date) and add a test around midnight.
+
+## Phase 3 status (21 November 2026): accounts, permissions and audit history
+
+**Local Phase 3 acceptance: complete after the two independent audit findings were fixed (see "Second independent audit"). All required checks passed on the final code.** Not established: anything on a hosted Supabase project, a real SMTP provider, Safari or a physical phone (see "Remaining limitations"). Design, permission matrix, bootstrap runbook and verification commands: [phase3/ACCOUNTS_AND_PERMISSIONS.md](phase3/ACCOUNTS_AND_PERMISSIONS.md).
+
+**Where the work was done.** Branch `codex/phase-3-accounts-permissions`, created from `origin/main` at the Phase 2 merge commit `2d21e31`, in `C:\Users\mh978\Downloads\abdo` (the checkout that was open). The worktree held only the four local-only folders (`abdo temp/`, `blabn/`, `outputs/`, `screenshot/`), which are untracked and must stay out of commits. The first `git fetch` of the merge commit failed on leftover partial pack files; removing them and fetching `main` alone worked. Nothing was pushed.
+
+**What was built.** Migrations `20261121000005`-`08` (employees, staff accounts, branch memberships, group assignments, catalog; audit history; administrator commands and the `app_authorize` / `app_access_context` questions; RLS policies, explicit grants, default-deny for later objects, operating-action audit triggers, a permission-checked `inventory_adjustments` skeleton); Supabase Auth sign-in, sign-out, password recovery, forced password change after a temporary password; staff screens (create, update, groups per branch, disable, reactivate, temporary password reset, per-person history) and the audit screen, in Arabic RTL and English LTR; the shared guard for pages, actions, downloads and direct requests; the first-administrator bootstrap script.
+
+### Acceptance criteria
+
+| Criterion (plan, Phase 3 and the task) | Result | Evidence (command, then what it shows) |
+|---|---|---|
+| Abdo (the synthetic admin) can create, change, disable and reactivate staff, assign several groups to one person, and see it in the audit history | **Pass** | `npm run test:phase3` section 4 and 10 (real forms and actions): six accounts created, one holds three groups across two branches, name changed, groups changed (Storekeeper and Al Quds removed, Manager added), disabled with reason (Auth user banned), reactivated (ban lifted); `staff.created/updated/access_changed/disabled/reactivated` listed with actor and before/after in `/admin/audit` and on the person's page. `npm run test:browser` repeats it in Edge in both languages (105 checks after the second audit). `supabase/tests/phase3_checks.sql` section 6 covers the commands, the last-admin and self-disable guards. |
+| A cashier uses assigned workflows and is denied inventory adjustments and unassigned branches: page, direct request, protected download, database policy | **Pass** | `npm run test:phase3` section 6: daily close, cash count and the draft download work; 403 for the adjustments page, staff pages, audit, comparison, reports and `?branch=alquds|bourgogne|nowhere` in English and Arabic; `POST /api/inventory/adjustments` 403 (own and other branch); `/api/exports/daily-close-draft?branch=alquds` and `/api/exports/comparison` 403; as the cashier's own session against the database: reads Maarif days only, inventory insert `42501`, no comparison or audit rows, cannot grant themselves System Admin (no write grant), `admin_*` and bootstrap commands refused; replaying the create-staff and set-access server actions as the cashier changes nothing. `phase3_checks.sql` section 8 repeats the policy checks in SQL. |
+| Removing a permission, or disabling an account, blocks the next protected request of an open session | **Pass** | `npm run test:phase3` sections 8 and 8b with one cookie jar kept open: after the group is removed the same session gets 403 on the page and the download and reads no row; restoring it restores access on the next request; after disabling, the same session is sent to sign in (page), 401 (download, direct request) and reads nothing; with the account switched off in the database only (Auth session still valid) the page ends the session, API calls are 401 and the policy returns no rows. `npm run test:browser` shows the 403 page and the redirect in two real browser sessions. `phase3_checks.sql` section 12 does the same in SQL with the same JWT claims. |
+| Comparison entry does not grant viewing or exporting | **Pass** | Editor: page 403, export 403, can insert a figure for the assigned branch only (not Bourgogne, not Maarif), reads zero rows including their own figure and through `branch_daily_figures` (`test:phase3` section 7, `phase3_checks.sql` section 11); `GROUP_PERMISSIONS` and the migration give `comparison.export` to System Admin only. |
+| Staff cannot alter the audit history | **Pass** | `test:phase3` section 10: cashier, storekeeper, editor, manager and kiosk read zero audit rows and cannot update; the administrator cannot update, delete or forge; the service role cannot update, delete or insert; the record stays unchanged. `phase3_checks.sql` section 14: the table owner is also refused (trigger) for UPDATE, DELETE and TRUNCATE; credential-like field names are refused; no credential or password appears in any audit record or page. |
+| Cross-branch denial through page, direct request, report download, database policy | **Pass** | As in the cashier row. The report download is the minimal synthetic CSV export on the shared guard (real exports belong to Phase 9). |
+| Bootstrap of Abdo, verified with a synthetic account; no real credentials in source control; production pending | **Pass (local)** | `scripts/phase3/bootstrap-admin.mjs` created `synthetic.admin@example.test` (random password, never printed); a second run is refused and leaves no Auth account; refuses a non-local URL without `--confirm-remote`; the account is forced to choose its own password. `.env.local` is ignored by Git; `.env.example` holds no values (unit test). **Production provisioning: pending.** |
+| Kiosk permissions defined now, workflow later | **Pass** | `attendance_kiosk` holds only `attendance.event.create`; denied on every page, download and table in `test:phase3` section 7 and `phase3_checks.sql` section 10. |
+| Maarif operational, Al Quds and Bourgogne comparison-only; existing records reused | **Pass** | No new organization or branch records; `operates_in_app` is asserted in `phase3_checks.sql` and `test:phase3` section 0; operational permissions are refused on Al Quds (even for System Admin). |
+| Migration upgrade from Phase 2, fresh build, Phase 2 regression | **Pass** | `npm run db:upgrade-test`: reset to `20261121000004` + seed, Phase 2 checks and the preserved deny-all baseline check (`supabase/tests/phase2_boundary_checks.sql`, the original assertion kept at the boundary), `migration up`, seed data intact (10/2/3/3), Phase 2 and Phase 3 checks; then `db reset` and both again; the upgraded and fresh schemas, table grants and function grants are identical (1949 lines compared). `npm run db:check` (Phase 2 checks, which no longer assert the deny-all baseline) and `npm run db:check:phase3` also passed on the final fresh build. |
+| Typecheck, unit tests, production build, HTTP smoke | **Pass** | `npm run typecheck` clean; `npm test` 162/162 in 11 files (76 earlier + 86 new); `npm run build` passes (all application pages are now dynamic); `npm run test:smoke` 69/69 (now signs in as a synthetic admin it creates and removes). |
+| Sign-in, recovery and staff management in both languages | **Pass** | `npm run test:browser` (Edge via playwright-core, 91 checks, 0 console errors): sign-in errors, language switch, temporary password then forced change, create/update/access/disable/reactivate, audit, recovery with the real email from the local mail catcher (link, one-time code, new password, old password dead, link single-use), sign-out; `lang`/`dir`/computed direction; no horizontal scroll at 375 px on the sign-in, staff list, staff detail, new-staff and audit pages. `test:phase3` section 9 repeats recovery over HTTP and checks Arabic messages. Screenshots were written to a temporary folder and not kept in Git. |
+
+Exact commands (local Supabase running, `.env.local` from `node scripts/phase3/write-local-env.mjs`): `npm run typecheck`, `npm test`, `npm run build`, `npm run db:upgrade-test`, `npm run db:check`, `npm run db:check:phase3`, `npm run test:concurrency` (27 checks), `npm run test:phase3` (369 checks), `npm run test:browser` (105 checks), `npm run test:smoke` (69 checks). `test:phase3` and `test:browser` rebuild the local database first (`--no-reset` skips it, but the bootstrap then needs a fresh database).
+
+### Self-audit: what was found and fixed
+
+Each was found while building or by the separate audit pass, fixed in Phase 3 scope, given a regression check and rerun.
+
+1. **Per-request pages were being prerendered.** The access check's `try/catch` swallowed Next.js's dynamic-rendering signal, so the build prerendered pages as "authorization unavailable". Fixed with `connection()` before the `try`; the build now lists every page as dynamic.
+2. **Recovery link opened the wrong host in a real browser.** The callback redirected using the request URL (`localhost`) while the session cookie belongs to `127.0.0.1`; the person landed on sign-in. Found by the browser run, fixed by building redirects from `SITE_URL`; browser recovery now passes in both languages.
+3. **Duplicate email on update returned a generic error.** Supabase Auth answers a duplicate with a bare 500. Fixed by checking staff records first and mapping the bare error; `test:phase3` section 10b now checks the refusal and that both records keep the old email.
+4. **Audit history showed a time of day without a date.** Fixed with a date-and-time formatter for the audit screens.
+5. **Seed test failed on a CRLF checkout.** `core.autocrlf=true` writes `seed.sql` with CRLF, so the Phase 2 seed test (and `seed:check`) failed on the untouched baseline too. Both now compare content with line endings normalized.
+6. **Local stack left half-stopped by an interrupted run** (environment, not code): `supabase stop`/`start` restored it, then the whole suite was rerun from clean; the results above are from that rerun.
+7. **The two guard tests have teeth.** Mutations of the SQL (open the select policy, drop the audit trigger, open comparison insert, `has_permission` always true, grant update on audit) each failed `phase3_checks.sql`; mutations of the application guard (skip the database permission check, ignore the forced password change) each failed `tests/guard.test.ts`. The mutated code was reverted.
+8. **Added after the review of my own coverage:** password reset by the administrator, email change keeping Auth and the staff record in step, sign-in "return to" address (another site, protocol-relative, other language ignored), a server action posted from another site (refused by Next.js), and a valid Auth account with no staff record (cannot sign in, holds no session).
+
+### Second independent audit (21 November 2026): two findings, fixed
+
+Both were real defects in the first Phase 3 delivery. Each is fixed by the forward migration `20261121000009_password_gate_and_admin_serialization.sql` (migrations 05-08 are unchanged) and the application code, with regression coverage at the database, HTTP and browser levels.
+
+**Finding 1: the temporary-password requirement was enforced only in Next.js.** A new, bootstrapped or administrator-reset account is flagged `must_change_password`, but PostgreSQL still authorized it: a valid JWT used directly against the Data API passed every policy and command (reproduced first: on a database at migration 08 a flagged cashier read all 10 business days). Also, `app_complete_password_change()` cleared the flag on request, so a flagged person could release themselves without changing the password.
+
+| Part | Fix | Evidence |
+|---|---|---|
+| Deny at both layers | `effective_permissions()` and `can_see_branch()` return nothing for a flagged account; the catalog policies need `access_cleared()`. Every policy, `admin_*` command and `app_authorize` therefore refuses it. It keeps `app_access_context()`, `app_complete_password_change()`, its own account rows and the password page; the Next.js guard still sends it to `/account/password`. | `phase3_checks.sql` sections 5b and 6b (flagged administrator and cashier: no permission, no rows, no write, commands refused, own row readable); `test:phase3` `flaggedChecks` on first sign-in of the administrator and of all six staff, on an administrator-issued temporary password, on a recovery session, and on a flag set while a session is open (page redirect, download 403, database reads empty, write 42501, `app_authorize` false, `admin_*` refused). |
+| Release only after a confirmed change | The flag stores a SHA-256 fingerprint of the Auth password hash taken when it was set (never the hash; not readable through the API: column-level grant). The completion command clears the flag and writes the `account.password_changed` audit record only when Auth now holds a different hash; otherwise `password_not_changed`. | SQL: release refused without a change; a changed hash alone audits nothing until the person confirms; completion audited once; asking again audits nothing. HTTP: right after a real sign-in the release is refused (so Auth does not re-hash on sign-in); after the real change through the form the flag and fingerprint are cleared and exactly one completion is audited. |
+| First sign-in, admin reset, recovery | All three verified end to end. | `test:phase3` sections 2, 5, 10b: the temporary password signs in and is held at the password page; an administrator reset ends the person's open sessions (Auth revokes them), the new temporary password is held at the password page, the previous password stops working; recovery of a flagged account (real email, link, one-time code) releases it only after the new password, the temporary password then fails, one more completion is audited. `test:browser` repeats first sign-in, administrator reset (session ended, sign-in with the temporary password, every page held at the password page until a password is chosen) and recovery in both languages. |
+| Upgrade path | Accounts flagged when the migration runs are fingerprinted. | `db:upgrade-test` section D: reset to migration 08, a flagged account, the gap reproduced (10 days visible), `migration up`, the account fingerprinted and refused (0 days), SQL checks pass, schema, table, column and function privileges equal the fresh build. |
+
+**Finding 2: two administrators could disable or demote each other at the same time and leave none.** Each command checked "another active System Admin remains" inside its own transaction, so two overlapping transactions each saw the other still active and both committed (reproduced: 0 active administrators in every round).
+
+| Part | Fix | Evidence |
+|---|---|---|
+| Serialize | `require_admin()`, called first by every `admin_*` command, takes a transaction-scoped advisory lock per organization (`pg_advisory_xact_lock`). The bootstrap takes the same lock. | `npm run test:concurrency` (27 checks): real overlapping `authenticated` transactions, each held open while the others start. Two administrators disabling each other, removing each other's group, one disabling while the other removes the group, and a three-administrator ring, 3 rounds each in separate organizations: at least one active System Admin remains every time and the loser is refused. A sequential control is refused by the last-admin rule. |
+| Re-check the caller inside the lock | After the lock the caller's `admin.users.manage` is checked again (the caller may have been demoted or disabled while waiting), then the last-active-admin rule runs in the same transaction. | The losing transaction is refused with `permission_denied` (the caller is no longer an administrator) in every round. |
+| The test has teeth | `node scripts/phase3/concurrency-test.mjs --prove-failure-without-lock` puts the pre-fix `require_admin()` back and the test fails in every round with 0 active administrators; `npx supabase db reset` restores the migrations. | Run and recorded; the suite below was run afterwards on the restored database. |
+
+**Self-audit after the two fixes** (a separate pass over the new code and tests):
+- *Found and fixed:* `staff_accounts` was readable through the API, so `password_fingerprint` (a digest of the hash) was visible to the person and to the administrator. Column-level grant added; checked in SQL (`has_column_privilege`), over HTTP for the cashier and the administrator, and in the schema comparison (column privileges are now compared).
+- *My own test expectations corrected, not product changes:* an administrator password reset through the Auth admin API also ends the person's open sessions (stricter than first assumed); a made-up fingerprint is not a valid way to flag an account in a test (the administrator command is used instead).
+- *Mutation checks:* making `effective_permissions()` ignore the flag fails `phase3_checks.sql`; making the completion skip the fingerprint test fails it; the static tests in `tests/access-architecture.test.ts` pin the lock, the re-check, the fingerprint wherever the flag is set, and the release order.
+- *Follow-up audit fix:* staff sign-in email changes go through the audited administrator workflow. A forward migration blocks self-service Auth email changes for staff and prevents the directory from storing an address that differs from Auth. The same migration reconciles and audits older directory records whose confirmed Auth address already changed.
+- *Follow-up request check:* the inventory JSON endpoint compares the full browser origin with the configured `SITE_URL`, including the scheme. The regression check covers a mismatched origin even when the forwarded host matches it.
+
+### Final verification after the follow-up audit
+
+| Command | Result |
+|---|---|
+| `npm run typecheck` | clean |
+| `npm test` | 162/162 in 11 files |
+| `npm run build` | passes |
+| `npm run db:upgrade-test` | Pass. Phase 2 boundary and upgrade, 10-migration fresh build, matching schema and grants, and migration 08 upgrade with a flagged account and a reconciled and audited email. |
+| `npm run db:check` (Phase 2 regression) and `npm run db:check:phase3` | pass |
+| `npm run test:concurrency` | 27/27 |
+| `npm run test:phase3` (HTTP) | 372/372, including the audited administrator email change and denial of staff self-service email changes. |
+| `npm run test:browser` (Edge, Arabic and English) | 105/105, no console errors |
+| `npm run test:smoke` | 69/69 |
+| `npm run seed:check` | Pass. |
+
+The follow-up audit reran the suite on a disposable local Supabase project with synthetic accounts. The four existing Docker workloads continued running.
+
+### Remaining limitations and decisions
+
+- **Production**: no hosted Supabase project, SMTP provider or real Abdo account was used or created. Provisioning, the Auth settings in `supabase/config.toml` (sign-ups off, 10-character minimum, redirect URLs) and `SITE_URL` must be set on the hosted project; recovery emails were checked only through the local mail catcher.
+- **403 pages**: the status is a real 403, but Next.js sends its error shell and the browser renders the "access denied" content from the response payload (the root layout is the dynamic `[locale]` segment). The HTTP checks assert the status and the message text in the payload; the browser checks assert what is shown. Requires `experimental.authInterrupts` in `next.config.ts`.
+- **Verified in Edge only**; layout checked at 375 px in the browser pane engine, not on a physical phone or Safari. Arabic wording of the new screens has not been read by a native reviewer other than the project owner.
+- **Comparison data**: entry is insert-only (an update would need the row to be readable, which the editor must not be able to do); corrections and revision history arrive with Phase 7. The comparison page and export need `comparison.view` / `comparison.export` for every branch; per-branch columns are Phase 7.
+- **Audit scope**: rows are written by the administrator commands, the bootstrap command and the operating-table triggers for signed-in people. Direct service-role writes are not audited by the triggers; a database owner can still disable triggers.
+- **Real exports, daily-close writes, stock movements**: the CSV downloads and the adjustment screen are minimal guarded skeletons on synthetic data; the real workflows are Phases 4, 6 and 9. `inventory_adjustments` is a skeleton table that Phase 6 extends.
+- **Disabling removes Auth sessions** with a privileged delete that is skipped quietly if the database owner may not touch the `auth` schema on a hosted project; the live checks refuse every request regardless, and the Auth user is banned by the server.
+- **Phase 4 carry-over unchanged**: the Casablanca time-zone follow-up and the daily close and cash-ledger work stay in Phase 4.
 
 ## Questions for Abdo
 
@@ -126,6 +220,9 @@ Session 8 (21 Nov, applying Abdo's answers):
 | `supabase/config.toml`, `migrations/` (four, the last is the audit fix), `seed.sql`, `tests/phase2_checks.sql` | Local development database baseline (ports 55xxx, project `balaban-dev`). |
 | `scripts/phase2/*`, `tests/*` | Seed generation, database check runner, HTTP smoke test of the production build, 76 unit tests (see "Phase 2 audit fixes"). |
 | `docs/phase2/REPORT_CONTRACTS.md` | Report contracts (earlier Phase 2 work). |
+| Phase 3 migrations (05–09 and the staff email integrity migration), `supabase/tests/phase3_checks.sql`, `phase2_boundary_checks.sql` | Phase 3 schema, policies, grants, audit; SQL checks and the preserved Phase 2 deny-all baseline check. |
+| `src/modules/access/*`, `src/app/[locale]/{sign-in,forgot-password,account,admin,inventory}`, `src/app/api/*`, `src/lib/supabase/{config,server}.ts`, `src/proxy.ts` | Sign-in, staff screens, audit screen, shared guard, protected downloads and routes, session refresh. |
+| `scripts/phase3/*`, `tests/{guard,access-*}.test.ts`, `docs/phase3/ACCOUNTS_AND_PERMISSIONS.md` | Bootstrap, migration, HTTP and browser checks; unit and architecture tests; Phase 3 runbook. |
 | `docs/HANDOFF.md` | This record. |
 | `docs/phase1/README.md`, `TRIAL.md`, `CLOSURE.md`, `ABDO_FINAL_CONFIRMATION_AR.md` | Phase 1 guide, device trial and save/return explanation, closure checklist (generated), final-confirmation message for Abdo (not sent). |
 | `docs/phase1/findings.json`, `FINDINGS.md` | Findings with status, questions, done and remaining (version `2026-11-21.1`). |
@@ -217,6 +314,6 @@ Environment: the checks ran on this project's own local Supabase instance (`bala
 
 ## Next steps (in order)
 
-1. Review [PR #2](https://github.com/MohammedHssan11/blabn/pull/2) before merging the Phase 1 and Phase 2 work into main.
-2. Start Phase 3 (accounts and permissions) from the [plan](IMPLEMENTATION_PLAN.md). Add row-level policies there; the API roles have no table access until then. For a deployed environment, create an authorized Supabase development project and run the same migrations and `db:check`.
-3. Carry the Phase 2 caveats forward: single place for business-date calculation and the Casablanca time-zone data check (Phase 4), the cash and payment-type assumptions (Phase 4), the weekly total-ratio rule (Phase 7). The scheduled follow-ups stay as they were: protected ledger edits (Phase 4, only if needed), the historical order-sheet date (Phase 8), Abdo's final confirmation (Phase 10).
+1. Start Phase 4 from the updated `origin/main`. Read and write business data with the signed-in person’s client so the row-level policies apply. Call the guard with the permission and branch first.
+2. Before production rollout, provision an authorized hosted Supabase project, set the Auth options and `SITE_URL`, configure SMTP, and bootstrap Abdo. See the [accounts and permissions runbook](phase3/ACCOUNTS_AND_PERMISSIONS.md).
+4. Carry the Phase 2 caveats forward: single place for business-date calculation and the Casablanca time-zone data check (Phase 4), the cash and payment-type assumptions (Phase 4), the weekly total-ratio rule (Phase 7). The scheduled follow-ups stay as they were: protected ledger edits (Phase 4, only if needed), the historical order-sheet date (Phase 8), Abdo's final confirmation (Phase 10).

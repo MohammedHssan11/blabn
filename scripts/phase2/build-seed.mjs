@@ -13,7 +13,8 @@ const { buildSeedSql } = await import("./seed-sql.ts");
 const sql = buildSeedSql(JSON.parse(readFileSync(fixturePath, "utf8")));
 
 if (process.argv.includes("--check")) {
-  const current = existsSync(seedPath) ? readFileSync(seedPath, "utf8") : "";
+  // Git on Windows may check the file out with CRLF line endings; the content is what matters.
+  const current = existsSync(seedPath) ? readFileSync(seedPath, "utf8").split("\r\n").join("\n") : "";
   if (current !== sql) {
     console.error("supabase/seed.sql is out of date. Run: npm run seed:build");
     process.exit(1);
