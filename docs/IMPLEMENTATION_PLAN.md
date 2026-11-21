@@ -160,6 +160,8 @@ Abdo can manage accounts and roles. Each employee can access only the work assig
 
 The cashier enters the operating day once. The system calculates expected cash, counted cash, and difference while maintaining cash and purchasing-custody ledgers.
 
+Use [Abdo's Phase 4 decisions](phase4/ABDO_DECISIONS.md) for the confirmed Maarif workflow. The branch manager counts and closes, and can approve his own recorded correction. The normal cutoff is 02:00 local time. A later close retains the business date it closes. The branch accepts cash and card.
+
 ### Work
 
 - Open one business-day record per branch and local business date.
@@ -561,13 +563,12 @@ Every phase produces a reviewable usable result. Any change affecting balances o
 
 ## Confirmations needed during delivery
 
-Phase 1 can begin with the material already available once the [decisions needed before Phase 1](#decisions-needed-before-phase-1) are made. Source issues and questions go into the Phase 1 findings register and Abdo's review page. The table records when the corresponding production rules will be needed.
+Phase 1 can begin with the material already available once the [decisions needed before Phase 1](#decisions-needed-before-phase-1) are made. Source issues and questions go into the Phase 1 findings register and Abdo's review page. The table records when the corresponding production rules will be needed. The confirmed cutoff, close, correction, and payment rules are in [Abdo's Phase 4 decisions](phase4/ABDO_DECISIONS.md).
 
 | Confirmation | Owner | Needed by | Work that can proceed first |
 |---|---|---|---|
 | Is the date in the old order sheet SRC-01 `Sheet1!C6` the order date or the delivery date? | Abdo | Phase 8, before mapping historical order dates | New orders use separate business, expected receipt and actual receipt dates |
 | What is the approved live source for Al Quds and Bourgogne values, and who enters them? | Abdo | Before live branch comparison | Comparison screen and source tracking |
-| What timezone and business-day cut-off apply, and who may close or correct a day? | Abdo and project owner | During Phases 3–4 | Configurable settings and test data |
 | Which product mappings, units, conversions, and recipes are approved? | Abdo or catalog owner | Before live inventory consumption | Catalog and review queue |
 | What safety stock, coverage period, pack size, supplier minimum, cut-off, and calendar exceptions apply? | Abdo or purchasing owner | Before live replenishment recommendations | Transparent calculation and editable draft orders |
 | Which report fields and layouts should be retained? | Abdo | Phase 1 decision, verified in Phases 9–10 | Inventory and map the supplied templates |

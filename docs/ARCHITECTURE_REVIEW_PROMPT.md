@@ -24,6 +24,8 @@ Read these Markdown files:
 5. docs/SOURCE_MATERIAL.md
 6. docs/DECISIONS.md
 7. docs/ARCHITECTURE.md
+8. docs/HANDOFF.md and docs/IMPLEMENTATION_PLAN.md
+9. docs/phase4/ABDO_DECISIONS.md for the confirmed rules to use when working on daily close
 
 Use the documents to understand why the branch wants to enter each business day once, what the future application should cover, what is planned for later, and what is already present in the repository. Use the source inventory only to understand what reference material is available.
 

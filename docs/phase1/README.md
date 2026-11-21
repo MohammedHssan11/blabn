@@ -2,6 +2,8 @@
 
 Status: **closed on 21 November 2026**. All six answers are recorded and the workbook checks pass. The owner deferred the protected ledger review to Phase 4 if needed, the legacy order-sheet date to Phase 8, and Abdo's separate confirmation to the Phase 10 walkthrough. See the [closure checklist](CLOSURE.md) and [handover](../HANDOFF.md).
 
+The [Phase 4 decision record](../phase4/ABDO_DECISIONS.md) now answers P1-19. The Phase 1 report map describes the prototype baseline.
+
 ## Workbook audit baseline
 
 The table records the workbook audit statuses before the review responses. The [decision summary](decisions/DECISIONS_SUMMARY.md) records Abdo's answers and the [field map](FIELD_MAP.md) applies them to the app and reports.
