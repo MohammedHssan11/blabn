@@ -1,0 +1,257 @@
+{
+  "version": "phase2-synthetic-2026-11-21.1",
+  "notice": "SYNTHETIC TEST DATA. Invented for Phase 2 prototypes; none of these figures come from Abdo's workbooks or any real branch day. Edit this file, then run `npm run seed:build` to regenerate supabase/seed.sql.",
+  "organization": {
+    "id": "00000000-0000-4000-8000-000000000001",
+    "name": "Synthetic Test Organization"
+  },
+  "branches": [
+    {
+      "id": "00000000-0000-4000-8000-000000000011",
+      "code": "maarif",
+      "name_en": "Maarif",
+      "name_ar": "المعاريف",
+      "timezone": "Africa/Casablanca",
+      "business_day_rollover": "00:00",
+      "operates_in_app": true
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000012",
+      "code": "alquds",
+      "name_en": "Al Quds",
+      "name_ar": "القدس",
+      "timezone": "Africa/Casablanca",
+      "business_day_rollover": "00:00",
+      "operates_in_app": false
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000013",
+      "code": "bourgogne",
+      "name_en": "Bourgogne",
+      "name_ar": "بورغوندي",
+      "timezone": "Africa/Casablanca",
+      "business_day_rollover": "00:00",
+      "operates_in_app": false
+    }
+  ],
+  "business_days": [
+    {
+      "id": "00000000-0000-4000-8000-000000000101",
+      "branch_code": "maarif",
+      "business_date": "2026-11-01",
+      "status": "closed",
+      "closed_at": "2026-11-01T21:15:00Z",
+      "net_sales": "850.50",
+      "order_count": 9,
+      "card_amount": "200.00",
+      "opening_cash": "0.00",
+      "revision": 1
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000102",
+      "branch_code": "maarif",
+      "business_date": "2026-11-02",
+      "status": "closed",
+      "closed_at": "2026-11-02T21:45:00Z",
+      "net_sales": "1000.00",
+      "order_count": 10,
+      "card_amount": "300.00",
+      "opening_cash": "0.00",
+      "revision": 1
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000103",
+      "branch_code": "maarif",
+      "business_date": "2026-11-03",
+      "status": "closed",
+      "closed_at": "2026-11-03T21:00:00Z",
+      "net_sales": "100.00",
+      "order_count": 2,
+      "card_amount": "0.00",
+      "opening_cash": "0.00",
+      "revision": 1
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000104",
+      "branch_code": "maarif",
+      "business_date": "2026-11-04",
+      "status": "closed",
+      "closed_at": "2026-11-04T21:00:00Z",
+      "net_sales": "1000.00",
+      "order_count": 3,
+      "card_amount": "250.00",
+      "opening_cash": null,
+      "revision": 1
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000105",
+      "branch_code": "maarif",
+      "business_date": "2026-11-05",
+      "status": "closed",
+      "closed_at": "2026-11-05T21:00:00Z",
+      "net_sales": "0.00",
+      "order_count": 3,
+      "card_amount": "0.00",
+      "opening_cash": null,
+      "revision": 1
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000106",
+      "branch_code": "maarif",
+      "business_date": "2026-11-06",
+      "status": "closed",
+      "closed_at": "2026-11-06T21:00:00Z",
+      "net_sales": "1200.00",
+      "order_count": null,
+      "card_amount": "400.00",
+      "opening_cash": null,
+      "revision": 1
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000107",
+      "branch_code": "maarif",
+      "business_date": "2026-11-07",
+      "status": "closed",
+      "closed_at": "2026-11-07T21:00:00Z",
+      "net_sales": "900.00",
+      "order_count": 0,
+      "card_amount": null,
+      "opening_cash": null,
+      "revision": 1
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000108",
+      "branch_code": "maarif",
+      "business_date": "2026-11-08",
+      "status": "open",
+      "closed_at": null,
+      "net_sales": null,
+      "order_count": null,
+      "card_amount": null,
+      "opening_cash": null,
+      "revision": 0
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000110",
+      "branch_code": "maarif",
+      "business_date": "2026-11-10",
+      "status": "closed",
+      "closed_at": "2026-11-10T21:00:00Z",
+      "net_sales": "120.00",
+      "order_count": 3,
+      "card_amount": "0.00",
+      "opening_cash": null,
+      "revision": 1
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000117",
+      "branch_code": "maarif",
+      "business_date": "2026-11-17",
+      "status": "closed",
+      "closed_at": "2026-11-17T21:00:00Z",
+      "net_sales": "90.00",
+      "order_count": 2,
+      "card_amount": "0.00",
+      "opening_cash": null,
+      "revision": 1
+    }
+  ],
+  "cash_movements": [
+    {
+      "id": "00000000-0000-4000-8000-000000000201",
+      "branch_code": "maarif",
+      "business_date": "2026-11-01",
+      "kind": "expense",
+      "amount": "60.00",
+      "occurred_at": "2026-11-01T10:00:00Z",
+      "note": "Synthetic supplies"
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000202",
+      "branch_code": "maarif",
+      "business_date": "2026-11-01",
+      "kind": "expense",
+      "amount": "25.50",
+      "occurred_at": "2026-11-01T14:00:00Z",
+      "note": "Synthetic cleaning"
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000203",
+      "branch_code": "maarif",
+      "business_date": "2026-11-01",
+      "kind": "bank_remittance",
+      "amount": "400.00",
+      "occurred_at": "2026-11-01T21:10:00Z",
+      "note": "Synthetic bank deposit"
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000204",
+      "branch_code": "maarif",
+      "business_date": "2026-11-02",
+      "kind": "expense",
+      "amount": "100.00",
+      "occurred_at": "2026-11-02T13:30:00Z",
+      "note": "Synthetic supplies"
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000205",
+      "branch_code": "maarif",
+      "business_date": "2026-11-02",
+      "kind": "bank_remittance",
+      "amount": "500.00",
+      "occurred_at": "2026-11-02T21:30:00Z",
+      "note": "Synthetic bank deposit after the count"
+    }
+  ],
+  "cash_counts": [
+    {
+      "id": "00000000-0000-4000-8000-000000000301",
+      "branch_code": "maarif",
+      "business_date": "2026-11-01",
+      "counted_amount": "565.00",
+      "counted_at": "2026-11-01T20:50:00Z",
+      "expected_cash": "565.00",
+      "variance": "0.00",
+      "calc_version": "cash-count-v1"
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000302",
+      "branch_code": "maarif",
+      "business_date": "2026-11-02",
+      "counted_amount": "603.00",
+      "counted_at": "2026-11-02T21:00:00Z",
+      "expected_cash": "600.00",
+      "variance": "3.00",
+      "calc_version": "cash-count-v1"
+    }
+  ],
+  "comparison_figures": [
+    {
+      "id": "00000000-0000-4000-8000-000000000401",
+      "branch_code": "alquds",
+      "business_date": "2026-11-03",
+      "net_sales": "80.00",
+      "order_count": null,
+      "source": "reporting_only",
+      "entered_at": "2026-11-11T09:00:00Z"
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000402",
+      "branch_code": "alquds",
+      "business_date": "2026-11-10",
+      "net_sales": "96.00",
+      "order_count": null,
+      "source": "reporting_only",
+      "entered_at": "2026-11-11T09:00:00Z"
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000403",
+      "branch_code": "bourgogne",
+      "business_date": "2026-11-03",
+      "net_sales": "150.00",
+      "order_count": null,
+      "source": "reporting_only",
+      "entered_at": "2026-11-11T09:00:00Z"
+    }
+  ]
+}

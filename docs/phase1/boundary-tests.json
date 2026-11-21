@@ -1,0 +1,421 @@
+﻿{
+    "generated":  "2026-11-21T04:14:31",
+    "passed":  26,
+    "total":  26,
+    "not_tested":  [
+                       "Ledger copies (SRC-10/11): cancellation totals and carry-forward read protected day sheets; inputs cannot be entered without the sheet password.",
+                       "Weekly comparison (SRC-12): only dates changed (P1-10); the ratio formulas are the original ones."
+                   ],
+    "results":  [
+                    {
+                        "test":  "Daily Sales: ratio blank when the day has no sales (blank)",
+                        "file":  "daily-sales-nov-2026.xlsx",
+                        "ok":  true,
+                        "checks":  [
+                                       {
+                                           "cell":  "Sheet1!I25",
+                                           "got":  "(blank)",
+                                           "want":  "(blank)",
+                                           "ok":  true
+                                       },
+                                       {
+                                           "cell":  "Sheet1!K25",
+                                           "got":  "(blank)",
+                                           "want":  "(blank)",
+                                           "ok":  true
+                                       }
+                                   ]
+                    },
+                    {
+                        "test":  "Daily Sales: ratio blank when sales are an explicit 0 (division undefined)",
+                        "file":  "daily-sales-nov-2026.xlsx",
+                        "ok":  true,
+                        "checks":  [
+                                       {
+                                           "cell":  "Sheet1!I25",
+                                           "got":  "(blank)",
+                                           "want":  "(blank)",
+                                           "ok":  true
+                                       },
+                                       {
+                                           "cell":  "Sheet1!K25",
+                                           "got":  "(blank)",
+                                           "want":  "(blank)",
+                                           "ok":  true
+                                       }
+                                   ]
+                    },
+                    {
+                        "test":  "Daily Sales: ratio computed for a normal day",
+                        "file":  "daily-sales-nov-2026.xlsx",
+                        "ok":  true,
+                        "checks":  [
+                                       {
+                                           "cell":  "Sheet1!I25",
+                                           "got":  0.25,
+                                           "want":  0.25,
+                                           "ok":  true
+                                       },
+                                       {
+                                           "cell":  "Sheet1!K25",
+                                           "got":  0.3,
+                                           "want":  0.3,
+                                           "ok":  true
+                                       }
+                                   ]
+                    },
+                    {
+                        "test":  "Daily Sales: average blank when orders are blank (P1-03)",
+                        "file":  "daily-sales-nov-2026.xlsx",
+                        "ok":  true,
+                        "checks":  [
+                                       {
+                                           "cell":  "Sheet1!D25",
+                                           "got":  "(blank)",
+                                           "want":  "(blank)",
+                                           "ok":  true
+                                       }
+                                   ]
+                    },
+                    {
+                        "test":  "Daily Sales: average blank when orders are an explicit 0 (P1-03)",
+                        "file":  "daily-sales-nov-2026.xlsx",
+                        "ok":  true,
+                        "checks":  [
+                                       {
+                                           "cell":  "Sheet1!D25",
+                                           "got":  "(blank)",
+                                           "want":  "(blank)",
+                                           "ok":  true
+                                       }
+                                   ]
+                    },
+                    {
+                        "test":  "Daily Sales: average = sales / orders, two decimals (P1-03)",
+                        "file":  "daily-sales-nov-2026.xlsx",
+                        "ok":  true,
+                        "checks":  [
+                                       {
+                                           "cell":  "Sheet1!D25",
+                                           "got":  333.33,
+                                           "want":  333.33,
+                                           "ok":  true
+                                       }
+                                   ]
+                    },
+                    {
+                        "test":  "Daily Sales: average 0 when sales are an explicit 0 and orders recorded (P1-03)",
+                        "file":  "daily-sales-nov-2026.xlsx",
+                        "ok":  true,
+                        "checks":  [
+                                       {
+                                           "cell":  "Sheet1!D25",
+                                           "got":  0,
+                                           "want":  0,
+                                           "ok":  true
+                                       }
+                                   ]
+                    },
+                    {
+                        "test":  "Daily Sales: total row blank for a month with no entries",
+                        "file":  "daily-sales-nov-2026.xlsx",
+                        "ok":  true,
+                        "checks":  [
+                                       {
+                                           "cell":  "Sheet1!D35",
+                                           "got":  "(blank)",
+                                           "want":  "(blank)",
+                                           "ok":  true
+                                       },
+                                       {
+                                           "cell":  "Sheet1!I35",
+                                           "got":  "(blank)",
+                                           "want":  "(blank)",
+                                           "ok":  true
+                                       },
+                                       {
+                                           "cell":  "Sheet1!K35",
+                                           "got":  "(blank)",
+                                           "want":  "(blank)",
+                                           "ok":  true
+                                       },
+                                       {
+                                           "cell":  "Sheet1!B35",
+                                           "got":  0,
+                                           "want":  0,
+                                           "ok":  true
+                                       }
+                                   ]
+                    },
+                    {
+                        "test":  "Comparison: growth blank when the current day is not entered",
+                        "file":  "sales-comparison-nov-2026.xlsx",
+                        "ok":  true,
+                        "checks":  [
+                                       {
+                                           "cell":  "1!D8",
+                                           "got":  "(blank)",
+                                           "want":  "(blank)",
+                                           "ok":  true
+                                       }
+                                   ]
+                    },
+                    {
+                        "test":  "Comparison: growth -100% when current sales are an explicit 0",
+                        "file":  "sales-comparison-nov-2026.xlsx",
+                        "ok":  true,
+                        "checks":  [
+                                       {
+                                           "cell":  "1!D8",
+                                           "got":  -1,
+                                           "want":  -1,
+                                           "ok":  true
+                                       }
+                                   ]
+                    },
+                    {
+                        "test":  "Comparison: growth blank when the prior figure is 0",
+                        "file":  "sales-comparison-nov-2026.xlsx",
+                        "ok":  true,
+                        "checks":  [
+                                       {
+                                           "cell":  "1!D8",
+                                           "got":  "(blank)",
+                                           "want":  "(blank)",
+                                           "ok":  true
+                                       }
+                                   ]
+                    },
+                    {
+                        "test":  "Comparison: growth blank when the prior figure is missing",
+                        "file":  "sales-comparison-nov-2026.xlsx",
+                        "ok":  true,
+                        "checks":  [
+                                       {
+                                           "cell":  "1!D8",
+                                           "got":  "(blank)",
+                                           "want":  "(blank)",
+                                           "ok":  true
+                                       }
+                                   ]
+                    },
+                    {
+                        "test":  "Comparison: growth for a normal day",
+                        "file":  "sales-comparison-nov-2026.xlsx",
+                        "ok":  true,
+                        "checks":  [
+                                       {
+                                           "cell":  "1!D8",
+                                           "got":  0.19999999999999996,
+                                           "want":  0.2,
+                                           "ok":  true
+                                       }
+                                   ]
+                    },
+                    {
+                        "test":  "Comparison: like-for-like total blank when no current day is entered",
+                        "file":  "sales-comparison-nov-2026.xlsx",
+                        "ok":  true,
+                        "checks":  [
+                                       {
+                                           "cell":  "1!D37",
+                                           "got":  "(blank)",
+                                           "want":  "(blank)",
+                                           "ok":  true
+                                       }
+                                   ]
+                    },
+                    {
+                        "test":  "Comparison: like-for-like total uses only days entered in both months",
+                        "file":  "sales-comparison-nov-2026.xlsx",
+                        "ok":  true,
+                        "checks":  [
+                                       {
+                                           "cell":  "1!D37",
+                                           "got":  -0.44999999999999996,
+                                           "want":  -0.45,
+                                           "ok":  true
+                                       }
+                                   ]
+                    },
+                    {
+                        "test":  "Statement: over/short blank when system revenue is missing",
+                        "file":  "daily-statement-nov-2026.xlsx",
+                        "ok":  true,
+                        "checks":  [
+                                       {
+                                           "cell":  "27!I17",
+                                           "got":  "(blank)",
+                                           "want":  "(blank)",
+                                           "ok":  true
+                                       },
+                                       {
+                                           "cell":  "27!I23",
+                                           "got":  100,
+                                           "want":  100,
+                                           "ok":  true
+                                       }
+                                   ]
+                    },
+                    {
+                        "test":  "Statement: over/short computed when system revenue is an explicit 0",
+                        "file":  "daily-statement-nov-2026.xlsx",
+                        "ok":  true,
+                        "checks":  [
+                                       {
+                                           "cell":  "27!I17",
+                                           "got":  100,
+                                           "want":  100,
+                                           "ok":  true
+                                       }
+                                   ]
+                    },
+                    {
+                        "test":  "Statement: over/short 0 when totals agree",
+                        "file":  "daily-statement-nov-2026.xlsx",
+                        "ok":  true,
+                        "checks":  [
+                                       {
+                                           "cell":  "27!I17",
+                                           "got":  0,
+                                           "want":  0,
+                                           "ok":  true
+                                       }
+                                   ]
+                    },
+                    {
+                        "test":  "Inventory: uncounted item opens next day at its book balance, no deviation",
+                        "file":  "inventory-nov-2026-days-1-13.xlsx",
+                        "ok":  true,
+                        "checks":  [
+                                       {
+                                           "cell":  "2!P40",
+                                           "got":  4,
+                                           "want":  "4 (1!AB40)",
+                                           "ok":  true
+                                       },
+                                       {
+                                           "cell":  "1!AD40",
+                                           "got":  "(blank)",
+                                           "want":  "(blank)",
+                                           "ok":  true
+                                       }
+                                   ]
+                    },
+                    {
+                        "test":  "Inventory: explicit 0 count is a count (opens at 0, deviation = -book)",
+                        "file":  "inventory-nov-2026-days-1-13.xlsx",
+                        "ok":  true,
+                        "checks":  [
+                                       {
+                                           "cell":  "2!P40",
+                                           "got":  0,
+                                           "want":  0,
+                                           "ok":  true
+                                       },
+                                       {
+                                           "cell":  "1!AD40",
+                                           "got":  -4,
+                                           "want":  "-4 (-1!AB40)",
+                                           "ok":  true
+                                       }
+                                   ]
+                    },
+                    {
+                        "test":  "Inventory: count equal to book gives deviation 0",
+                        "file":  "inventory-nov-2026-days-1-13.xlsx",
+                        "ok":  true,
+                        "checks":  [
+                                       {
+                                           "cell":  "1!AD40",
+                                           "got":  0,
+                                           "want":  0,
+                                           "ok":  true
+                                       },
+                                       {
+                                           "cell":  "2!P40",
+                                           "got":  4,
+                                           "want":  4,
+                                           "ok":  true
+                                       }
+                                   ]
+                    },
+                    {
+                        "test":  "Inventory: monthly deviation equals the cumulative deviation of the last day",
+                        "file":  "inventory-nov-2026-days-1-13.xlsx",
+                        "ok":  true,
+                        "checks":  [
+                                       {
+                                           "cell":  "Total!AD89",
+                                           "got":  -23.380000000000006,
+                                           "want":  "-23.38 (31!AE89)",
+                                           "ok":  true
+                                       },
+                                       {
+                                           "cell":  "Total!AD40",
+                                           "got":  5,
+                                           "want":  "5 (31!AE40)",
+                                           "ok":  true
+                                       }
+                                   ]
+                    },
+                    {
+                        "test":  "Inventory: Product Mix share blank on a day with no sales",
+                        "file":  "inventory-nov-2026-days-1-13.xlsx",
+                        "ok":  true,
+                        "checks":  [
+                                       {
+                                           "cell":  "20!H8",
+                                           "got":  "(blank)",
+                                           "want":  "(blank)",
+                                           "ok":  true
+                                       },
+                                       {
+                                           "cell":  "20!I8",
+                                           "got":  "(blank)",
+                                           "want":  "(blank)",
+                                           "ok":  true
+                                       }
+                                   ]
+                    },
+                    {
+                        "test":  "Review template: difference blank before a count",
+                        "file":  "inventory-review-template-nov-2026.xlsx",
+                        "ok":  true,
+                        "checks":  [
+                                       {
+                                           "cell":  "Sheet1!K7",
+                                           "got":  "(blank)",
+                                           "want":  "(blank)",
+                                           "ok":  true
+                                       }
+                                   ]
+                    },
+                    {
+                        "test":  "Review template: explicit 0 count gives difference = -expected",
+                        "file":  "inventory-review-template-nov-2026.xlsx",
+                        "ok":  true,
+                        "checks":  [
+                                       {
+                                           "cell":  "Sheet1!K7",
+                                           "got":  -45,
+                                           "want":  "-45 (-Sheet1!M7)",
+                                           "ok":  true
+                                       }
+                                   ]
+                    },
+                    {
+                        "test":  "Review template: expected = total - consumption",
+                        "file":  "inventory-review-template-nov-2026.xlsx",
+                        "ok":  true,
+                        "checks":  [
+                                       {
+                                           "cell":  "Sheet1!M7",
+                                           "got":  43,
+                                           "want":  "43 (N7-O7)",
+                                           "ok":  true
+                                       }
+                                   ]
+                    }
+                ]
+}

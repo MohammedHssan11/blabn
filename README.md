@@ -1,10 +1,10 @@
 # Balaban Branch Operations
 
-An internal web application for the Maarif branch. It replaces repetitive daily Excel entry with one operating workflow for daily closing, product mix, inventory, replenishment suggestions, reports, and later attendance.
+An internal Arabic and English application for the Maarif branch. It replaces repetitive daily Excel entry with one operating workflow for daily closing, product mix, inventory, replenishment suggestions, cross-branch sales comparison, and reports. The web release comes first, followed by a separately installable desktop application and then camera attendance.
 
 ## Current status
 
-Planning and repository setup. No production code has been started yet.
+Phase 1 closed on 21 November 2026 after the source audit, six recorded answers and workbook checks. Phase 2 has the [report contracts](docs/phase2/REPORT_CONTRACTS.md), a bilingual Next.js application with three prototypes on synthetic data, and Supabase migrations; its acceptance checks passed on 21 November 2026 (see the handover record). See the [closure checklist](docs/phase1/CLOSURE.md) and [handover record](docs/HANDOFF.md) for the three scheduled follow-ups.
 
 ## Product scope
 
@@ -14,8 +14,11 @@ Planning and repository setup. No production code has been started yet.
 - Track stock, receipts, waste, hospitality, physical counts, and variances.
 - Generate a transparent replenishment suggestion for the correct receipt day. A purchase order created on Wednesday evening, for example, is planned for Friday delivery, not Thursday.
 - Plan replenishment over three months with same-weekday comparisons, so a Wednesday can be reviewed against earlier Wednesdays rather than an unrelated day.
+- Compare sales for Al Quds, Maarif, Bourgogne, and their total. Al Quds and Bourgogne figures are entered by authorized users for reporting only.
 - Export the five existing report families to Excel.
-- Add camera-based attendance on a dedicated branch device in a later phase.
+- Work in Arabic and English, with the same figures in both languages.
+- Add a separately installable desktop application after the web release is verified in live use.
+- Add camera-based attendance on a dedicated branch device after the desktop release.
 
 ## Access model
 
@@ -25,13 +28,17 @@ Planning and repository setup. No production code has been started yet.
 
 ## Active documentation
 
+- [Implementation plan](docs/IMPLEMENTATION_PLAN.md)
 - [Project context](docs/PROJECT_CONTEXT.md)
 - [Requirements](docs/REQUIREMENTS.md)
 - [Architecture](docs/ARCHITECTURE.md)
+- [Architecture review](docs/ARCHITECTURE_REVIEW.md)
 - [Data and reports](docs/DATA_AND_REPORTS.md)
 - [Decisions and backlog](docs/DECISIONS.md)
 - [Source-material map](docs/SOURCE_MATERIAL.md)
 - [Onboarding prompt for Claude or Codex](docs/ARCHITECTURE_REVIEW_PROMPT.md)
+- [Phase 1 source review and Abdo's review page](docs/phase1/README.md)
+- [Handover record](docs/HANDOFF.md)
 
 ## Repository rules
 
@@ -41,11 +48,6 @@ Planning and repository setup. No production code has been started yet.
 - Work on a feature branch, open a pull request, and merge only after review.
 - Keep `main` runnable at all times.
 
-## First implementation order
+## Implementation order
 
-1. Create the database schema and access roles.
-2. Build daily closing and cash reconciliation.
-3. Add Product Mix, inventory movements, and recipes.
-4. Produce the five Excel report exports and compare them with a real branch day.
-5. Add three-month replenishment planning and delivery-date-aware purchase orders.
-6. Add the camera attendance module after the operational core is stable.
+Delivery follows the 15 phases in the [Implementation Plan](docs/IMPLEMENTATION_PLAN.md), starting with the Phase 1 review of every source workbook with Abdo. Each phase closes, after its acceptance checks pass, before the next phase starts.

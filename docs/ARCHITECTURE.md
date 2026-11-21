@@ -2,7 +2,7 @@
 
 ## Architecture choice
 
-Build a single **web application and installable PWA** as a modular monolith. Do not build a separate desktop application or a collection of microservices for the MVP.
+Build a single **web application and installable PWA** as a modular monolith. Deliver the web application first. After it passes live verification, build a separately installable desktop application that uses the same backend, accounts, permissions, and server-side calculations. Do not split the system into microservices.
 
 ```text
 Laptop / tablet / phone
@@ -20,6 +20,12 @@ Supabase PostgreSQL      Supabase Storage
 data, auth, roles        imports and exports
 ```
 
+The desktop application is a later client of the same backend:
+
+```text
+Desktop application (packaging selected in Phase 12) -> same server-side logic, Supabase data, and auth
+```
+
 The attendance camera service is a later, isolated component:
 
 ```text
@@ -33,6 +39,7 @@ Attendance kiosk -> camera verification service -> attendance events in PostgreS
 | Main language | TypeScript |
 | Web framework | Next.js + React |
 | Styling | Tailwind CSS |
+| Localization | Arabic and English with shared translation files and RTL/LTR layout support (library selected in Phase 2) |
 | Database | PostgreSQL, managed by Supabase |
 | Authentication | Supabase Auth |
 | Authorization | Application roles plus PostgreSQL Row Level Security |
@@ -41,6 +48,7 @@ Attendance kiosk -> camera verification service -> attendance events in PostgreS
 | Validation | Zod or equivalent schema validation |
 | Unit tests | Vitest |
 | End-to-end tests | Playwright |
+| Desktop application, later | Separately installable client of the same backend; packaging selected in Phase 12 after the target operating systems are confirmed |
 | Attendance service, later | Isolated camera-verification service only if required after a real device test |
 
 ## Why PostgreSQL

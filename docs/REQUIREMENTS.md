@@ -14,6 +14,7 @@
 - **Cashier:** daily closing, expenses, payment totals, draft exports.
 - **Storekeeper:** stock receipts, counts, waste, hospitality, and proposed purchase orders.
 - **Manager:** can approve adjustments and close a business day if Abdo grants the permission.
+- **Comparison Editor:** enters assigned Al Quds and Bourgogne comparison figures with source and date. Viewing and exporting comparison data are separate permissions.
 - **Attendance kiosk:** can create attendance events only; it must not access financial or inventory screens.
 
 The first production setup has one System Admin account for Abdo. The system is designed to add more application admins later without changing the database model. This role does not control the source repository or GitHub.
@@ -63,10 +64,13 @@ The forecast can start from same-weekday historical sales/consumption. Abdo or a
 - Default the expected receipt date to two calendar days after the order is created. Example: an order made Wednesday evening has an expected receipt date of Friday.
 - Allow an authorized user to change the expected receipt date and require a reason for the override. The system must retain both the original calculated date and the override in the audit log.
 - Do not convert the two-day rule into “next business day” unless the branch later supplies a holiday/weekend calendar and explicitly approves that policy.
+- History for the planning view starts on the first live business date. Until an item has the agreed minimum number of complete same-weekday observations, the system shows the history available and offers manual purchase orders instead of a recommendation.
 
 ## 5. Reports
 
 The system must create the five report families from the same saved business-day data. It must not require the user to copy values from one report into another.
+
+If an approved report needs sales from before the first live business date, Abdo approves the specific figures and an authorized user enters them as reporting-only records with source and date. These figures never enter ledgers, stock, or carry-forward.
 
 ## 6. Import and export
 
@@ -92,10 +96,26 @@ The daily-ledger workflow must retain the information found in the October and N
 - Face verification with liveness detection; code alone is not sufficient.
 - Missing punches, duplicate punches, and manager corrections must be visible in an audit trail.
 - No employee face images, templates, or biometric secrets may be committed to Git.
+- Abdo can export attendance events and worked hours to Excel, with a permission separate from the financial reports.
 
 ## 9. Out of scope for the MVP
 
 - A direct Foodics API integration.
 - A machine-learning demand model.
-- A standalone desktop application.
-- Multi-branch rollout.
+- A desktop application before the web release has passed live verification (see [Implementation Plan, Phase 11](IMPLEMENTATION_PLAN.md#phase-11--web-installation-rollout-and-stability-verification)).
+- Operational rollout (closing, inventory, replenishment) to branches other than Maarif.
+
+## 10. Language
+
+The application supports Arabic (right-to-left) and English (left-to-right) for all screens, messages, and report-download workflows. A user's language choice persists. Saved values, calculations, and report figures are identical in both languages. Excel report labels follow the template Abdo approved in Phase 1.
+
+## 11. Cross-branch sales comparison
+
+- Compare Al Quds, Maarif, Bourgogne, and the selected total for current and prior weeks or selected monthly periods.
+- Maarif figures come from saved business days.
+- Al Quds and Bourgogne figures are entered manually by authorized users, with source, date, user, and revision history, until an approved source exists.
+- This is reporting data only and is not an operational rollout to those branches.
+
+## 12. Delivery order
+
+The web release is installed, tested end to end, and verified in live use in Arabic and English before desktop work starts. The separately installable desktop application uses the same accounts, permissions, data, and server-side calculations as the web release. Camera attendance follows the desktop release. See the [Implementation Plan](IMPLEMENTATION_PLAN.md).

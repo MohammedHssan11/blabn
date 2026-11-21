@@ -1,0 +1,1231 @@
+{
+ "schema": "blabn-phase1-field-map/1",
+ "findings_version": "2026-11-21.1",
+ "summary": {
+  "fields": 54,
+  "pending": 6,
+  "agreed_team": 43,
+  "agreed_abdo": 5
+ },
+ "fields": [
+  {
+   "id": "DS-01",
+   "report": "Daily Sales",
+   "field_en": "Business date",
+   "field_ar": "التاريخ",
+   "legacy_location": "SRC-02/03 Sheet1!A3:A33",
+   "meaning": "One row per business day of the month",
+   "source_record": "Daily close: business date",
+   "unit": "date",
+   "date_basis": "Business date of the closed day (not the print or entry date)",
+   "rounding": "-",
+   "blank_behaviour": "Day without a close shows its date and blank figures",
+   "findings": [
+    "P1-07"
+   ],
+   "pending_on": [],
+   "status": "agreed (team)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 9"
+  },
+  {
+   "id": "DS-02",
+   "report": "Daily Sales",
+   "field_en": "Sales",
+   "field_ar": "المبيعات",
+   "legacy_location": "SRC-02/03 Sheet1!B",
+   "meaning": "Net sales of the business day (Foodics 'Net Sales')",
+   "source_record": "Daily close: sales/revenue",
+   "unit": "MAD",
+   "date_basis": "Business date of the closed day (not the print or entry date)",
+   "rounding": "None; stored as entered",
+   "blank_behaviour": "Blank, not 0, when the day is not closed",
+   "findings": [
+    "P1-07"
+   ],
+   "pending_on": [],
+   "status": "agreed (team)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 9"
+  },
+  {
+   "id": "DS-03",
+   "report": "Daily Sales",
+   "field_en": "Orders",
+   "field_ar": "عدد الطلبات",
+   "legacy_location": "SRC-02/03 Sheet1!C",
+   "meaning": "Order count of the business day (Foodics orders)",
+   "source_record": "Daily close: order count",
+   "unit": "count",
+   "date_basis": "Business date of the closed day (not the print or entry date)",
+   "rounding": "-",
+   "blank_behaviour": "Blank when not closed",
+   "findings": [
+    "P1-07"
+   ],
+   "pending_on": [],
+   "status": "agreed (team)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 9"
+  },
+  {
+   "id": "DS-04",
+   "report": "Daily Sales",
+   "field_en": "Average order value",
+   "field_ar": "متوسط الطلب",
+   "legacy_location": "SRC-02/03 Sheet1!D",
+   "meaning": "Net sales / order count",
+   "source_record": "Calculated from DS-02 and DS-03",
+   "unit": "MAD",
+   "date_basis": "Business date of the closed day (not the print or entry date)",
+   "rounding": "2 decimals for display, as in the Foodics reference",
+   "blank_behaviour": "Blank when orders are blank or 0",
+   "findings": [
+    "P1-03"
+   ],
+   "pending_on": [
+    "P1-03"
+   ],
+   "status": "agreed (Abdo)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 9"
+  },
+  {
+   "id": "DS-05",
+   "report": "Daily Sales",
+   "field_en": "Expenses incl. bank remittance",
+   "field_ar": "المصاريف (شاملة توريد البنك)",
+   "legacy_location": "SRC-02/03 Sheet1!G",
+   "meaning": "Operating expenses plus bank remittance, as the legacy column holds",
+   "source_record": "Daily close: expenses + bank remittance (stored separately)",
+   "unit": "MAD",
+   "date_basis": "Business date of the closed day (not the print or entry date)",
+   "rounding": "None; stored as entered",
+   "blank_behaviour": "Blank when not closed",
+   "findings": [
+    "P1-04",
+    "P1-05",
+    "P1-06"
+   ],
+   "pending_on": [],
+   "status": "agreed (team)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 9"
+  },
+  {
+   "id": "DS-06",
+   "report": "Daily Sales",
+   "field_en": "Cash (bank remittance)",
+   "field_ar": "كاش (توريد البنك)",
+   "legacy_location": "SRC-02/03 Sheet1!H",
+   "meaning": "Bank remittance of the day",
+   "source_record": "Daily close: bank remittance",
+   "unit": "MAD",
+   "date_basis": "Business date of the closed day (not the print or entry date)",
+   "rounding": "None; stored as entered",
+   "blank_behaviour": "Blank when no remittance is recorded",
+   "findings": [
+    "P1-04",
+    "P1-06"
+   ],
+   "pending_on": [],
+   "status": "agreed (team)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 9"
+  },
+  {
+   "id": "DS-07",
+   "report": "Daily Sales",
+   "field_en": "Remittance ratio",
+   "field_ar": "نسبة التوريد",
+   "legacy_location": "SRC-02/03 Sheet1!I",
+   "meaning": "Remittance / sales",
+   "source_record": "Calculated",
+   "unit": "ratio",
+   "date_basis": "Business date of the closed day (not the print or entry date)",
+   "rounding": "None; shown as %",
+   "blank_behaviour": "Blank when sales are blank or 0",
+   "findings": [
+    "P1-04",
+    "P1-11"
+   ],
+   "pending_on": [],
+   "status": "agreed (team)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 9"
+  },
+  {
+   "id": "DS-08",
+   "report": "Daily Sales",
+   "field_en": "Card/Visa",
+   "field_ar": "فيزا",
+   "legacy_location": "SRC-02/03 Sheet1!J",
+   "meaning": "Card payments of the day (Foodics card payments)",
+   "source_record": "Daily close: card/Visa",
+   "unit": "MAD",
+   "date_basis": "Business date of the closed day (not the print or entry date)",
+   "rounding": "None; stored as entered",
+   "blank_behaviour": "Blank when not closed",
+   "findings": [
+    "P1-07"
+   ],
+   "pending_on": [],
+   "status": "agreed (team)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 9"
+  },
+  {
+   "id": "DS-09",
+   "report": "Daily Sales",
+   "field_en": "Card ratio",
+   "field_ar": "نسبة الفيزا",
+   "legacy_location": "SRC-02/03 Sheet1!K",
+   "meaning": "Card / sales",
+   "source_record": "Calculated",
+   "unit": "ratio",
+   "date_basis": "Business date of the closed day (not the print or entry date)",
+   "rounding": "None; shown as %",
+   "blank_behaviour": "Blank when sales are blank or 0",
+   "findings": [
+    "P1-11"
+   ],
+   "pending_on": [],
+   "status": "agreed (team)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 9"
+  },
+  {
+   "id": "DS-10",
+   "report": "Daily Sales",
+   "field_en": "Month totals",
+   "field_ar": "الإجمالي",
+   "legacy_location": "SRC-02/03 Sheet1!B35:K35",
+   "meaning": "Sums of the closed days; period average = total sales / total orders; ratios on totals; shows how many days are included",
+   "source_record": "Calculated from saved days",
+   "unit": "MAD",
+   "date_basis": "Selected month",
+   "rounding": "2 decimals for display, as in the Foodics reference",
+   "blank_behaviour": "Blank ratios for a month with no entries",
+   "findings": [
+    "P1-03",
+    "P1-07",
+    "P1-11"
+   ],
+   "pending_on": [
+    "P1-03"
+   ],
+   "status": "agreed (team)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 9"
+  },
+  {
+   "id": "DS-11",
+   "report": "Daily Sales",
+   "field_en": "Title",
+   "field_ar": "العنوان",
+   "legacy_location": "SRC-02/03 Sheet1!A1",
+   "meaning": "Branch and period of the report",
+   "source_record": "Generated from branch and selected period",
+   "unit": "text",
+   "date_basis": "Selected month",
+   "rounding": "-",
+   "blank_behaviour": "-",
+   "findings": [
+    "P1-07",
+    "P1-23"
+   ],
+   "pending_on": [],
+   "status": "agreed (team)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 9"
+  },
+  {
+   "id": "ST-01",
+   "report": "Daily statement",
+   "field_en": "Date",
+   "field_ar": "التاريخ",
+   "legacy_location": "SRC-04/05 day sheet!I3",
+   "meaning": "Business date of the sheet",
+   "source_record": "Daily close: business date",
+   "unit": "date",
+   "date_basis": "Business date of the closed day (not the print or entry date)",
+   "rounding": "-",
+   "blank_behaviour": "-",
+   "findings": [
+    "P1-16"
+   ],
+   "pending_on": [],
+   "status": "agreed (team)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 9"
+  },
+  {
+   "id": "ST-02",
+   "report": "Daily statement",
+   "field_en": "Expense lines",
+   "field_ar": "المصروفات",
+   "legacy_location": "SRC-04/05 day sheet!D6:E26",
+   "meaning": "Each expense with its description, and the bank remittance as its own line",
+   "source_record": "Daily close: expenses and bank remittance",
+   "unit": "MAD",
+   "date_basis": "Business date of the closed day (not the print or entry date)",
+   "rounding": "None; stored as entered",
+   "blank_behaviour": "Only recorded lines are listed",
+   "findings": [
+    "P1-04",
+    "P1-16"
+   ],
+   "pending_on": [],
+   "status": "agreed (team)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 9"
+  },
+  {
+   "id": "ST-03",
+   "report": "Daily statement",
+   "field_en": "Total expenses",
+   "field_ar": "اجمالي المصروفات",
+   "legacy_location": "SRC-04/05 day sheet!D28 → I21",
+   "meaning": "Legacy expense-line total can include remittance for display. The cash-count calculation uses timed cash movements from the ledger.",
+   "source_record": "Calculated",
+   "unit": "MAD",
+   "date_basis": "Business date of the closed day (not the print or entry date)",
+   "rounding": "None; stored as entered",
+   "blank_behaviour": "0 when no expense line",
+   "findings": [
+    "P1-04",
+    "P1-14"
+   ],
+   "pending_on": [],
+   "status": "agreed (team)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 9"
+  },
+  {
+   "id": "ST-04",
+   "report": "Daily statement",
+   "field_en": "Counted cash by denomination",
+   "field_ar": "الإجمالي النقدي",
+   "legacy_location": "SRC-04/05 day sheet!G6:I13, I15",
+   "meaning": "Physical drawer count, recorded at the time of counting",
+   "source_record": "Daily close: counted cash (denominations, counter, time)",
+   "unit": "MAD",
+   "date_basis": "Business date of the closed day (not the print or entry date); count before bank remittance",
+   "rounding": "None; stored as entered",
+   "blank_behaviour": "Blank = not counted (never 0)",
+   "findings": [
+    "P1-12",
+    "P1-13"
+   ],
+   "pending_on": [
+    "P1-13"
+   ],
+   "status": "agreed (team)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 4"
+  },
+  {
+   "id": "ST-05",
+   "report": "Daily statement",
+   "field_en": "Card/Visa",
+   "field_ar": "فيزا",
+   "legacy_location": "SRC-04/05 day sheet!I20",
+   "meaning": "Card payments of the day",
+   "source_record": "Daily close: card/Visa",
+   "unit": "MAD",
+   "date_basis": "Business date of the closed day (not the print or entry date)",
+   "rounding": "None; stored as entered",
+   "blank_behaviour": "Blank when not entered",
+   "findings": [
+    "P1-14"
+   ],
+   "pending_on": [],
+   "status": "agreed (team)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 9"
+  },
+  {
+   "id": "ST-06",
+   "report": "Daily statement",
+   "field_en": "Total amount",
+   "field_ar": "اجمالي المبلغ",
+   "legacy_location": "SRC-04/05 day sheet!I23",
+   "meaning": "For the pre-remittance reference close: counted cash + card + operating cash expenses through the count. Show the later bank remittance on its own line.",
+   "source_record": "Calculated from counted cash, card and timed ledger entries",
+   "unit": "MAD",
+   "date_basis": "Business date of the closed day (not the print or entry date)",
+   "rounding": "None; stored as entered",
+   "blank_behaviour": "Uses blank count as not counted",
+   "findings": [
+    "P1-13",
+    "P1-14"
+   ],
+   "pending_on": [
+    "P1-13"
+   ],
+   "status": "agreed (team)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 9"
+  },
+  {
+   "id": "ST-07",
+   "report": "Daily statement",
+   "field_en": "System revenue",
+   "field_ar": "اجمالي الايراد (سيستم)",
+   "legacy_location": "SRC-04/05 day sheet!I25",
+   "meaning": "Net sales of the day from Foodics",
+   "source_record": "Daily close: sales/revenue",
+   "unit": "MAD",
+   "date_basis": "Business date of the closed day (not the print or entry date)",
+   "rounding": "None; stored as entered",
+   "blank_behaviour": "A day cannot close without it; blank shows no over/short",
+   "findings": [
+    "P1-15"
+   ],
+   "pending_on": [],
+   "status": "agreed (team)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 4"
+  },
+  {
+   "id": "ST-08",
+   "report": "Daily statement",
+   "field_en": "Over/short",
+   "field_ar": "اوفركاش او عجز",
+   "legacy_location": "SRC-04/05 day sheet!I17",
+   "meaning": "Counted cash minus expected cash at count time. The 2 November reference yields +3 MAD.",
+   "source_record": "Daily close reconciliation shared with the ledger",
+   "unit": "MAD",
+   "date_basis": "Business date of the closed day (not the print or entry date)",
+   "rounding": "None; stored as entered",
+   "blank_behaviour": "Blank when system revenue or the count is missing",
+   "findings": [
+    "P1-12",
+    "P1-13",
+    "P1-14",
+    "P1-15"
+   ],
+   "pending_on": [
+    "P1-13"
+   ],
+   "status": "agreed (team)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 4"
+  },
+  {
+   "id": "ST-09",
+   "report": "Daily statement",
+   "field_en": "Counter, cashier, shift",
+   "field_ar": "القائم بالجرد / الكاشير / الشيفت",
+   "legacy_location": "SRC-04/05 day sheet!D4:G4",
+   "meaning": "Who counted the cash and who was cashier; whether they must differ is pending",
+   "source_record": "Daily close: user, counter and role",
+   "unit": "text",
+   "date_basis": "Business date of the closed day (not the print or entry date)",
+   "rounding": "-",
+   "blank_behaviour": "Placeholders rejected",
+   "findings": [
+    "P1-19"
+   ],
+   "pending_on": [
+    "P1-19"
+   ],
+   "status": "pending",
+   "waiting_for_answer": [
+    "P1-19"
+   ],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 4"
+  },
+  {
+   "id": "LG-01",
+   "report": "Daily ledger",
+   "field_en": "Business date and branch",
+   "field_ar": "التاريخ والفرع",
+   "legacy_location": "SRC-10/11 day sheet!G4, C4",
+   "meaning": "Date and branch of each daily close",
+   "source_record": "Daily close: business date, branch",
+   "unit": "date/text",
+   "date_basis": "Business date of the closed day (not the print or entry date)",
+   "rounding": "-",
+   "blank_behaviour": "Required",
+   "findings": [
+    "P1-19"
+   ],
+   "pending_on": [],
+   "status": "agreed (team)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 4"
+  },
+  {
+   "id": "LG-02",
+   "report": "Daily ledger",
+   "field_en": "Sales entries and total",
+   "field_ar": "المبيعات صباحي/مسائي",
+   "legacy_location": "SRC-10/11 day sheet!rows 17-19, E17",
+   "meaning": "Morning and evening sales and their total",
+   "source_record": "Daily close: sales entries",
+   "unit": "MAD",
+   "date_basis": "Business date of the closed day (not the print or entry date)",
+   "rounding": "None; stored as entered",
+   "blank_behaviour": "Blank when not entered",
+   "findings": [],
+   "pending_on": [],
+   "status": "agreed (team)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 4"
+  },
+  {
+   "id": "LG-03",
+   "report": "Daily ledger",
+   "field_en": "Card/Visa and other payments",
+   "field_ar": "الفيزا والمدفوعات",
+   "legacy_location": "SRC-10/11 day sheet!row 20 and payment rows; hidden journal Sheet1",
+   "meaning": "Card and other payment rows of the day",
+   "source_record": "Daily close: payments",
+   "unit": "MAD",
+   "date_basis": "Business date of the closed day (not the print or entry date)",
+   "rounding": "None; stored as entered",
+   "blank_behaviour": "Blank when not entered",
+   "findings": [
+    "P1-21"
+   ],
+   "pending_on": [],
+   "status": "agreed (team)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 4"
+  },
+  {
+   "id": "LG-04",
+   "report": "Daily ledger",
+   "field_en": "Receipts and expenses with account",
+   "field_ar": "المقبوضات والمصروفات",
+   "legacy_location": "SRC-10/11 day sheet!rows 21-55 (codes), Ref_ lists",
+   "meaning": "Each receipt or expense with its account/category from the expense list",
+   "source_record": "Daily close: ledger entries; expense categories seeded from Ref_",
+   "unit": "MAD",
+   "date_basis": "Business date of the closed day (not the print or entry date)",
+   "rounding": "None; stored as entered",
+   "blank_behaviour": "Only recorded rows",
+   "findings": [
+    "P1-22"
+   ],
+   "pending_on": [],
+   "status": "agreed (team)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 4"
+  },
+  {
+   "id": "LG-05",
+   "report": "Daily ledger",
+   "field_en": "Counted cash and reconciliation message",
+   "field_ar": "عد الخزينة ونتيجة المطابقة",
+   "legacy_location": "SRC-10/11 day sheet!K10:M20, O14",
+   "meaning": "Count by denomination and the reconciliation result. Expected cash includes cash movements through the count time.",
+   "source_record": "Daily close: counted cash",
+   "unit": "MAD",
+   "date_basis": "Business date of the closed day (not the print or entry date); count before bank remittance",
+   "rounding": "None; stored as entered",
+   "blank_behaviour": "Blank count = 'not counted', never 'match'",
+   "findings": [
+    "P1-12",
+    "P1-13"
+   ],
+   "pending_on": [
+    "P1-13"
+   ],
+   "status": "agreed (team)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 4"
+  },
+  {
+   "id": "LG-06",
+   "report": "Daily ledger",
+   "field_en": "Cash ledger opening and closing",
+   "field_ar": "رصيد الخزينة",
+   "legacy_location": "SRC-10/11 day sheet!E41:E45",
+   "meaning": "Opening = previous business day's closing; days chained in date order",
+   "source_record": "Calculated from saved entries",
+   "unit": "MAD",
+   "date_basis": "Business date of the closed day (not the print or entry date)",
+   "rounding": "None; stored as entered",
+   "blank_behaviour": "First live day uses the reviewed opening balance",
+   "findings": [
+    "P1-17",
+    "P1-18"
+   ],
+   "pending_on": [],
+   "status": "agreed (team)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 4"
+  },
+  {
+   "id": "LG-07",
+   "report": "Daily ledger",
+   "field_en": "Purchasing custody opening and closing",
+   "field_ar": "رصيد العهدة",
+   "legacy_location": "SRC-10/11 day sheet!E86:E90",
+   "meaning": "Separate ledger; opening = previous day's closing",
+   "source_record": "Calculated from saved entries",
+   "unit": "MAD",
+   "date_basis": "Business date of the closed day (not the print or entry date)",
+   "rounding": "None; stored as entered",
+   "blank_behaviour": "First live day uses the reviewed opening balance",
+   "findings": [
+    "P1-17"
+   ],
+   "pending_on": [],
+   "status": "agreed (team)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 4"
+  },
+  {
+   "id": "LG-08",
+   "report": "Daily ledger",
+   "field_en": "Cash counter and role, cashier",
+   "field_ar": "القائم بالجرد والكاشير",
+   "legacy_location": "SRC-10/11 day sheet!counter and cashier cells",
+   "meaning": "Employee and role responsible for the count; separation from cashier pending",
+   "source_record": "Daily close: user, counter and role",
+   "unit": "text",
+   "date_basis": "Business date of the closed day (not the print or entry date)",
+   "rounding": "-",
+   "blank_behaviour": "Placeholders rejected",
+   "findings": [
+    "P1-19"
+   ],
+   "pending_on": [
+    "P1-19"
+   ],
+   "status": "pending",
+   "waiting_for_answer": [
+    "P1-19"
+   ],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 4"
+  },
+  {
+   "id": "LG-09",
+   "report": "Daily ledger",
+   "field_en": "Cancellation register",
+   "field_ar": "الأوردرات الملغية",
+   "legacy_location": "SRC-10/11 day sheet!I24:S55",
+   "meaning": "Branch, date, order start, cancellation time, old/new order id and value, reason, customer (phone masked in tests)",
+   "source_record": "Cancellation records",
+   "unit": "MAD / text",
+   "date_basis": "Business date of the closed day (not the print or entry date)",
+   "rounding": "None; stored as entered",
+   "blank_behaviour": "Rows only for real cancellations (no placeholder branch/date)",
+   "findings": [
+    "P1-19",
+    "P1-20"
+   ],
+   "pending_on": [],
+   "status": "agreed (team)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 4"
+  },
+  {
+   "id": "LG-10",
+   "report": "Daily ledger",
+   "field_en": "Monthly summary by day",
+   "field_ar": "ملخص اليومية",
+   "legacy_location": "SRC-10/11 ملخص!C5:J37",
+   "meaning": "Per-day receipts, payments and total cancellation value, derived from saved entries",
+   "source_record": "Calculated from saved entries",
+   "unit": "MAD",
+   "date_basis": "Selected month",
+   "rounding": "None; stored as entered",
+   "blank_behaviour": "Days without entries are blank",
+   "findings": [
+    "P1-18",
+    "P1-20",
+    "P1-23"
+   ],
+   "pending_on": [],
+   "status": "agreed (team)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 9"
+  },
+  {
+   "id": "LG-11",
+   "report": "Daily ledger",
+   "field_en": "Monthly summary by account",
+   "field_ar": "ملخص الحسابات",
+   "legacy_location": "SRC-10/11 ملخص (account columns)",
+   "meaning": "Totals per account/category from saved entries",
+   "source_record": "Calculated from saved entries",
+   "unit": "MAD",
+   "date_basis": "Selected month",
+   "rounding": "None; stored as entered",
+   "blank_behaviour": "-",
+   "findings": [
+    "P1-20",
+    "P1-22"
+   ],
+   "pending_on": [],
+   "status": "agreed (team)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 9"
+  },
+  {
+   "id": "CMP-01",
+   "report": "Sales comparison",
+   "field_en": "Monthly comparison days",
+   "field_ar": "التاريخ (الشهر الحالي والسابق)",
+   "legacy_location": "SRC-08/09 E/I/L columns",
+   "meaning": "Same day number in the current and prior month",
+   "source_record": "Saved business days; pre-live figures as approved reporting-only records",
+   "unit": "date",
+   "date_basis": "Business date of the closed day (not the print or entry date)",
+   "rounding": "-",
+   "blank_behaviour": "Day not entered shows blank",
+   "findings": [
+    "P1-07",
+    "P1-09"
+   ],
+   "pending_on": [],
+   "status": "agreed (team)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 7"
+  },
+  {
+   "id": "CMP-02",
+   "report": "Sales comparison",
+   "field_en": "Monthly sales and orders",
+   "field_ar": "المبيعات والطلبات",
+   "legacy_location": "SRC-08/09 E,F / I,J",
+   "meaning": "Daily sales and orders of each month",
+   "source_record": "Daily close / reporting-only records",
+   "unit": "MAD",
+   "date_basis": "Business date of the closed day (not the print or entry date)",
+   "rounding": "None; stored as entered",
+   "blank_behaviour": "Blank, not 0, when not entered",
+   "findings": [
+    "P1-07",
+    "P1-09"
+   ],
+   "pending_on": [],
+   "status": "agreed (team)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 7"
+  },
+  {
+   "id": "CMP-03",
+   "report": "Sales comparison",
+   "field_en": "Monthly growth",
+   "field_ar": "نسبة النمو",
+   "legacy_location": "SRC-08/09 D6:D36",
+   "meaning": "Current / prior − 1",
+   "source_record": "Calculated",
+   "unit": "ratio",
+   "date_basis": "Business date of the closed day (not the print or entry date)",
+   "rounding": "None; shown as %",
+   "blank_behaviour": "Blank when current not entered or prior 0/missing; recorded 0 gives −100%",
+   "findings": [
+    "P1-08",
+    "P1-09"
+   ],
+   "pending_on": [],
+   "status": "agreed (team)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 7"
+  },
+  {
+   "id": "CMP-04",
+   "report": "Sales comparison",
+   "field_en": "Period growth",
+   "field_ar": "نسبة النمو للفترة",
+   "legacy_location": "SRC-08/09 D37",
+   "meaning": "Like-for-like: only days entered in both months",
+   "source_record": "Calculated",
+   "unit": "ratio",
+   "date_basis": "Selected period",
+   "rounding": "None; shown as %",
+   "blank_behaviour": "Blank when no comparable day",
+   "findings": [
+    "P1-09"
+   ],
+   "pending_on": [],
+   "status": "agreed (team)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 7"
+  },
+  {
+   "id": "CMP-05",
+   "report": "Sales comparison",
+   "field_en": "Weekly comparison dates",
+   "field_ar": "تواريخ المقارنة الأسبوعية",
+   "legacy_location": "SRC-12 E6/I6, P6/T6, AA6/AE6, AL6/AP6",
+   "meaning": "Compare the same weekday using one shared current/prior date pair. Reference: 10 and 3 November.",
+   "source_record": "Selected dates",
+   "unit": "date",
+   "date_basis": "Business date of the closed day (not the print or entry date)",
+   "rounding": "-",
+   "blank_behaviour": "-",
+   "findings": [
+    "P1-10"
+   ],
+   "pending_on": [
+    "P1-10"
+   ],
+   "status": "agreed (Abdo)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 7"
+  },
+  {
+   "id": "CMP-06",
+   "report": "Sales comparison",
+   "field_en": "Weekly current/prior ratio",
+   "field_ar": "نسبة الحالي للسابق",
+   "legacy_location": "SRC-12 A6, L6, W6, AH6",
+   "meaning": "Current sales / prior sales",
+   "source_record": "Calculated",
+   "unit": "ratio",
+   "date_basis": "Business date of the closed day (not the print or entry date)",
+   "rounding": "None; shown as %",
+   "blank_behaviour": "Blank when prior is 0 or missing",
+   "findings": [
+    "P1-08"
+   ],
+   "pending_on": [
+    "P1-08"
+   ],
+   "status": "agreed (Abdo)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 7"
+  },
+  {
+   "id": "CMP-07",
+   "report": "Sales comparison",
+   "field_en": "Branch figures (Al Quds, Maarif, Bourgogne)",
+   "field_ar": "أرقام الفروع",
+   "legacy_location": "SRC-12 M:N, X:Y, AI:AJ (current) and prior",
+   "meaning": "Sales and orders per branch; Al Quds and Bourgogne entered manually with source and date",
+   "source_record": "Maarif: daily close; others: comparison entries",
+   "unit": "MAD",
+   "date_basis": "Business date of the closed day (not the print or entry date)",
+   "rounding": "None; stored as entered",
+   "blank_behaviour": "Missing branch shown as missing, not 0",
+   "findings": [
+    "P1-10"
+   ],
+   "pending_on": [
+    "P1-10"
+   ],
+   "status": "agreed (Abdo)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 7"
+  },
+  {
+   "id": "CMP-08",
+   "report": "Sales comparison",
+   "field_en": "Total of branches",
+   "field_ar": "الإجمالي",
+   "legacy_location": "SRC-12 B:C, F:G",
+   "meaning": "Sum of the branches for the same dates only",
+   "source_record": "Calculated",
+   "unit": "MAD",
+   "date_basis": "Business date of the closed day (not the print or entry date)",
+   "rounding": "None; stored as entered",
+   "blank_behaviour": "Marked incomplete when a branch is missing",
+   "findings": [
+    "P1-10"
+   ],
+   "pending_on": [
+    "P1-10"
+   ],
+   "status": "agreed (Abdo)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 7"
+  },
+  {
+   "id": "INV-01",
+   "report": "Inventory and order",
+   "field_en": "Product Mix quantity",
+   "field_ar": "الكمية المباعة",
+   "legacy_location": "SRC-06/13 day sheet!F8:F600",
+   "meaning": "Quantity sold per product from the Foodics Products Mix",
+   "source_record": "Product Mix lines (manual in v1)",
+   "unit": "count",
+   "date_basis": "Business date of the closed day (not the print or entry date)",
+   "rounding": "-",
+   "blank_behaviour": "Blank product = not sold that day",
+   "findings": [
+    "P1-27",
+    "P1-28",
+    "P1-29"
+   ],
+   "pending_on": [
+    "P1-29",
+    "P1-28"
+   ],
+   "status": "pending",
+   "waiting_for_answer": [
+    "P1-28"
+   ],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 5"
+  },
+  {
+   "id": "INV-02",
+   "report": "Inventory and order",
+   "field_en": "Product Mix amount and shares",
+   "field_ar": "المبلغ والنسبة",
+   "legacy_location": "SRC-06/13 day sheet!G, H, I",
+   "meaning": "Sales amount per line; must sum to net sales before consumption posts",
+   "source_record": "Product Mix lines",
+   "unit": "MAD",
+   "date_basis": "Business date of the closed day (not the print or entry date)",
+   "rounding": "None; stored as entered",
+   "blank_behaviour": "Shares blank when the section total is 0",
+   "findings": [
+    "P1-27"
+   ],
+   "pending_on": [],
+   "status": "agreed (team)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 5"
+  },
+  {
+   "id": "INV-03",
+   "report": "Inventory and order",
+   "field_en": "Product name and section",
+   "field_ar": "الصنف والقسم",
+   "legacy_location": "SRC-06/13 day sheet!C:D",
+   "meaning": "Foodics name kept as printed, mapped to one approved product",
+   "source_record": "Catalog mapping",
+   "unit": "text",
+   "date_basis": "-",
+   "rounding": "-",
+   "blank_behaviour": "Unmapped name goes to 'needs mapping'",
+   "findings": [
+    "P1-28"
+   ],
+   "pending_on": [
+    "P1-28"
+   ],
+   "status": "pending",
+   "waiting_for_answer": [
+    "P1-28"
+   ],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 5"
+  },
+  {
+   "id": "INV-04",
+   "report": "Inventory and order",
+   "field_en": "Opening stock",
+   "field_ar": "اول المدة",
+   "legacy_location": "SRC-06/13 day sheet!P",
+   "meaning": "Previous day's count, or its book balance when the item was not counted",
+   "source_record": "Calculated; first live day from reviewed opening balances",
+   "unit": "item unit",
+   "date_basis": "Business date of the closed day (not the print or entry date)",
+   "rounding": "None; stored as entered",
+   "blank_behaviour": "Not counted → previous book balance",
+   "findings": [
+    "P1-24",
+    "P1-33"
+   ],
+   "pending_on": [],
+   "status": "agreed (team)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 6"
+  },
+  {
+   "id": "INV-05",
+   "report": "Inventory and order",
+   "field_en": "Receipts, returns, purchases, transfers in",
+   "field_ar": "الوارد / مرتجع / مشتريات / محول من",
+   "legacy_location": "SRC-06/13 day sheet!Q:T; الوارد sheet",
+   "meaning": "Record stock actually received on the day it arrives. A purchase order changes stock only when a receipt is recorded.",
+   "source_record": "Stock movements; purchase receipts link to their order lines",
+   "unit": "item unit",
+   "date_basis": "Actual receipt business date",
+   "rounding": "None; stored as entered",
+   "blank_behaviour": "Blank = none received",
+   "findings": [
+    "P1-26",
+    "P1-35"
+   ],
+   "pending_on": [
+    "P1-35"
+   ],
+   "status": "agreed (team)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 6"
+  },
+  {
+   "id": "INV-06",
+   "report": "Inventory and order",
+   "field_en": "Recipe consumption",
+   "field_ar": "الأستهلاكات",
+   "legacy_location": "SRC-06/13 day sheet!V; recipe list rows 649-3100",
+   "meaning": "Product Mix × approved recipe per component, using the recipe version valid on the date",
+   "source_record": "Calculated from Product Mix and recipes",
+   "unit": "component unit",
+   "date_basis": "Business date of the closed day (not the print or entry date); recipe version date pending (P1-32)",
+   "rounding": "None; stored as entered",
+   "blank_behaviour": "-",
+   "findings": [
+    "P1-30",
+    "P1-31",
+    "P1-32"
+   ],
+   "pending_on": [
+    "P1-31",
+    "P1-32"
+   ],
+   "status": "pending",
+   "waiting_for_answer": [
+    "P1-31",
+    "P1-32"
+   ],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 5"
+  },
+  {
+   "id": "INV-07",
+   "report": "Inventory and order",
+   "field_en": "Waste, hospitality, deductions, transfers out",
+   "field_ar": "الهالك / الضيافة / تحميلات / محول الى",
+   "legacy_location": "SRC-06/13 day sheet!X:AA",
+   "meaning": "Other stock movements of the day",
+   "source_record": "Stock movements",
+   "unit": "item unit",
+   "date_basis": "Business date of the closed day (not the print or entry date)",
+   "rounding": "None; stored as entered",
+   "blank_behaviour": "Blank = none",
+   "findings": [],
+   "pending_on": [],
+   "status": "agreed (team)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 6"
+  },
+  {
+   "id": "INV-08",
+   "report": "Inventory and order",
+   "field_en": "Book balance",
+   "field_ar": "الرصيد الدفتري",
+   "legacy_location": "SRC-06/13 day sheet!AB",
+   "meaning": "Opening + receipts − consumption − other movements",
+   "source_record": "Calculated",
+   "unit": "item unit",
+   "date_basis": "Business date of the closed day (not the print or entry date)",
+   "rounding": "None; stored as entered",
+   "blank_behaviour": "-",
+   "findings": [
+    "P1-24"
+   ],
+   "pending_on": [],
+   "status": "agreed (team)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 6"
+  },
+  {
+   "id": "INV-09",
+   "report": "Inventory and order",
+   "field_en": "Physical count",
+   "field_ar": "الجرد الفعلي",
+   "legacy_location": "SRC-06/13 day sheet!AC",
+   "meaning": "Counted quantity; blank = not counted, 0 = counted zero; numbers only",
+   "source_record": "Physical counts",
+   "unit": "item unit",
+   "date_basis": "Business date of the closed day (not the print or entry date)",
+   "rounding": "None; stored as entered",
+   "blank_behaviour": "Blank stays blank; symbols rejected",
+   "findings": [
+    "P1-24",
+    "P1-26"
+   ],
+   "pending_on": [],
+   "status": "agreed (team)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 6"
+  },
+  {
+   "id": "INV-10",
+   "report": "Inventory and order",
+   "field_en": "Deviation and cumulative deviation",
+   "field_ar": "الانحراف / التراكمي",
+   "legacy_location": "SRC-06/13 day sheet!AD:AE",
+   "meaning": "Count − book only when counted; cumulative across the month; negative shown with a minus",
+   "source_record": "Calculated",
+   "unit": "item unit",
+   "date_basis": "Business date of the closed day (not the print or entry date)",
+   "rounding": "2 decimals display",
+   "blank_behaviour": "Blank when not counted",
+   "findings": [
+    "P1-24",
+    "P1-25",
+    "P1-37"
+   ],
+   "pending_on": [],
+   "status": "agreed (team)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 6"
+  },
+  {
+   "id": "INV-11",
+   "report": "Inventory and order",
+   "field_en": "Monthly deviation",
+   "field_ar": "انحراف الشهر",
+   "legacy_location": "SRC-06/13 Total!AD; الأنحرافات sheet",
+   "meaning": "Cumulative deviation at month end",
+   "source_record": "Calculated",
+   "unit": "item unit",
+   "date_basis": "Selected month",
+   "rounding": "2 decimals display",
+   "blank_behaviour": "-",
+   "findings": [
+    "P1-23",
+    "P1-25"
+   ],
+   "pending_on": [],
+   "status": "agreed (team)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 6"
+  },
+  {
+   "id": "INV-12",
+   "report": "Inventory and order",
+   "field_en": "Component unit",
+   "field_ar": "الوحدة",
+   "legacy_location": "SRC-06/13 recipe list!F",
+   "meaning": "One base unit per component with conversion factors",
+   "source_record": "Catalog",
+   "unit": "unit",
+   "date_basis": "-",
+   "rounding": "-",
+   "blank_behaviour": "-",
+   "findings": [
+    "P1-31"
+   ],
+   "pending_on": [
+    "P1-31"
+   ],
+   "status": "pending",
+   "waiting_for_answer": [
+    "P1-31"
+   ],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 5"
+  },
+  {
+   "id": "INV-13",
+   "report": "Inventory and order",
+   "field_en": "Review: expected stock and difference",
+   "field_ar": "المتوقع والفرق",
+   "legacy_location": "SRC-14 Sheet1!K, M",
+   "meaning": "Expected = total − consumption; difference only after a count",
+   "source_record": "Calculated",
+   "unit": "item unit",
+   "date_basis": "Business date of the closed day (not the print or entry date)",
+   "rounding": "None; stored as entered",
+   "blank_behaviour": "Difference blank before a count",
+   "findings": [
+    "P1-34"
+   ],
+   "pending_on": [],
+   "status": "agreed (team)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 6"
+  },
+  {
+   "id": "ORD-01",
+   "report": "Inventory and order",
+   "field_en": "Order date and expected receipt date",
+   "field_ar": "تاريخ الطلبية والاستلام المتوقع",
+   "legacy_location": "SRC-01 Sheet1!C6 (legacy date interpretation tracked in the Phase 1 closure checklist)",
+   "meaning": "Store creation, expected receipt and actual receipt dates separately. Default to the order business date plus two calendar days.",
+   "source_record": "Purchase orders and receipts",
+   "unit": "date",
+   "date_basis": "Order business date / expected receipt date / actual receipt date",
+   "rounding": "-",
+   "blank_behaviour": "-",
+   "findings": [
+    "P1-35",
+    "P1-36"
+   ],
+   "pending_on": [
+    "P1-35"
+   ],
+   "status": "agreed (team)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 8"
+  },
+  {
+   "id": "ORD-02",
+   "report": "Inventory and order",
+   "field_en": "Order lines",
+   "field_ar": "سطور الطلبية",
+   "legacy_location": "SRC-01 Sheet1!B:G",
+   "meaning": "Single-branch order; each line: catalog item, unit, numeric quantity, source (factory or store)",
+   "source_record": "Purchase order lines",
+   "unit": "item unit",
+   "date_basis": "Order created date",
+   "rounding": "None; stored as entered",
+   "blank_behaviour": "Non-numeric quantity rejected",
+   "findings": [
+    "P1-36"
+   ],
+   "pending_on": [],
+   "status": "agreed (team)",
+   "waiting_for_answer": [],
+   "contested_without_agreed_rule": [],
+   "implemented_in": "Phase 8"
+  }
+ ],
+ "findings_without_field": {
+  "P1-01": "Source-material completeness (copies of the newer workbook and template); no report field.",
+  "P1-02": "Source transcription verified against the photos; the project owner confirmed M04 as 'دنيا البمبوظه' on 20 Nov 2026. Test evidence only, with no report field definition or pending Abdo decision."
+ }
+}

@@ -1,0 +1,67 @@
+{
+ "schema": "blabn-phase1-owner-deferrals/1",
+ "note": "Items the project owner either applies or defers explicitly. Update only with scripts/phase1/record_outcome.py.",
+ "items": {
+  "ledger-protected-sheets": {
+   "what": "318 corrections on the password-protected day sheets of the daily ledgers SRC-10 and SRC-11 (custody carry-forward, days 22-24 chaining, date/branch, error-row check, stray formulas on sheet 16). Findings P1-17, P1-18, P1-19, P1-21, P1-23. The cash-count message edits (62, P1-12) were withdrawn on 2026-11-21 after Abdo's P1-13 answer.",
+   "options": "apply with the sheet password (apply_fixes.ps1 -SheetPassword), or defer explicitly; the application implements these rules either way",
+   "status": "deferred",
+   "by": "Project owner",
+   "on": "2026-11-21T04:27:23",
+   "reason": "Owner approved postponing the 318 protected legacy workbook edits. Use the reviewed rules to build and test daily closing. Review the old workbook only if the Phase 4 reference case needs it.",
+   "until": "Phase 4 (revisit only if the protected reference is needed)",
+   "history": [
+    {
+     "status": "pending",
+     "by": null,
+     "on": null,
+     "reason": null,
+     "until": null
+    }
+   ],
+   "notes": [
+    {
+     "on": "2026-11-21",
+     "note": "Description updated from 380 to 318 operations: the O14 cash-count message rewrite contradicted P1-13 (count before remittance) and was withdrawn. Status unchanged (pending).",
+     "previous_what": "380 corrections on the password-protected day sheets of the daily ledgers SRC-10 and SRC-11 (cash-count message, custody carry-forward, days 22-24 chaining, date/branch, error-row check, stray formulas on sheet 16). Findings P1-12, P1-17, P1-18, P1-19, P1-21, P1-23."
+    }
+   ]
+  },
+  "final-review-confirmation": {
+   "what": "Abdo's separate confirmation of the six-answer review summary.",
+   "options": "Confirm the implemented workflow with Abdo during Phase 10 acceptance. Retain his six existing answers as the development baseline.",
+   "status": "deferred",
+   "by": "Project owner",
+   "on": "2026-11-21T04:27:23",
+   "reason": "The six imported answers are the development baseline. The owner moved the separate confirmation to the existing walkthrough of the working system with Abdo.",
+   "until": "Phase 10 (end-to-end acceptance with Abdo)",
+   "history": [
+    {
+     "status": "pending",
+     "by": null,
+     "on": null,
+     "reason": null,
+     "until": null
+    }
+   ]
+  },
+  "legacy-order-sheet-date": {
+   "what": "P1-35: confirm whether the single date in SRC-01 Sheet1!C6 (4 November 2026) denotes order creation or delivery.",
+   "options": "Confirm with Abdo before using the legacy date in Phase 8. Until then preserve C6 as a source value and use explicit creation, expected delivery and actual receipt dates for live records.",
+   "status": "deferred",
+   "by": "Project owner",
+   "on": "2026-11-21T03:35:15",
+   "reason": "Project owner requested postponing the question. Abdo confirmed ordering two business dates ahead and daily deliveries, but the meaning of C6 remains unconfirmed. Use separate dates for live orders and receipts, and keep the legacy label as evidence.",
+   "until": "Phase 8 (before mapping historical order dates)",
+   "history": [
+    {
+     "status": "pending",
+     "by": null,
+     "on": null,
+     "reason": null,
+     "until": null
+    }
+   ]
+  }
+ }
+}

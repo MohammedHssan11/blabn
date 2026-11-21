@@ -17,3 +17,16 @@ tmp/
 
 # Legacy and source reference material; keep local only
 archive/
+
+# Python caches and local backups from Phase 1 tooling
+__pycache__/
+docs/phase1/decisions/*.bak
+docs/phase1/decisions/*.tmp
+
+# Next.js / TypeScript build output
+*.tsbuildinfo
+next-env.d.ts
+
+# Local Supabase development instance (config.toml is tracked)
+supabase/.temp/
+supabase/.branches/
