@@ -19,4 +19,4 @@ Use identical saved values in Arabic and English. Format the labels, digits, amo
 
 ## Scheduled dependencies
 
-Keep fields ST-09 and LG-08 open until the count-role decision in Phase 4. Keep INV-01, INV-03, INV-06 and INV-12 marked with their Phase 5 catalog, unit and recipe dependencies. Use creation, expected receipt and actual receipt for new orders. Confirm what the historical order-sheet date means in Phase 8 before mapping it.
+Fields ST-09 and LG-08 are pending implementation. Use the [confirmed Phase 4 count-role rule](../phase4/ABDO_DECISIONS.md) when implementing them. Keep INV-01, INV-03, INV-06 and INV-12 marked with their Phase 5 catalog, unit and recipe dependencies. Use creation, expected receipt and actual receipt for new orders. Confirm what the historical order-sheet date means in Phase 8 before mapping it.

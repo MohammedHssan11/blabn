@@ -43,6 +43,7 @@ The bilingual interface uses B.Laban’s blue and white palette across sign-in, 
 - [Onboarding prompt for Claude or Codex](docs/ARCHITECTURE_REVIEW_PROMPT.md)
 - [Phase 1 source review and Abdo's review page](docs/phase1/README.md)
 - [Handover record](docs/HANDOFF.md)
+- [Phase 4 decisions from Abdo](docs/phase4/ABDO_DECISIONS.md)
 
 ## Repository rules
 

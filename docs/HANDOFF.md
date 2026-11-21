@@ -4,7 +4,7 @@ Read this first in every session, then compare it with the actual repository sta
 
 _Last updated: 21 November 2026. Phase 1 closed with documented deferrals. Phase 2 complete (merged to `main` as `2d21e31`). **Phase 3 (accounts, permissions, audit history) is complete for local development. See "Phase 3 status" for the acceptance and audit results. Production provisioning of Abdo's account is pending.**_
 
-The [B.Laban interface refresh](BRAND_DESIGN.md) updates sign-in and recovery, the workspace, navigation, tables, and forms. The production build, 162 unit tests, and 69 smoke checks passed. Browser checks covered the English desktop and Arabic mobile views, including signed-in pages. Phase 4 remains the next delivery milestone.
+The [B.Laban interface refresh](BRAND_DESIGN.md) updates sign-in and recovery, the workspace, navigation, tables, and forms. The production build, 162 unit tests, and 69 smoke checks passed. Browser checks covered the English desktop and Arabic mobile views, including signed-in pages. Phase 4 remains the next delivery milestone. [Abdo's Phase 4 voice-note decisions](phase4/ABDO_DECISIONS.md) are recorded and ready for implementation.
 
 ## Where things are
 
@@ -149,7 +149,9 @@ The follow-up audit reran the suite on a disposable local Supabase project with 
 
 The six review answers are in the [decision summary](phase1/decisions/DECISIONS_SUMMARY.md). Save further operational questions for the phase that uses them.
 
-Before later phases: P1-19 who counts the cash (Phase 4); P1-24 count cadence (Phase 6); P1-28 chocolate Dubai cake size and other name differences (Phase 5); P1-31 units, starting with mixed nuts in «عدد» (Phase 5); P1-32 recipe effective date and the 6-spoon line (Phase 5); P1-35 meaning of the old order template's date (Phase 8); P1-33 five opening balances (Phase 11).
+**Phase 4 answers are recorded.** Abdo counts the drawer as branch manager. The normal business-day cutoff is 02:00 local time. An overnight sale at 01:00 and a late close of that business day belong to the prior operating date. Abdo closes, corrects and approves his own corrections, and the branch takes cash and card. Start with the [implementation handoff](phase4/ABDO_DECISIONS.md).
+
+Still open for later: P1-28 chocolate Dubai cake size and other name differences, P1-31 units, and P1-32 recipe effective date and the 6-spoon line (Phase 5); P1-24 count cadence (Phase 6); P1-35 meaning of the old order template's date (Phase 8); P1-33 opening balances (Phase 11).
 
 ## Work completed
 
@@ -248,10 +250,10 @@ Session 8 (21 Nov, applying Abdo's answers):
 - Ledger day sheets are password-protected. The 318 operations and their workbook-specific boundary tests are deferred. Six error cells remain in hidden legacy ledger sheets whose original references are lost.
 - The field map describes source records in requirement terms; table and column design is Phase 2. Template layout and labels are retained as confirmed when Abdo confirms the final set.
 - Recipes, Foodics-name mapping and units are Phase 5 catalog work. No independent source exists for September sales, Al Quds/Bourgogne figures, or Maarif on 3/10 Nov; only 7 Nov has a Foodics print.
-- The page shows only the six required questions. The six questions needed before later phases (P1-19, P1-24, P1-28, P1-31, P1-32, P1-33) and any wish of Abdo's to contest one of the 31 other findings are not on the page: the team adds a question to `review-questions.json` (and rebuilds) before the phase that needs it, or records his answer through the same decision record. The builder currently requires exactly the `required` findings; relax that check when adding later questions.
+- The Phase 1 review page contains the six questions imported at closure. P1-19 was answered later and is tracked in the Phase 4 decision record. Add still-open questions to the review page or record their answer directly when the relevant phase needs them.
 - The Arabic wording is in the colloquial register of the earlier pages and has not been read by a native reviewer other than the project owner; Abdo's feedback in the trial is the check.
 - The original Arabic workbook names come from a local legacy index and a content match, not from the repository (which renamed the files to English). If Abdo's own file names differ, correct `files` in `review-questions.json`, rerun `verify_questions.py` and `build.mjs`.
-- Phase 2 assumptions (prototype only, to confirm in the phase named): expected cash counts every non-card sale as cash (other payment types: Phase 4); the weekly total ratio is left blank when the branches present on the two dates differ (Phase 7); the business-day rollover is 00:00 in `Africa/Casablanca` (closing hours: Phase 4); synthetic Al Quds and Bourgogne figures are reporting-only and invented.
+- Phase 2 fixture assumptions: the fixtures treat non-card sales as cash and use a 00:00 rollover. For live Phase 4 work use the [confirmed cash/card workflow and 02:00 rollover](phase4/ABDO_DECISIONS.md). The weekly total ratio is left blank when the branches present on the two dates differ (Phase 7); synthetic Al Quds and Bourgogne figures are reporting-only and invented.
 - Phase 2 limits: screens read fixtures, not the database; no sign-in or permissions (Phase 3); the Arabic wording of the prototypes has not been read by a native reviewer; layout checked at 375 px and a desktop pane (about 800 px wide), not on a physical phone; the language-persistence check in a real browser covered Arabic ↔ English and `/` redirect.
 - Open plan decision (Decisions needed before Phase 1, Abdo and project owner): whether a finding may be deferred with an interim rule, owner and deadline. The statuses and the closure checklist assume it may for later-phase questions.
 
@@ -316,6 +318,6 @@ Environment: the checks ran on this project's own local Supabase instance (`bala
 
 ## Next steps (in order)
 
-1. Start Phase 4 from the updated `origin/main`. Read and write business data with the signed-in person’s client so the row-level policies apply. Call the guard with the permission and branch first.
+1. Start Phase 4 from the updated `origin/main` and use [Abdo's confirmed rules](phase4/ABDO_DECISIONS.md). Read and write business data with the signed-in person’s client so the row-level policies apply. Call the guard with the permission and branch first.
 2. Before production rollout, provision an authorized hosted Supabase project, set the Auth options and `SITE_URL`, configure SMTP, and bootstrap Abdo. See the [accounts and permissions runbook](phase3/ACCOUNTS_AND_PERMISSIONS.md).
-3. Carry the Phase 2 caveats forward: single place for business-date calculation and the Casablanca time-zone data check (Phase 4), the cash and payment-type assumptions (Phase 4), the weekly total-ratio rule (Phase 7). The scheduled follow-ups stay as they were: protected ledger edits (Phase 4, only if needed), the historical order-sheet date (Phase 8), Abdo's final confirmation (Phase 10).
+3. Carry the Phase 2 caveats forward: single place for business-date calculation and the Casablanca time-zone data check (Phase 4), implementation of the confirmed Maarif cash and card rules (Phase 4), the weekly total-ratio rule (Phase 7). The scheduled follow-ups stay as they were: protected ledger edits (Phase 4, only if needed), the historical order-sheet date (Phase 8), Abdo's final confirmation (Phase 10).

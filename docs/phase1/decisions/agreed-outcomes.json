@@ -1,5 +1,13 @@
 {
  "schema": "blabn-phase1-agreed-outcomes/1",
  "note": "Final rules agreed after Abdo proposed an alternative or did not accept a team correction. Update only with scripts/phase1/record_outcome.py.",
- "outcomes": {}
+ "outcomes": {
+  "P1-19": {
+   "rule": "Abdo, the branch manager, physically counts the Maarif drawer. Store the actual counter, role and count time separately from the cashier and the person entering the close. Source: 21 November 2026 WhatsApp voice reply. See docs/phase4/ABDO_DECISIONS.md.",
+   "agreed_with": "Abdo",
+   "agreed_on": "2026-11-21",
+   "recorded_at": "2026-11-21T19:29:37",
+   "history": []
+  }
+ }
 }

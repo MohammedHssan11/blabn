@@ -62,7 +62,12 @@ unsure = [x for x in req if x in DEC and not answered(DEC[x])]
 contested = [x for x, d in DEC.items() if needs_rule(x, d) and x not in AGREED]
 fm_block = [f["id"] for f in FM["fields"] if f["status"] == "pending" and
             (f["contested_without_agreed_rule"] or any(byid[x]["abdo"] != "later" for x in f["waiting_for_answer"]))]
-fm_later = [f["id"] for f in FM["fields"] if f["status"] == "pending" and f["id"] not in fm_block]
+fm_later = [f for f in FM["fields"] if f["status"] == "pending" and f["id"] not in fm_block]
+fm_confirmed_later = [
+    f["id"] for f in fm_later
+    if f["waiting_for_answer"] and all(finding in AGREED for finding in f["waiting_for_answer"])
+]
+fm_still_waiting = [f["id"] for f in fm_later if f["id"] not in fm_confirmed_later]
 ledger = OWNER["ledger-protected-sheets"]
 legacy_order = OWNER.get("legacy-order-sheet-date", {})
 legacy_date_confirmed = DEC.get("P1-35", {}).get("option") in ("order_day", "delivery_day") or "P1-35" in AGREED
@@ -83,7 +88,10 @@ final_detail = final or (f"deferred until {final_deferral['until']} by {final_de
 items = [
     ("Required questions answered by Abdo", not req_open, f"{len(req) - len(req_open)} of {len(req)}" + (f" — open: {', '.join(req_open)}" if req_open else "") + (f" (not sure: {', '.join(unsure)})" if unsure else "")),
     ("Alternatives that are not fully specified, and contested team corrections, have an agreed final rule", not contested, "none open" if not contested else "open: " + ", ".join(contested)),
-    ("Field map complete (pending only on later-phase questions)", not fm_block, f"{FM['summary']['fields']} fields; blocking: {', '.join(fm_block) or 'none'}; waiting for later-phase questions: {', '.join(fm_later) or 'none'}"),
+    ("Field map complete (later phases tracked)", not fm_block,
+     f"{FM['summary']['fields']} fields; blocking: {', '.join(fm_block) or 'none'}; "
+     f"waiting for later-phase answers: {', '.join(fm_still_waiting) or 'none'}; "
+     f"confirmed since the prototype: {', '.join(fm_confirmed_later) or 'none'}"),
     ("Protected ledger corrections applied or deferred by the project owner", ledger["status"] in ("applied", "deferred"),
      ledger["status"] + (f" by {ledger['by']} on {ledger['on']}: {ledger['reason']}" if ledger["status"] != "pending" else " — record with scripts/phase1/record_outcome.py")),
     ("Workbook checks pass", checks_ok, f"diff unexplained {unexplained}; value checks {VER['passed']}/{VER['checks']}; boundary tests {BT['passed']}/{BT['total']}"),
@@ -98,7 +106,7 @@ L = ["# Phase 1 closure checklist", "",
      "| Condition | Met | Detail |", "|---|---|---|"]
 L += [f"| {n} | {'yes' if ok else '**no**'} | {d} |" for n, ok, d in items]
 L += ["", "## Questions for later phases (do not block Phase 1)", "", "| Finding | Needed before | Answered |", "|---|---|---|"]
-L += [f"| {f['id']} | {f['abdo_by']} | {'yes' if answered(DEC.get(f['id'])) else 'no'} |" for f in later]
+L += [f"| {f['id']} | {f['abdo_by']} | {'yes' if answered(DEC.get(f['id'])) or f['id'] in AGREED else 'no'} |" for f in later]
 L.append("")
 open(os.path.join(D, "CLOSURE.md"), "w", encoding="utf-8").write("\n".join(L))
 for n, ok, d in items:
