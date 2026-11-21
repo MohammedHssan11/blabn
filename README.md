@@ -8,6 +8,8 @@ Phase 1 closed on 21 November 2026 after the source audit, six recorded answers 
 
 Phase 3 local acceptance is complete. It adds sign-in, password recovery, staff accounts, permission groups, branch isolation and an append-only audit history. See [accounts and permissions](docs/phase3/ACCOUNTS_AND_PERMISSIONS.md) and the [handover record](docs/HANDOFF.md) for verification and production setup.
 
+The bilingual interface uses B.Laban’s blue and white palette across sign-in, the workspace, and operational screens. See the [brand references](docs/BRAND_DESIGN.md).
+
 ## Product scope
 
 - Enter a business day once: sales, orders, cash, card/Visa, expenses, bank remittance, and counted cash.

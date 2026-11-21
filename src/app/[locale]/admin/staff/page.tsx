@@ -39,7 +39,7 @@ export default async function StaffListPage({
       <p className="lead">{t("staff.intro")}</p>
       <ResultMessages t={t} error={first(sp.error)} notice={first(sp.notice)} />
       <p>
-        <Link className="badge ok" href={`${base}/new`} data-action="add-staff">
+        <Link className="primary-link" href={`${base}/new`} data-action="add-staff">
           {t("staff.add")}
         </Link>
       </p>

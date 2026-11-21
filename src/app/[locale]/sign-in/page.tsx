@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { isLocale } from "@/i18n/config";
 import { createTranslator } from "@/i18n/dictionary";
 import { first, type SearchParams } from "@/lib/search-params";
+import { AuthPanel } from "@/components/AuthPanel";
 import { ResultMessages } from "@/components/Messages";
 import { signInAction } from "@/modules/access/auth-actions";
 import { safeNextPath } from "@/modules/access/forms";
@@ -35,7 +36,7 @@ export default async function SignInPage({
   const errorCode = first(sp.error);
 
   return (
-    <div className="card auth-card">
+    <AuthPanel t={t}>
       <h1>{t("auth.signIn.title")}</h1>
       <p className="lead">{t("auth.signIn.intro")}</p>
       {noticeKey ? (
@@ -60,6 +61,6 @@ export default async function SignInPage({
       <p className="legend">
         <Link href={`/${locale}/forgot-password`}>{t("auth.signIn.forgot")}</Link>
       </p>
-    </div>
+    </AuthPanel>
   );
 }

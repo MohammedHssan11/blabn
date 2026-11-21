@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { isLocale } from "@/i18n/config";
 import { createTranslator } from "@/i18n/dictionary";
 import { first, type SearchParams } from "@/lib/search-params";
+import { AuthPanel } from "@/components/AuthPanel";
 import { ResultMessages } from "@/components/Messages";
 import { changeOwnPasswordAction } from "@/modules/access/auth-actions";
 import { MIN_PASSWORD_LENGTH } from "@/modules/access/forms";
@@ -37,7 +38,7 @@ export default async function PasswordPage({
       : t("auth.password.intro");
 
   return (
-    <div className="card auth-card">
+    <AuthPanel t={t}>
       <h1>{t("auth.password.title")}</h1>
       <p className="lead">{intro}</p>
       <ResultMessages t={t} error={first(sp.error)} />
@@ -54,6 +55,6 @@ export default async function PasswordPage({
         <p className="legend">{t("auth.password.hint", { min: MIN_PASSWORD_LENGTH })}</p>
         <button type="submit">{t("auth.password.submit")}</button>
       </form>
-    </div>
+    </AuthPanel>
   );
 }
