@@ -72,16 +72,15 @@ export default async function LocaleLayout({
         <a className="skip-link" href="#content">
           {t("app.skipToContent")}
         </a>
-        <div className="banner" role="note">
-          {t("app.prototypeBanner")}
-        </div>
         <header className="site-header">
           <div className="header-inner">
             <a className="brand" href={`/${locale}`}>
-              {t("app.name")}
-              <small>{t("app.tagline")}</small>
+              <span className="brand-mark" lang="ar" aria-hidden="true">ب</span>
+              <span className="brand-label">
+                <strong>{t("app.name")}</strong>
+                <small>{t("app.tagline")}</small>
+              </span>
             </a>
-            <MainNav items={items} label={t("nav.label")} />
             {access.state === "active" ? (
               <form className="account" action={signOutAction} data-form="sign-out">
                 <input type="hidden" name="locale" value={locale} />
@@ -95,7 +94,15 @@ export default async function LocaleLayout({
             ) : null}
             <LanguageSwitch target={other} label={switchLabel} title={t("nav.language")} />
           </div>
+          {items.length > 0 ? (
+            <div className="nav-strip">
+              <MainNav items={items} label={t("nav.label")} />
+            </div>
+          ) : null}
         </header>
+        <div className="banner" role="note">
+          {t("app.prototypeBanner")}
+        </div>
         <main id="content">{children}</main>
       </body>
     </html>

@@ -4,6 +4,8 @@ Read this first in every session, then compare it with the actual repository sta
 
 _Last updated: 21 November 2026. Phase 1 closed with documented deferrals. Phase 2 complete (merged to `main` as `2d21e31`). **Phase 3 (accounts, permissions, audit history) is complete for local development. See "Phase 3 status" for the acceptance and audit results. Production provisioning of Abdo's account is pending.**_
 
+The [B.Laban interface refresh](BRAND_DESIGN.md) updates sign-in and recovery, the workspace, navigation, tables, and forms. The production build, 162 unit tests, and 69 smoke checks passed. Browser checks covered the English desktop and Arabic mobile views, including signed-in pages. Phase 4 remains the next delivery milestone.
+
 ## Where things are
 
 | Item | Value |
@@ -316,4 +318,4 @@ Environment: the checks ran on this project's own local Supabase instance (`bala
 
 1. Start Phase 4 from the updated `origin/main`. Read and write business data with the signed-in person’s client so the row-level policies apply. Call the guard with the permission and branch first.
 2. Before production rollout, provision an authorized hosted Supabase project, set the Auth options and `SITE_URL`, configure SMTP, and bootstrap Abdo. See the [accounts and permissions runbook](phase3/ACCOUNTS_AND_PERMISSIONS.md).
-4. Carry the Phase 2 caveats forward: single place for business-date calculation and the Casablanca time-zone data check (Phase 4), the cash and payment-type assumptions (Phase 4), the weekly total-ratio rule (Phase 7). The scheduled follow-ups stay as they were: protected ledger edits (Phase 4, only if needed), the historical order-sheet date (Phase 8), Abdo's final confirmation (Phase 10).
+3. Carry the Phase 2 caveats forward: single place for business-date calculation and the Casablanca time-zone data check (Phase 4), the cash and payment-type assumptions (Phase 4), the weekly total-ratio rule (Phase 7). The scheduled follow-ups stay as they were: protected ledger edits (Phase 4, only if needed), the historical order-sheet date (Phase 8), Abdo's final confirmation (Phase 10).

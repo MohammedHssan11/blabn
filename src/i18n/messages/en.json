@@ -1,6 +1,6 @@
 {
   "app": {
-    "name": "Balaban",
+    "name": "B.Laban",
     "tagline": "Branch operations",
     "prototypeBanner": "Prototype with synthetic test data. These are not real branch figures.",
     "skipToContent": "Skip to content",
@@ -65,12 +65,17 @@
   },
   "home": {
     "title": "Branch operations",
-    "intro": "Phase 2 foundation: Arabic and English screens, shared calculations on the server, and three working prototypes built on synthetic data.",
-    "prototypesTitle": "Prototypes",
     "prototypes": {
       "dailyClose": "A month of closed days with sales, orders, average order value, card and remittance ratios.",
       "cashCount": "A saved cash count, its reconciliation at count time, and a later bank deposit.",
       "comparison": "One shared date pair for Maarif, Al Quds and Bourgogne, with missing figures marked."
+    },
+    "shortcuts": {
+      "title": "Quick access",
+      "reports": "Review report fields and their sources.",
+      "inventory": "Record or review adjustments for Maarif.",
+      "staff": "Manage accounts, branches, and permissions.",
+      "audit": "Review changes and who made them."
     },
     "modulesTitle": "Application areas",
     "modulesIntro": "The structure is in place; each area is built in the phase shown.",
