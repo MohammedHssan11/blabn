@@ -1,0 +1,101 @@
+{
+ "method": "Excel CalculateFullRebuild on copies; external links not refreshed",
+ "workbooks": {
+  "SRC-01": {
+   "formula_cells": 0,
+   "compared": 0,
+   "differences": 0,
+   "examples": []
+  },
+  "SRC-02": {
+   "formula_cells": 95,
+   "compared": 95,
+   "differences": 0,
+   "examples": []
+  },
+  "SRC-03": {
+   "formula_cells": 87,
+   "compared": 87,
+   "differences": 0,
+   "examples": []
+  },
+  "SRC-04": {
+   "formula_cells": 486,
+   "compared": 486,
+   "differences": 0,
+   "examples": []
+  },
+  "SRC-05": {
+   "formula_cells": 480,
+   "compared": 480,
+   "differences": 0,
+   "examples": []
+  },
+  "SRC-06": {
+   "formula_cells": 313701,
+   "compared": 313701,
+   "differences": 0,
+   "examples": []
+  },
+  "SRC-07": {
+   "formula_cells": 313978,
+   "compared": 313978,
+   "differences": 0,
+   "examples": []
+  },
+  "SRC-08": {
+   "formula_cells": 36,
+   "compared": 36,
+   "differences": 0,
+   "examples": []
+  },
+  "SRC-09": {
+   "formula_cells": 36,
+   "compared": 36,
+   "differences": 0,
+   "examples": []
+  },
+  "SRC-10": {
+   "formula_cells": 19942,
+   "compared": 19942,
+   "differences": 0,
+   "examples": []
+  },
+  "SRC-11": {
+   "formula_cells": 19933,
+   "compared": 19933,
+   "differences": 0,
+   "examples": []
+  },
+  "SRC-12": {
+   "formula_cells": 8,
+   "compared": 8,
+   "differences": 0,
+   "examples": []
+  },
+  "LOC-01": {
+   "formula_cells": 313977,
+   "compared": 313977,
+   "differences": 0,
+   "examples": []
+  },
+  "LOC-02": {
+   "formula_cells": 486,
+   "compared": 486,
+   "differences": 0,
+   "examples": []
+  },
+  "LOC-03": {
+   "formula_cells": 486,
+   "compared": 486,
+   "differences": 0,
+   "examples": []
+  },
+  "LOC-04": {
+   "formula_cells": 486,
+   "compared": 486,
+   "differences": 0,
+   "examples": []
+  }
+ }
+}

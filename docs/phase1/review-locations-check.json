@@ -1,0 +1,1420 @@
+{
+ "generated": "2026-11-21T04:23:09",
+ "questions_version": "2026-11-20.2",
+ "summary": {
+  "checks": 169,
+  "passed": 169,
+  "manual": 1,
+  "skipped": 0,
+  "per_question": {
+   "1": {
+    "finding": "P1-03",
+    "checks": 25,
+    "passed": 25
+   },
+   "2": {
+    "finding": "P1-08",
+    "checks": 25,
+    "passed": 25
+   },
+   "3": {
+    "finding": "P1-10",
+    "checks": 31,
+    "passed": 31
+   },
+   "4": {
+    "finding": "P1-13",
+    "checks": 34,
+    "passed": 34
+   },
+   "5": {
+    "finding": "P1-29",
+    "checks": 28,
+    "passed": 28
+   },
+   "6": {
+    "finding": "P1-35",
+    "checks": 25,
+    "passed": 25
+   }
+  }
+ },
+ "results": [
+  {
+   "question": 1,
+   "kind": "auto",
+   "check": "tab «Sheet1» exists in Daily Sales Maarief oct.xlsx",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 1,
+   "kind": "auto",
+   "check": "where: cell Sheet1!D3 is not empty",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 1,
+   "kind": "auto",
+   "check": "where: cell Sheet1!B3 is not empty",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 1,
+   "kind": "auto",
+   "check": "where: cell Sheet1!C3 is not empty",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 1,
+   "kind": "auto",
+   "check": "tab «Sheet1» exists in Daily Sales Maarief  NOV(1).xlsx",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 1,
+   "kind": "auto",
+   "check": "where: cell Sheet1!D4 is not empty",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 1,
+   "kind": "auto",
+   "check": "sales_oct Sheet1!D2",
+   "got": "متوسط الطلب",
+   "want": "متوسط الطلب",
+   "ok": true
+  },
+  {
+   "question": 1,
+   "kind": "auto",
+   "check": "sales_oct Sheet1!B3",
+   "got": 50125,
+   "want": 50125,
+   "ok": true
+  },
+  {
+   "question": 1,
+   "kind": "auto",
+   "check": "sales_oct Sheet1!C3",
+   "got": 632,
+   "want": 632,
+   "ok": true
+  },
+  {
+   "question": 1,
+   "kind": "auto",
+   "check": "sales_oct Sheet1!D3",
+   "got": 72.1,
+   "want": 72.1,
+   "ok": true
+  },
+  {
+   "question": 1,
+   "kind": "auto",
+   "check": "sales_oct Sheet1!B29",
+   "got": 46635,
+   "want": 46635,
+   "ok": true
+  },
+  {
+   "question": 1,
+   "kind": "auto",
+   "check": "sales_oct Sheet1!C29",
+   "got": 613,
+   "want": 613,
+   "ok": true
+  },
+  {
+   "question": 1,
+   "kind": "auto",
+   "check": "sales_oct Sheet1!D29",
+   "got": 73.5,
+   "want": 73.5,
+   "ok": true
+  },
+  {
+   "question": 1,
+   "kind": "auto",
+   "check": "sales_oct Sheet1!D30",
+   "got": 80.7,
+   "want": 80.7,
+   "ok": true
+  },
+  {
+   "question": 1,
+   "kind": "auto",
+   "check": "October average: how each of the 30 typed values was produced",
+   "got": {
+    "div_1_1_exact": 24,
+    "div_1_1_rounded_to_whole": 2,
+    "plain": 3,
+    "neither": 1
+   },
+   "want": {
+    "div_1_1_exact": 24,
+    "div_1_1_rounded_to_whole": 2,
+    "plain": 3,
+    "neither": 1
+   },
+   "ok": true
+  },
+  {
+   "question": 1,
+   "kind": "auto",
+   "check": "50125 / 632",
+   "got": 79.31,
+   "want": 79.31,
+   "ok": true
+  },
+  {
+   "question": 1,
+   "kind": "auto",
+   "check": "50125 / 632 / 1.1",
+   "got": 72.1,
+   "want": 72.1,
+   "ok": true
+  },
+  {
+   "question": 1,
+   "kind": "auto",
+   "check": "46635 / 613",
+   "got": 76.08,
+   "want": 76.08,
+   "ok": true
+  },
+  {
+   "question": 1,
+   "kind": "auto",
+   "check": "48695 / 639",
+   "got": 76.21,
+   "want": 76.21,
+   "ok": true
+  },
+  {
+   "question": 1,
+   "kind": "auto",
+   "check": "100605 / 1185",
+   "got": 84.9,
+   "want": 84.9,
+   "ok": true
+  },
+  {
+   "question": 1,
+   "kind": "auto",
+   "check": "sales_nov Sheet1!A4",
+   "got": "2026-11-02",
+   "want": "2026-11-02",
+   "ok": true
+  },
+  {
+   "question": 1,
+   "kind": "auto",
+   "check": "sales_nov Sheet1!B4",
+   "got": 48695,
+   "want": 48695,
+   "ok": true
+  },
+  {
+   "question": 1,
+   "kind": "auto",
+   "check": "sales_nov Sheet1!C4",
+   "got": 639,
+   "want": 639,
+   "ok": true
+  },
+  {
+   "question": 1,
+   "kind": "auto",
+   "check": "sales_nov Sheet1!D4",
+   "got": 76,
+   "want": 76,
+   "ok": true
+  },
+  {
+   "question": 1,
+   "kind": "auto",
+   "check": "transcription orders_summary.total_taxes",
+   "got": "0.00",
+   "want": "0.00",
+   "ok": true
+  },
+  {
+   "question": 2,
+   "kind": "auto",
+   "check": "tab «مبيعات شهر 8» exists in مقارنه يوميه المغرب (3) (1).xlsx",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 2,
+   "kind": "auto",
+   "check": "where: cell مبيعات شهر 8!A5 is not empty",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 2,
+   "kind": "auto",
+   "check": "where: cell مبيعات شهر 8!A6 is not empty",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 2,
+   "kind": "auto",
+   "check": "where: cell مبيعات شهر 8!W6 is not empty",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 2,
+   "kind": "auto",
+   "check": "tab «مبيعات شهر 6» exists in مقارنة مبيعات المعاريف اكتوبر (1).xlsx",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 2,
+   "kind": "auto",
+   "check": "where: cell مبيعات شهر 6!D5 is not empty",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 2,
+   "kind": "auto",
+   "check": "where: cell مبيعات شهر 6!D6 is not empty",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 2,
+   "kind": "auto",
+   "check": "weekly مبيعات شهر 8!A5",
+   "got": "نسبه %",
+   "want": "نسبه %",
+   "ok": true
+  },
+  {
+   "question": 2,
+   "kind": "auto",
+   "check": "weekly مبيعات شهر 8!C6",
+   "got": 136170,
+   "want": 136170,
+   "ok": true
+  },
+  {
+   "question": 2,
+   "kind": "auto",
+   "check": "weekly مبيعات شهر 8!G6",
+   "got": 120420,
+   "want": 120420,
+   "ok": true
+  },
+  {
+   "question": 2,
+   "kind": "auto",
+   "check": "weekly مبيعات شهر 8!A6",
+   "got": 1.1307922272047832,
+   "want": 1.13079,
+   "ok": true
+  },
+  {
+   "question": 2,
+   "kind": "auto",
+   "check": "weekly مبيعات شهر 8!Y6",
+   "got": 54510,
+   "want": 54510,
+   "ok": true
+  },
+  {
+   "question": 2,
+   "kind": "auto",
+   "check": "weekly مبيعات شهر 8!AC6",
+   "got": 46485,
+   "want": 46485,
+   "ok": true
+  },
+  {
+   "question": 2,
+   "kind": "auto",
+   "check": "weekly مبيعات شهر 8!W6",
+   "got": 1.1726363343013875,
+   "want": 1.17264,
+   "ok": true
+  },
+  {
+   "question": 2,
+   "kind": "auto",
+   "check": "growth 136170 vs 120420",
+   "got": 13.08,
+   "want": 13.08,
+   "ok": true
+  },
+  {
+   "question": 2,
+   "kind": "auto",
+   "check": "136170 - 120420",
+   "got": 15750,
+   "want": 15750,
+   "ok": true
+  },
+  {
+   "question": 2,
+   "kind": "auto",
+   "check": "cmp_oct مبيعات شهر 6!D5",
+   "got": "نسبه النمو",
+   "want": "نسبه النمو",
+   "ok": true
+  },
+  {
+   "question": 2,
+   "kind": "auto",
+   "check": "cmp_oct مبيعات شهر 6!F6",
+   "got": 84980,
+   "want": 84980,
+   "ok": true
+  },
+  {
+   "question": 2,
+   "kind": "auto",
+   "check": "cmp_oct مبيعات شهر 6!J6",
+   "got": 50125,
+   "want": 50125,
+   "ok": true
+  },
+  {
+   "question": 2,
+   "kind": "auto",
+   "check": "cmp_oct مبيعات شهر 6!D6 formula",
+   "got": "=F6/J6",
+   "want": "=F6/J6",
+   "ok": true
+  },
+  {
+   "question": 2,
+   "kind": "auto",
+   "check": "cmp_nov مبيعات شهر 6!F6",
+   "got": 50125,
+   "want": 50125,
+   "ok": true
+  },
+  {
+   "question": 2,
+   "kind": "auto",
+   "check": "cmp_nov مبيعات شهر 6!J6",
+   "got": 86470,
+   "want": 86470,
+   "ok": true
+  },
+  {
+   "question": 2,
+   "kind": "auto",
+   "check": "cmp_nov مبيعات شهر 6!D6 formula",
+   "got": "=J6/F6",
+   "want": "=J6/F6",
+   "ok": true
+  },
+  {
+   "question": 2,
+   "kind": "auto",
+   "check": "growth 50125 vs 84980",
+   "got": -41.02,
+   "want": -41.02,
+   "ok": true
+  },
+  {
+   "question": 2,
+   "kind": "auto",
+   "check": "growth 86470 vs 50125",
+   "got": 72.51,
+   "want": 72.51,
+   "ok": true
+  },
+  {
+   "question": 3,
+   "kind": "auto",
+   "check": "tab «مبيعات شهر 8» exists in مقارنه يوميه المغرب (3) (1).xlsx",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 3,
+   "kind": "auto",
+   "check": "where: cell مبيعات شهر 8!AL6 is not empty",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 3,
+   "kind": "auto",
+   "check": "where: cell مبيعات شهر 8!AP6 is not empty",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 3,
+   "kind": "auto",
+   "check": "where: cell مبيعات شهر 8!AJ6 is not empty",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 3,
+   "kind": "auto",
+   "check": "where: cell مبيعات شهر 8!AI6 is not empty",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 3,
+   "kind": "auto",
+   "check": "where: cell مبيعات شهر 8!E6 is not empty",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 3,
+   "kind": "auto",
+   "check": "where: cell مبيعات شهر 8!I6 is not empty",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 3,
+   "kind": "auto",
+   "check": "where: cell مبيعات شهر 8!P6 is not empty",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 3,
+   "kind": "auto",
+   "check": "where: cell مبيعات شهر 8!T6 is not empty",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 3,
+   "kind": "auto",
+   "check": "where: cell مبيعات شهر 8!AA6 is not empty",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 3,
+   "kind": "auto",
+   "check": "where: cell مبيعات شهر 8!AE6 is not empty",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 3,
+   "kind": "auto",
+   "check": "weekly مبيعات شهر 8!E6",
+   "got": "2026-11-09",
+   "want": "2026-11-09",
+   "ok": true
+  },
+  {
+   "question": 3,
+   "kind": "auto",
+   "check": "weekly مبيعات شهر 8!I6",
+   "got": "2026-11-02",
+   "want": "2026-11-02",
+   "ok": true
+  },
+  {
+   "question": 3,
+   "kind": "auto",
+   "check": "weekly مبيعات شهر 8!D6",
+   "got": "الثلاثاء",
+   "want": "الثلاثاء",
+   "ok": true
+  },
+  {
+   "question": 3,
+   "kind": "auto",
+   "check": "weekly مبيعات شهر 8!H6",
+   "got": "الثلاثاء",
+   "want": "الثلاثاء",
+   "ok": true
+  },
+  {
+   "question": 3,
+   "kind": "auto",
+   "check": "weekly مبيعات شهر 8!P6",
+   "got": "2026-11-10",
+   "want": "2026-11-10",
+   "ok": true
+  },
+  {
+   "question": 3,
+   "kind": "auto",
+   "check": "weekly مبيعات شهر 8!T6",
+   "got": "2026-11-03",
+   "want": "2026-11-03",
+   "ok": true
+  },
+  {
+   "question": 3,
+   "kind": "auto",
+   "check": "weekly مبيعات شهر 8!AA6",
+   "got": "2026-11-10",
+   "want": "2026-11-10",
+   "ok": true
+  },
+  {
+   "question": 3,
+   "kind": "auto",
+   "check": "weekly مبيعات شهر 8!AE6",
+   "got": "2026-11-03",
+   "want": "2026-11-03",
+   "ok": true
+  },
+  {
+   "question": 3,
+   "kind": "auto",
+   "check": "weekly مبيعات شهر 8!AL6",
+   "got": "2026-11-03",
+   "want": "2026-11-03",
+   "ok": true
+  },
+  {
+   "question": 3,
+   "kind": "auto",
+   "check": "weekly مبيعات شهر 8!AP6",
+   "got": "2026-11-03",
+   "want": "2026-11-03",
+   "ok": true
+  },
+  {
+   "question": 3,
+   "kind": "auto",
+   "check": "weekly مبيعات شهر 8!N6",
+   "got": 52685,
+   "want": 52685,
+   "ok": true
+  },
+  {
+   "question": 3,
+   "kind": "auto",
+   "check": "weekly مبيعات شهر 8!Y6",
+   "got": 54510,
+   "want": 54510,
+   "ok": true
+  },
+  {
+   "question": 3,
+   "kind": "auto",
+   "check": "weekly مبيعات شهر 8!AJ6",
+   "got": 28975,
+   "want": 28975,
+   "ok": true
+  },
+  {
+   "question": 3,
+   "kind": "auto",
+   "check": "weekly مبيعات شهر 8!AI6",
+   "got": 374,
+   "want": 374,
+   "ok": true
+  },
+  {
+   "question": 3,
+   "kind": "auto",
+   "check": "weekly مبيعات شهر 8!C6",
+   "got": 136170,
+   "want": 136170,
+   "ok": true
+  },
+  {
+   "question": 3,
+   "kind": "auto",
+   "check": "sum 52685+54510+28975",
+   "got": 136170,
+   "want": 136170,
+   "ok": true
+  },
+  {
+   "question": 3,
+   "kind": "auto",
+   "check": "weekday of 2026-11-09",
+   "got": "Monday",
+   "want": "Monday",
+   "ok": true
+  },
+  {
+   "question": 3,
+   "kind": "auto",
+   "check": "weekday of 2026-11-02",
+   "got": "Monday",
+   "want": "Monday",
+   "ok": true
+  },
+  {
+   "question": 3,
+   "kind": "auto",
+   "check": "weekday of 2026-11-10",
+   "got": "Tuesday",
+   "want": "Tuesday",
+   "ok": true
+  },
+  {
+   "question": 3,
+   "kind": "auto",
+   "check": "weekday of 2026-11-03",
+   "got": "Tuesday",
+   "want": "Tuesday",
+   "ok": true
+  },
+  {
+   "question": 4,
+   "kind": "auto",
+   "check": "tab «2» exists in يومية بلبن المعاريف شهر نونبر11 (1).xlsx",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 4,
+   "kind": "auto",
+   "check": "where: cell 2!K11 is not empty",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 4,
+   "kind": "auto",
+   "check": "where: cell 2!O14 is not empty",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 4,
+   "kind": "auto",
+   "check": "where: cell 2!F63 is not empty",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 4,
+   "kind": "auto",
+   "check": "tab «2» exists in بيان يومى المغرب ( المعاريف) شهر 11(1).xlsx",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 4,
+   "kind": "auto",
+   "check": "where: cell 2!D12 is not empty",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 4,
+   "kind": "auto",
+   "check": "where: cell 2!I17 is not empty",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 4,
+   "kind": "auto",
+   "check": "where: cell 2!I25 is not empty",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 4,
+   "kind": "auto",
+   "check": "ledger_nov 2!K11",
+   "got": 100,
+   "want": 100,
+   "ok": true
+  },
+  {
+   "question": 4,
+   "kind": "auto",
+   "check": "ledger_nov 2!L11",
+   "got": 200,
+   "want": 200,
+   "ok": true
+  },
+  {
+   "question": 4,
+   "kind": "auto",
+   "check": "ledger_nov 2!K12",
+   "got": 169,
+   "want": 169,
+   "ok": true
+  },
+  {
+   "question": 4,
+   "kind": "auto",
+   "check": "ledger_nov 2!L12",
+   "got": 100,
+   "want": 100,
+   "ok": true
+  },
+  {
+   "question": 4,
+   "kind": "auto",
+   "check": "ledger_nov 2!K14",
+   "got": 2,
+   "want": 2,
+   "ok": true
+  },
+  {
+   "question": 4,
+   "kind": "auto",
+   "check": "ledger_nov 2!L14",
+   "got": 20,
+   "want": 20,
+   "ok": true
+  },
+  {
+   "question": 4,
+   "kind": "auto",
+   "check": "ledger_nov 2!K16",
+   "got": 1,
+   "want": 1,
+   "ok": true
+  },
+  {
+   "question": 4,
+   "kind": "auto",
+   "check": "ledger_nov 2!L16",
+   "got": 5,
+   "want": 5,
+   "ok": true
+  },
+  {
+   "question": 4,
+   "kind": "auto",
+   "check": "ledger_nov 2!M20",
+   "got": 36945,
+   "want": 36945,
+   "ok": true
+  },
+  {
+   "question": 4,
+   "kind": "auto",
+   "check": "sum 20000+16900+40+5",
+   "got": 36945,
+   "want": 36945,
+   "ok": true
+  },
+  {
+   "question": 4,
+   "kind": "auto",
+   "check": "ledger_nov 2!O14 contains",
+   "got": "زيادة قيمتها 36945 ريالً ",
+   "want": "زيادة قيمتها 36945",
+   "ok": true
+  },
+  {
+   "question": 4,
+   "kind": "auto",
+   "check": "ledger_nov 2!D63",
+   "got": "توريد بنك",
+   "want": "توريد بنك",
+   "ok": true
+  },
+  {
+   "question": 4,
+   "kind": "auto",
+   "check": "ledger_nov 2!F63",
+   "got": 36945,
+   "want": 36945,
+   "ok": true
+  },
+  {
+   "question": 4,
+   "kind": "auto",
+   "check": "ledger_nov 2!E45",
+   "got": 0,
+   "want": 0,
+   "ok": true
+  },
+  {
+   "question": 4,
+   "kind": "auto",
+   "check": "ledger_nov 2!E17",
+   "got": 48695,
+   "want": 48695,
+   "ok": true
+  },
+  {
+   "question": 4,
+   "kind": "auto",
+   "check": "ledger_nov 2!F20",
+   "got": 11300,
+   "want": 11300,
+   "ok": true
+  },
+  {
+   "question": 4,
+   "kind": "auto",
+   "check": "ledger_nov 2!G4",
+   "got": "1900-01-01",
+   "want": "1900-01-01",
+   "ok": true
+  },
+  {
+   "question": 4,
+   "kind": "auto",
+   "check": "statement_nov 2!I3",
+   "got": "2026-11-02",
+   "want": "2026-11-02",
+   "ok": true
+  },
+  {
+   "question": 4,
+   "kind": "auto",
+   "check": "statement_nov 2!E12",
+   "got": "توريد بنك",
+   "want": "توريد بنك",
+   "ok": true
+  },
+  {
+   "question": 4,
+   "kind": "auto",
+   "check": "statement_nov 2!D12",
+   "got": 36945,
+   "want": 36945,
+   "ok": true
+  },
+  {
+   "question": 4,
+   "kind": "auto",
+   "check": "statement_nov 2!I17",
+   "got": 3,
+   "want": 3,
+   "ok": true
+  },
+  {
+   "question": 4,
+   "kind": "auto",
+   "check": "statement_nov 2!I20",
+   "got": 11300,
+   "want": 11300,
+   "ok": true
+  },
+  {
+   "question": 4,
+   "kind": "auto",
+   "check": "statement_nov 2!I25",
+   "got": 48695,
+   "want": 48695,
+   "ok": true
+  },
+  {
+   "question": 4,
+   "kind": "auto",
+   "check": "statement_nov 2!D28",
+   "got": 37398,
+   "want": 37398,
+   "ok": true
+  },
+  {
+   "question": 4,
+   "kind": "auto",
+   "check": "37398 - 36945",
+   "got": 453,
+   "want": 453,
+   "ok": true
+  },
+  {
+   "question": 4,
+   "kind": "auto",
+   "check": "expected cash before remittance",
+   "got": 36942,
+   "want": 36942,
+   "ok": true
+  },
+  {
+   "question": 5,
+   "kind": "auto",
+   "check": "tab «7» exists in شيت جرد بلبن فرع المعاريف نوفمبر 2026 (2).xlsx",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 5,
+   "kind": "auto",
+   "check": "where: cell 7!F327 is not empty",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 5,
+   "kind": "auto",
+   "check": "where: cell 7!F325 is not empty",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 5,
+   "kind": "auto",
+   "check": "inv_nov 7!D327",
+   "got": "كيكة هبة دبى صوص كيندر صغيرة",
+   "want": "كيكة هبة دبى صوص كيندر صغيرة",
+   "ok": true
+  },
+  {
+   "question": 5,
+   "kind": "auto",
+   "check": "inv_nov 7!F327",
+   "got": 12,
+   "want": 12,
+   "ok": true
+  },
+  {
+   "question": 5,
+   "kind": "auto",
+   "check": "inv_nov 7!D325",
+   "got": "كيكة هبة دبى شيكولاتة صغيرة",
+   "want": "كيكة هبة دبى شيكولاتة صغيرة",
+   "ok": true
+  },
+  {
+   "question": 5,
+   "kind": "auto",
+   "check": "inv_nov 7!F325",
+   "got": 109,
+   "want": 109,
+   "ok": true
+  },
+  {
+   "question": 5,
+   "kind": "auto",
+   "check": "inv_nov 7!D351",
+   "got": "قشطوطة كراميل",
+   "want": "قشطوطة كراميل",
+   "ok": true
+  },
+  {
+   "question": 5,
+   "kind": "auto",
+   "check": "inv_nov 7!F351",
+   "got": 36,
+   "want": 36,
+   "ok": true
+  },
+  {
+   "question": 5,
+   "kind": "auto",
+   "check": "inv_nov 7!D360",
+   "got": "سوبر الملوك",
+   "want": "سوبر الملوك",
+   "ok": true
+  },
+  {
+   "question": 5,
+   "kind": "auto",
+   "check": "inv_nov 7!F360",
+   "got": 59,
+   "want": 59,
+   "ok": true
+  },
+  {
+   "question": 5,
+   "kind": "auto",
+   "check": "inv_nov 7!D365",
+   "got": "قشطوطة رز ب لبن + مانجا زبده قطع",
+   "want": "قشطوطة رز ب لبن + مانجا زبده قطع",
+   "ok": true
+  },
+  {
+   "question": 5,
+   "kind": "auto",
+   "check": "inv_nov 7!F365",
+   "got": 59,
+   "want": 59,
+   "ok": true
+  },
+  {
+   "question": 5,
+   "kind": "auto",
+   "check": "inv_nov 7!D239",
+   "got": "الغوريلا",
+   "want": "الغوريلا",
+   "ok": true
+  },
+  {
+   "question": 5,
+   "kind": "auto",
+   "check": "inv_nov 7!F239",
+   "got": 80,
+   "want": 80,
+   "ok": true
+  },
+  {
+   "question": 5,
+   "kind": "auto",
+   "check": "inv_nov 7!D288",
+   "got": "المتكندرة صغير",
+   "want": "المتكندرة صغير",
+   "ok": true
+  },
+  {
+   "question": 5,
+   "kind": "auto",
+   "check": "inv_nov 7!F288",
+   "got": 147,
+   "want": 147,
+   "ok": true
+  },
+  {
+   "question": 5,
+   "kind": "auto",
+   "check": "inv_nov tab 7 item quantities (without totals)",
+   "got": 2249,
+   "want": 2249,
+   "ok": true
+  },
+  {
+   "question": 5,
+   "kind": "auto",
+   "check": "inv_nov_corrected tab 7 item quantities (without totals)",
+   "got": 2192,
+   "want": 2192,
+   "ok": true
+  },
+  {
+   "question": 5,
+   "kind": "auto",
+   "check": "inv_nov_corrected 7!F327",
+   "got": 12,
+   "want": 12,
+   "ok": true
+  },
+  {
+   "question": 5,
+   "kind": "auto",
+   "check": "transcription_corrected F327 quantity",
+   "got": 2,
+   "want": 2,
+   "ok": true
+  },
+  {
+   "question": 5,
+   "kind": "auto",
+   "check": "transcription_corrected F327 amount",
+   "got": "100.00",
+   "want": "100.00",
+   "ok": true
+  },
+  {
+   "question": 5,
+   "kind": "auto",
+   "check": "transcription_corrected F351 quantity",
+   "got": 16,
+   "want": 16,
+   "ok": true
+  },
+  {
+   "question": 5,
+   "kind": "auto",
+   "check": "transcription_corrected F360 quantity",
+   "got": 52,
+   "want": 52,
+   "ok": true
+  },
+  {
+   "question": 5,
+   "kind": "auto",
+   "check": "transcription_corrected F365 quantity",
+   "got": 49,
+   "want": 49,
+   "ok": true
+  },
+  {
+   "question": 5,
+   "kind": "auto",
+   "check": "transcription_corrected F239 quantity",
+   "got": 70,
+   "want": 70,
+   "ok": true
+  },
+  {
+   "question": 5,
+   "kind": "auto",
+   "check": "transcription_corrected F288 quantity",
+   "got": 137,
+   "want": 137,
+   "ok": true
+  },
+  {
+   "question": 5,
+   "kind": "manual",
+   "check": "photo read by the team (manual)",
+   "got": "Kinder line «كيكة الهبة دبي صوص كيندر كبير» 2 / 100.00 and the five other lines read on product-mix-bottom-2026-11-07.jpg on 20 Nov 2026.",
+   "want": "read",
+   "ok": true
+  },
+  {
+   "question": 6,
+   "kind": "auto",
+   "check": "tab «Sheet1» exists in 11 طلبية فرع المعاريف شهر (1).xlsx",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 6,
+   "kind": "auto",
+   "check": "where: cell Sheet1!C6 is not empty",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 6,
+   "kind": "auto",
+   "check": "where: cell Sheet1!D12 is not empty",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 6,
+   "kind": "auto",
+   "check": "where: cell Sheet1!D16 is not empty",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 6,
+   "kind": "auto",
+   "check": "where: cell Sheet1!D20 is not empty",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 6,
+   "kind": "auto",
+   "check": "tab «4» exists in شيت جرد بلبن فرع المعاريف نوفمبر 2026 (2).xlsx",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 6,
+   "kind": "auto",
+   "check": "where: cell 4!Q19 is not empty",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 6,
+   "kind": "auto",
+   "check": "where: cell 4!Q10 is not empty",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 6,
+   "kind": "auto",
+   "check": "where: cell 4!Q51 is not empty",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "question": 6,
+   "kind": "auto",
+   "check": "order Sheet1!C6",
+   "got": "04\\11/2026",
+   "want": "04\\11/2026",
+   "ok": true
+  },
+  {
+   "question": 6,
+   "kind": "auto",
+   "check": "order Sheet1!B12",
+   "got": "سلانكاتيه",
+   "want": "سلانكاتيه",
+   "ok": true
+  },
+  {
+   "question": 6,
+   "kind": "auto",
+   "check": "order Sheet1!D12",
+   "got": 80,
+   "want": 80,
+   "ok": true
+  },
+  {
+   "question": 6,
+   "kind": "auto",
+   "check": "order Sheet1!B16",
+   "got": "قشطوطه كراميل",
+   "want": "قشطوطه كراميل",
+   "ok": true
+  },
+  {
+   "question": 6,
+   "kind": "auto",
+   "check": "order Sheet1!D16",
+   "got": 20,
+   "want": 20,
+   "ok": true
+  },
+  {
+   "question": 6,
+   "kind": "auto",
+   "check": "order Sheet1!B20",
+   "got": "الغوريلا",
+   "want": "الغوريلا",
+   "ok": true
+  },
+  {
+   "question": 6,
+   "kind": "auto",
+   "check": "order Sheet1!D20",
+   "got": 50,
+   "want": 50,
+   "ok": true
+  },
+  {
+   "question": 6,
+   "kind": "auto",
+   "check": "inv_nov 4!M19 contains",
+   "got": "سلانكاتيه مجهز (كريم بروليه + قشطوطة كريمة)",
+   "want": "سلانكاتيه",
+   "ok": true
+  },
+  {
+   "question": 6,
+   "kind": "auto",
+   "check": "inv_nov 4!Q19",
+   "got": 80,
+   "want": 80,
+   "ok": true
+  },
+  {
+   "question": 6,
+   "kind": "auto",
+   "check": "inv_nov 4!M10 contains",
+   "got": " قشطوطه كراميل",
+   "want": "قشطوطه كراميل",
+   "ok": true
+  },
+  {
+   "question": 6,
+   "kind": "auto",
+   "check": "inv_nov 4!Q10",
+   "got": 20,
+   "want": 20,
+   "ok": true
+  },
+  {
+   "question": 6,
+   "kind": "auto",
+   "check": "inv_nov 4!M51 contains",
+   "got": "الغوريلا",
+   "want": "الغوريلا",
+   "ok": true
+  },
+  {
+   "question": 6,
+   "kind": "auto",
+   "check": "inv_nov 4!Q51",
+   "got": 50,
+   "want": 50,
+   "ok": true
+  },
+  {
+   "question": 6,
+   "kind": "auto",
+   "check": "weekday of 2026-11-04",
+   "got": "Wednesday",
+   "want": "Wednesday",
+   "ok": true
+  },
+  {
+   "question": 6,
+   "kind": "auto",
+   "check": "weekday of 2026-11-06",
+   "got": "Friday",
+   "want": "Friday",
+   "ok": true
+  },
+  {
+   "question": 6,
+   "kind": "auto",
+   "check": "items received per day (min over days)",
+   "got": {
+    "1": 28,
+    "2": 31,
+    "3": 31,
+    "4": 36,
+    "5": 30,
+    "6": 36,
+    "7": 41,
+    "8": 36,
+    "9": 35,
+    "10": 31,
+    "11": 38,
+    "12": 44,
+    "13": 44
+   },
+   "want": ">= 28",
+   "ok": true
+  },
+  {
+   "question": 0,
+   "kind": "auto",
+   "check": "repository copy of the November inventory is byte-identical to the local original",
+   "got": true,
+   "want": true,
+   "ok": true
+  }
+ ]
+}

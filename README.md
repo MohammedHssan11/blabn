@@ -4,7 +4,7 @@ An internal Arabic and English application for the Maarif branch. It replaces re
 
 ## Current status
 
-Planning and repository setup. No production code has been started yet.
+Phase 1 closed on 21 November 2026 after the source audit, six recorded answers and workbook checks. Phase 2 has the [report contracts](docs/phase2/REPORT_CONTRACTS.md), a bilingual Next.js application with three prototypes on synthetic data, and Supabase migrations; its acceptance checks passed on 21 November 2026 (see the handover record). See the [closure checklist](docs/phase1/CLOSURE.md) and [handover record](docs/HANDOFF.md) for the three scheduled follow-ups.
 
 ## Product scope
 
@@ -37,6 +37,8 @@ Planning and repository setup. No production code has been started yet.
 - [Decisions and backlog](docs/DECISIONS.md)
 - [Source-material map](docs/SOURCE_MATERIAL.md)
 - [Onboarding prompt for Claude or Codex](docs/ARCHITECTURE_REVIEW_PROMPT.md)
+- [Phase 1 source review and Abdo's review page](docs/phase1/README.md)
+- [Handover record](docs/HANDOFF.md)
 
 ## Repository rules
 

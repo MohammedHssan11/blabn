@@ -10,7 +10,7 @@ The first release is a web application in Arabic and English. It covers daily cl
 
 The web application is built with Next.js, React, and TypeScript and can be installed as a PWA. Supabase provides PostgreSQL, authentication, authorization, storage, and migrations. Foodics figures are entered manually in the first release. The web and desktop applications use the same accounts, data, and server-side calculations.
 
-The project is in planning. The Phase 1 source review and Abdo's Excel decision workbook are deliverables for a future phase. This plan records the delivery decisions made after the architecture review.
+Phase 1 closed on 21 November 2026. Development uses Abdo's six recorded answers and the verified source copies. The project owner scheduled the protected legacy ledger review for Phase 4 if needed, the historical order date for Phase 8, and the final confirmation for the Phase 10 walkthrough. Phase 2 begins with the [report contracts](phase2/REPORT_CONTRACTS.md). See the [closure checklist](phase1/CLOSURE.md).
 
 ## Delivery sequence
 
@@ -36,7 +36,7 @@ The project is in planning. The Phase 1 source review and Abdo's Excel decision 
 
 Work through the phases in numbered order. At the end of each phase, run its acceptance checks, rerun any affected checks from earlier phases, and record the results. Fix any issue that causes an acceptance check to fail and rerun the check. Start the next phase only after every acceptance check for the current phase passes. For phases that add or change a user-facing workflow, run that workflow in both Arabic and English.
 
-Phase 1 closes when source coverage is recorded and Abdo's final decision is recorded for every issue. The web foundation starts in Phase 2. Questions about the source material are Phase 1 findings. Later phases apply the recorded decisions and do not reopen them.
+Phase 1 closes when source coverage is recorded, its checks are complete, and every issue has a final outcome: Abdo's decision for the questions that need his knowledge, and the team's documented and verified resolution for the rest, which Abdo can also accept or contest. Questions that a later phase needs are recorded with that phase as their deadline. The web foundation starts in Phase 2. Questions about the source material are Phase 1 findings. Later phases apply the recorded decisions and do not reopen them.
 
 Phase 11 closes only after the full web workflow works in both languages on the branch's devices, the PWA has been installed and tested, and the results from live branch use meet the live-verification criteria in Phase 11's acceptance checks. Desktop work starts in Phase 12.
 
@@ -57,19 +57,21 @@ Phase 11 closes only after the full web workflow works in both languages on the 
 
 ### Goal
 
-Review every available workbook, worksheet, and supporting data source. Give Abdo one Excel workbook that explains each issue, shows what it affects, and lets him decide how to handle it.
+Review every available workbook, worksheet, and supporting data source. Give Abdo a private review page, in plain Arabic, that presents one issue at a time, explains what it affects, and records how he wants it handled. A downloadable spreadsheet (CSV) copy of the same findings and decisions is available from the page.
 
 ### Work
 
 - Inventory all available workbooks, worksheets, and supporting source files, including hidden worksheets, report photos, and transcriptions. Record what each source covers and flag any missing, unreadable, or conflicting material. Confirm the source scope with Abdo at the start of Phase 1 (see [Decisions needed before Phase 1](#decisions-needed-before-phase-1)), and add any confirmed material to the [source-material inventory](SOURCE_MATERIAL.md).
-- Include as findings the source questions already known from planning: the timing of the 36,945 cash entry relative to bank remittance, the duplicated Bourgogne date and aggregate example in SRC-12, differences between the October and November inventory workbooks (SRC-06 and SRC-07), the stale month labels in the monthly comparison tabs, and approval of the 7 November transcription (IMG-04).
+- Include as findings the source questions already known from planning: the timing of the 36,945 cash entry relative to bank remittance, the duplicated Bourgogne date and aggregate example in SRC-12, differences between the October and November inventory workbooks (SRC-06 and SRC-07), the stale month labels in the monthly comparison tabs, and verification of the 7 November transcription (IMG-04), closed through source checks and the project owner's visual confirmation of «دنيا البمبوظه» on 20 November 2026.
 - Check dates, branch labels, units, duplicates, blanks and explicit zeros, formulas and external links, totals and carry-forward, and matching figures across sources. Use independent calculations where possible and distinguish confirmed errors, conflicting evidence, and business rules that need clarification.
 - Record each separate finding with its exact source location. Reference related occurrences of the same issue so Abdo can see the full impact without answering the same question repeatedly. Preserve the original workbooks and evidence.
-- Create the decision workbook for Abdo. Include a source-coverage tab and a findings tab with filters by source, severity, and decision. Explain findings and proposed changes in plain Arabic, with the affected rule or field also named in English so the implementation team can trace it.
-- Walk through the findings with Abdo. For each row, he can approve the proposed change, propose a different change and describe it, or keep the existing behavior. Record the agreed outcome and the date of his decision. When he proposes an alternative, record the final rule once agreed.
+- Publish the source-coverage inventory for the team and build Abdo's review page from the findings register. The page shows only the questions that need his knowledge to close Phase 1, numbered and one at a time, with a list showing each question's status (awaiting an answer, answered, or not sure) and progress. For each question it gives, in everyday Arabic, where the issue is (the original workbook name, tab and cell), what is recorded now, why it needs attention, the proposed change and the question to answer. The team keeps the complete findings register and the technical trace to rules and fields internally.
+- Save each answer as soon as Abdo confirms it, keep it after the page is closed and reopened, and keep earlier answers as history when he changes a response. Abdo returns his answers as a downloaded file (or they are saved directly when the team runs the page locally with him); the team imports them into the decision record in the repository.
+- The team corrects, in copies of the workbooks (originals unchanged), only errors that independent evidence supports, and leaves unproven dates, units, product mappings, recipe dates and definitions as recorded until Abdo decides. Each finding records its status: fully verified correction, partial correction, applied on an assumption, future application rule, deferred to a later phase, or pending Abdo's decision. Check every corrected copy cell by cell against its original for unintended changes and test blanks, explicit zeros and empty periods.
+- For each required question Abdo can approve the proposed change, propose a different change and describe it, keep the existing behavior, or answer "not sure / needs review", which keeps the question unresolved. Questions that cannot be answered by one of these (a date, a before/after) also carry the specific answer he must give. Questions needed only before a later phase are added to the page when that phase approaches; a team correction he wants to contest outside the page is raised with the team, which records the answer in the same decision record. Record the agreed outcome and the date of his decision. When he proposes an alternative that is not fully specified, record the final rule once agreed.
 - Build the report field map from the decisions, including what the system should do when a legacy report is kept as-is. Carry the approved calculation, data-handling, and layout decisions into the later phases and their acceptance checks.
 
-| Column in the findings tab | What it captures |
+| Field in each finding | What it captures |
 |---|---|
 | Finding ID, category, and severity | A stable reference and a way to prioritize review |
 | Source and location | File, sheet and cell range, or an equivalent location in a supporting source |
@@ -85,10 +87,11 @@ Review every available workbook, worksheet, and supporting data source. Give Abd
 
 - The source inventory accounts for every available file and worksheet and records review coverage.
 - Every finding points to its evidence and explains the issue, impact, proposed change, reason, and verification in terms Abdo can follow.
-- Every finding has a recorded final decision from Abdo. Proposed alternatives have an agreed outcome, and keep-as-is decisions describe the behavior to retain.
+- Every finding has a recorded status and final outcome. Questions marked as required for Phase 1 have Abdo's decision; questions for later phases name the phase and owner. Proposed alternatives and contested team corrections have an agreed outcome, and keep-as-is decisions describe the behavior to retain. Every other finding has the team's documented resolution: a verified correction in a copy of the workbook (with what remains for a partial one), a rule for the application, or a deferral to the later phase that owns it.
+- Corrected copies show no unexplained change against the originals, the value checks distinguish independent evidence from checks of the team's own edits, and boundary tests cover blanks, explicit zeros and empty periods. Corrections that cannot be applied (for example on password-protected sheets) are listed as pending.
 - The team can trace decisions affecting scope, calculations, or reports into the field map and the relevant later phase.
-- Abdo receives the decision workbook, reviews it, and confirms the final version and date.
-- The signed-off workbook is stored in the agreed private location and is not edited after sign-off. Later changes create a new version.
+- Abdo receives the review page privately and records his decisions. Record any project-owner deferral of the final confirmation and review the decisions with Abdo at the scheduled acceptance session.
+- The six recorded answers in `docs/phase1/decisions/abdo-decisions.json` are the development baseline. Preserve their history when later results change a decision.
 
 ## Phase 2 — Development foundation and report-source mapping
 
@@ -113,7 +116,7 @@ Create a working development baseline and document where each important report v
 - A developer can create the database from migrations and run the application.
 - Type checks and the production build succeed.
 - A user can switch between Arabic and English. Navigation, forms, and messages render in the correct direction and remain readable on laptop and mobile layouts.
-- The report map links every field to its source record and to any Phase 1 decision that affects it. No field depends on an open source question.
+- The report map links every field to its source record and any decision that affects it. Later-phase fields with open source questions stay marked with the phase in which they need confirmation.
 - Credentials remain outside source control, and original source workbooks and images remain private reference material.
 
 ## Phase 3 — Abdo, staff accounts, and permissions
@@ -164,6 +167,7 @@ The cashier enters the operating day once. The system calculates expected cash, 
 - Enter morning and evening sales, total sales, order count, POS cash, card payments, and approved payment types.
 - Enter expenses, receipts, bank remittances, notes, and their relevant times.
 - Enter cash denominations and quantities, then calculate the counted-cash total.
+- Use the saved close to feed Daily Sales Maarief, the daily statement and Yawmeya. Abdo currently copies values including Visa and totals between his sheets when closing.
 - Maintain separate cash and purchasing-custody ledgers with opening balance, entries, closing balance, and next-day carry-forward.
 - Record cancellation details, including original and replacement order information, times, values, reason, and permitted customer contact information.
 - Calculate average order value, card ratio, expected cash, and shortage or overage.
@@ -175,9 +179,11 @@ The cashier enters the operating day once. The system calculates expected cash, 
 ### Calculation rules
 
 - Expected cash starts with opening cash, adds cash received, and subtracts cash paid out through the time of counting.
+- Abdo counts the drawer before the bank remittance. For the 2 November reference day, expected cash is 48,695 − 11,300 − 453 = 36,942 MAD. The counted 36,945 MAD gives a variance of +3 MAD.
 - Bank remittance is recorded once. Its presentation in each report comes from the report field map.
 - Cash variance equals counted cash minus expected cash.
 - A missing count remains incomplete. An explicit zero is a real count.
+- Daily average order value equals net sales divided by the number of orders. An absent or zero order count leaves the average blank.
 - Period average order value equals period total sales divided by period total orders.
 - Card-ratio denominator and rounding are documented and applied consistently.
 
@@ -188,7 +194,8 @@ The cashier enters the operating day once. The system calculates expected cash, 
 - Simultaneous updates or stale edits produce one saved result or a clear conflict.
 - A failed transaction leaves no partial financial record or partial audit entry.
 - Correcting day one updates the current day-two view while retaining the original export basis.
-- Enter the 2 November reference in the private test environment and reproduce the cash result using the cash-count timing Abdo confirmed in Phase 1. Both timing scenarios also pass with known synthetic inputs.
+- Enter the 2 November reference in the private test environment and reproduce +3 MAD across the daily statement and Yawmeya. Record the later 36,945 MAD remittance once and verify that the count variance stays +3 MAD. Both timing scenarios also pass with known synthetic inputs.
+- Revisit the 318 deferred protected-sheet operations only if validating the daily close requires those legacy worksheets. Use the reviewed cash and ledger rules and the available reference evidence for the app.
 
 ## Phase 5 — Products, units, and recipes
 
@@ -226,6 +233,7 @@ The Storekeeper can see what arrived, what was consumed, expected stock, physica
 - Reconcile Product Mix totals before posting. Prevent overlapping photo portions, detail rows, and section totals from being counted twice.
 - Post theoretical ingredient and packaging consumption through the approved recipe version.
 - Record opening stock, receipts, purchases, transfers, returns, waste, hospitality, deductions, adjustments, and notes as typed stock movements.
+- Record «الوارد» on the actual receipt day, as Abdo does in the inventory sheet. Keep shortages traceable to the stock count and any separately approved adjustment.
 - Link each purchase receipt to its purchase-order line and create one stock movement.
 - Enter a physical count with count time and compare it to expected stock at the same point.
 - Preserve physical-count observations and create a separate approved adjustment where necessary.
@@ -238,7 +246,7 @@ The Storekeeper can see what arrived, what was consumed, expected stock, physica
 - Products, add-ons, and packaging consume correct components without duplicate usage.
 - A blank count is incomplete. An explicit zero participates in variance calculation.
 - Product Mix section totals reconcile without inflating the day's total.
-- Inventory figures follow Abdo's Phase 1 decisions on differences between the October and November inventory workbooks (SRC-06 and SRC-07).
+- Inventory figures follow the Phase 1 outcomes and Abdo's decisions on differences between the October and November inventory workbooks (SRC-06 and SRC-07), including the recipe effective date (P1-32) and units (P1-31).
 
 ## Phase 7 — Cross-branch sales comparison
 
@@ -249,7 +257,7 @@ Abdo can compare Al Quds, Maarif, Bourgogne, and the total across current and pr
 ### Work
 
 - Use SRC-12 as the reference for branch order and current-versus-prior-week layout.
-- Show each branch's current value, prior value, absolute difference, percentage change, dates, and comparison coverage.
+- Show sales and order counts for each branch on the current and previous matching weekday. Show dates, comparison coverage and absolute differences. Label the weekly sales ratio «نسبة الحالي للسابق» and compute it as current sales divided by prior sales. Monthly growth remains a separate measure.
 - Show totals for selected branches and dates only.
 - Pull Maarif figures from saved business-day data.
 - Allow authorized users to enter Al Quds and Bourgogne figures with source, date, user, and revision history.
@@ -257,13 +265,13 @@ Abdo can compare Al Quds, Maarif, Bourgogne, and the total across current and pr
 - Support monthly comparison and same-weekday comparison as separate modes.
 - Show missing days and partial-period coverage before showing a percentage.
 - Show dates before the first live business date as unavailable unless a report uses specifically selected historical sales figures. Keep those figures traceable to their source and scoped to reporting.
-- Apply Abdo's Phase 1 decision on the duplicated Bourgogne date and aggregate example in SRC-12.
+- Use 10 November for the current Bourgogne reference figure of 28,975 MAD and 374 orders. The SRC-12 reference comparison uses 10 and 3 November across branches and in the aggregate.
 - Apply separate permissions for entering, viewing, and exporting comparison data.
 
 ### Acceptance checks
 
 - The three branches and their total appear in the expected order.
-- A current value of 120 and prior value of 100 produces difference of 20 and growth of 20%.
+- A current value of 120 and prior value of 100 produces a difference of 20, a weekly ratio of 120%, and monthly growth of 20% in monthly mode.
 - Missing days and zero prior values display safely with an understandable unavailable percentage.
 - Maarif data entered once appears in closing, reports, and comparison without re-entry.
 - A user without comparison access cannot read Al Quds or Bourgogne figures.
@@ -285,7 +293,8 @@ Abdo can understand a replenishment suggestion, its dates and assumptions, appro
 - Include confirmed incoming stock once, on the date and in the coverage window where it applies.
 - Floor a recommendation at zero. Apply pack size, supplier minimum, shelf-life, and cut-off rules after the branch confirms them.
 - Create purchase orders with suggested quantity, final quantity, override reason, creator, and approver.
-- Default expected receipt date to local creation date plus two calendar days.
+- Default expected receipt to the order business date plus two calendar days. Abdo schedules orders at night and receives deliveries daily. Keep the actual creation timestamp and operational business date separately. Confirm the business-day cutoff before automating the after-midnight assignment.
+- Before mapping historical order dates, confirm whether the date in SRC-01 `Sheet1!C6` means creation or receipt. Keep the original source value for reference until that Phase 8 check.
 - Require a reason for an expected-date override and preserve both dates.
 - Support partial receipts, outstanding quantities, and cancellation of unreceived quantities.
 - Create stock only from saved receipt records tied to order lines.
@@ -293,6 +302,7 @@ Abdo can understand a replenishment suggestion, its dates and assumptions, appro
 ### Acceptance checks
 
 - A Wednesday-evening order receives Friday as the default expected receipt date.
+- For Abdo's planning example, 10 on hand plus 190 confirmed incoming gives 200 projected units available. A forecast of 150 leaves 50 projected units. Actual stock remains tied to recorded receipts and movements.
 - A test case of 20 forecast demand plus 5 safety stock minus 7 usable stock minus 3 eligible incoming stock produces 15.
 - Incoming stock outside the coverage window is excluded.
 - Changing receipt date preserves the original date and reason and shows the effect on planning.
@@ -318,7 +328,7 @@ Abdo can select a day or period and download consistent reports from saved appli
 - Build a server-side Excel export adapter. Select the library after testing Arabic layout, printing, and workbook size.
 - Build clean versioned templates from agreed layouts.
 - Make report selection, export status, and download available in both languages. Use the agreed workbook labels and layout for each template.
-- Produce every value from application calculations and apply Abdo's Phase 1 decisions. Where he kept existing behavior, reproduce the agreed behavior from saved data. Never copy legacy formulas, external links, or cached errors into generated files.
+- Produce every value from application calculations and apply the Phase 1 outcomes and Abdo's decisions. Where he kept existing behavior, reproduce the agreed behavior from saved data. Never copy legacy formulas, external links, or cached errors into generated files.
 - If an approved report needs sales from before the first live business date, Abdo approves the specific figures. An authorized user enters them as reporting-only records with source and date. They never enter ledgers, stock, or carry-forward.
 - Record branch, period, template version, calculation-rule version, source revisions, requester, status, and file location.
 - Permit draft exports only where the user's role allows them.
@@ -362,7 +372,7 @@ Validate the full web workflow with Abdo in Arabic and English before the web ro
 - Financial, stock, replenishment, and comparison results match independent calculations and agreed rules.
 - Each material report difference has a documented resolution.
 - Arabic and English produce the same saved values, calculations, and report figures for the same inputs.
-- Abdo accepts the real workflow and report presentation for branch use.
+- Abdo accepts the real workflow and report presentation for branch use. Confirm the Phase 1 summary during the same walkthrough and record the result and date.
 
 ## Phase 11 — Web installation, rollout, and stability verification
 
@@ -551,12 +561,11 @@ Every phase produces a reviewable usable result. Any change affecting balances o
 
 ## Confirmations needed during delivery
 
-Phase 1 can begin with the material already available once the [decisions needed before Phase 1](#decisions-needed-before-phase-1) are made. Source issues and questions go into Abdo's decision workbook. The table records when the corresponding production rules will be needed.
+Phase 1 can begin with the material already available once the [decisions needed before Phase 1](#decisions-needed-before-phase-1) are made. Source issues and questions go into the Phase 1 findings register and Abdo's review page. The table records when the corresponding production rules will be needed.
 
 | Confirmation | Owner | Needed by | Work that can proceed first |
 |---|---|---|---|
-| Was the 36,945 cash amount on 2 November counted before or after bank remittance? | Abdo | Phase 1 decision | Source inventory and other findings |
-| What corrects the duplicated Bourgogne date and aggregate example in SRC-12? | Abdo | Phase 1 decision | Source inventory and other findings |
+| Is the date in the old order sheet SRC-01 `Sheet1!C6` the order date or the delivery date? | Abdo | Phase 8, before mapping historical order dates | New orders use separate business, expected receipt and actual receipt dates |
 | What is the approved live source for Al Quds and Bourgogne values, and who enters them? | Abdo | Before live branch comparison | Comparison screen and source tracking |
 | What timezone and business-day cut-off apply, and who may close or correct a day? | Abdo and project owner | During Phases 3–4 | Configurable settings and test data |
 | Which product mappings, units, conversions, and recipes are approved? | Abdo or catalog owner | Before live inventory consumption | Catalog and review queue |
@@ -577,7 +586,7 @@ After Phase 1 closes, development can use the reviewed source material. The 2 No
 |---|---|---|
 | Must every finding have a final decision before Phase 2, or may a finding be deferred with an interim rule, an owner, and the phase by which it must be confirmed? | Abdo and project owner | Phase 1 acceptance checks and the Phase 2 start gate |
 | Does "every available source" cover only `source-material/`, or also local archive files and material Abdo has not yet supplied? | Abdo and project owner | Phase 1 source inventory |
-| Where is the signed-off decision workbook stored, and who controls its versions? | Project owner | Phase 1 acceptance checks |
+| Where is the signed-off decision record stored, and who controls its versions? (Proposed: `docs/phase1/decisions/` in the private repository, versioned in Git.) | Project owner | Phase 1 acceptance checks |
 | May real reference days be entered by hand in a private test environment, with automated fixtures kept anonymized? | Abdo and project owner | Working scope, Phases 2, 4, and 10 |
 | Does planning history start at the first live business date, or should selected historical consumption seed the three-month view? | Abdo | Phase 8 and the Phase 11 live cycle |
 
@@ -600,7 +609,7 @@ Direct Foodics integration and a full operational rollout for the other branches
 
 ## Final delivery checklist
 
-- [ ] Every source has been reviewed, and Abdo's decisions are recorded in the findings workbook and reflected in the report field map.
+- [ ] Every source has been reviewed, and Abdo's decisions are recorded in the Phase 1 decision record and reflected in the report field map.
 - [ ] Abdo manages users and permissions in the application.
 - [ ] Abdo can see the first live business date at handover, and live operating records begin on that date with reviewed opening balances.
 - [ ] One saved operating day supplies cash, inventory, replenishment, and reporting workflows.

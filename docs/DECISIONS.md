@@ -10,15 +10,21 @@
 | Staff use least-privilege roles | Staff should not see or change unrestricted financial and configuration data. |
 | Manual entry first | Foodics import/API availability is not yet verified. |
 | Explainable replenishment first | Historical demand plus safety stock is auditable; AI comes only after clean data exists. |
-| Two-calendar-day replenishment lead time | An order created Wednesday evening is planned for Friday receipt, not Thursday. The expected receipt date is explicit and auditable. |
+| Two-calendar-day replenishment lead time | Abdo prepares orders at night for receipt two days after the order business date, and deliveries occur daily. Record when the order was created, when it is expected, and when it arrived. |
 | Three-month same-weekday planning view | Demand is reviewed against matching weekdays across prior weeks, which is more useful than comparing unrelated weekdays. |
 | Camera attendance later | Operational closing, inventory, and reports are the MVP priority. |
 | Web first, then desktop, then camera attendance | The Arabic and English web release is installed, tested end to end, and verified in live use before desktop work starts. Camera attendance follows the desktop release. |
 | Arabic and English interface | Abdo and the staff work in both languages. Both languages produce the same saved values and report figures. |
 | Three-branch sales comparison as reporting data | Al Quds, Maarif, Bourgogne, and their total are compared. Al Quds and Bourgogne figures are entered by authorized users; this is not an operational rollout to those branches. |
-| Phase 1 source review before development | Every available workbook, worksheet, and supporting source is reviewed, and Abdo's decision on every finding is recorded before the web foundation starts. |
+| Phase 1 source review before development | Review every available source, record required decisions, and assign deferrals to the phase that needs them before starting the web foundation. |
 | Abdo selects the first live business date at handover | Old workbooks are references and test inputs. Selected historical sales figures are added later only when a report needs them. |
 | Keep approved reference material in the private repository | Legacy workbooks and report images used for development are tracked privately. Do not publish them or add unrelated archives, audio, credentials, or biometric data. |
+| Phase 1 decisions are collected through a private Arabic review page | Abdo returned his exported JSON with six answers. The team's [decision record](phase1/decisions/DECISIONS_SUMMARY.md) preserves his choices and comments. |
+| Cash drawer count before bank remittance | Use the cash movements through the time of the count for both the daily statement and Yawmeya. The 2 November reference reconciles to +3 MAD. |
+| Average order value and weekly comparison | Net sales divided by orders is the daily average. The weekly comparison retains current divided by prior as a ratio and pairs the same weekday across branches. Abdo confirmed the Bourgogne reference figure for 10 November. |
+| Corrected workbook copies follow Abdo's answers | On 21 November the Daily Sales copies were set to net sales ÷ orders for every day, and the weekly comparison copy to one date pair (10 and 3 November) for every branch and the total. The weekly ratio and the 7 November Kinder quantity of 12 stay as recorded, as Abdo chose. The legacy ledger cash message is not rewritten; the application computes the variance at the time of the count. |
+| Defer interpretation of the historical order-sheet date to Phase 8 | The project owner deferred the question about SRC-01 `Sheet1!C6` on 21 November. Confirm it before mapping historical order dates. The two-day lead time and the daily receipt workflow are recorded now. |
+| Close Phase 1 with the six recorded answers | The owner deferred the 318 legacy ledger edits until Phase 4 if needed, and moved Abdo's final confirmation to the Phase 10 walkthrough. Use the reviewed rules as the Phase 2 development baseline. |
 
 ## Open decisions
 

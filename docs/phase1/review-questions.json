@@ -1,0 +1,559 @@
+{
+  "schema": "blabn-phase1-review-questions/1",
+  "questions_version": "2026-11-20.2",
+  "note": "Customer-facing content of the six required questions on Abdo's review page (generated page: review/abdo-review.html). Technical register: findings.json. Every cited workbook, tab and cell is checked against the original files by scripts/phase1/review/verify_questions.py (result: review-locations-check.json). Do not put finding IDs, code or technical status words in the Arabic text; the builder rejects them.",
+  "usage_ar": [
+    "اقرأ مكان المشكلة والشرح والمقترح.",
+    "اختار إجابتك، ولو عندك تعديل اكتبه.",
+    "اضغط «حفظ الإجابة»، وبعد ما تخلص نزّل ملف الردود وابعتُه لنا."
+  ],
+  "files": {
+    "sales_oct": {
+      "name_ar": "Daily Sales Maarief oct.xlsx",
+      "repo": "source-material/workbooks/daily-sales-oct-2026.xlsx",
+      "name_source": "Original name recorded in archive/legacy/analysis/analysis/workbook_index.json; matched to SRC-02 by sheet name and cell contents (12 of 12 heading cells)."
+    },
+    "sales_nov": {
+      "name_ar": "Daily Sales Maarief  NOV(1).xlsx",
+      "repo": "source-material/workbooks/daily-sales-nov-2026.xlsx",
+      "name_source": "Same index; matched to SRC-03 (12 of 12 heading cells). The name has two spaces after Maarief, as recorded."
+    },
+    "cmp_oct": {
+      "name_ar": "مقارنة مبيعات المعاريف اكتوبر (1).xlsx",
+      "repo": "source-material/workbooks/sales-comparison-oct-2026.xlsx",
+      "name_source": "Same index; matched to SRC-08 (12 of 12 heading cells)."
+    },
+    "cmp_nov": {
+      "name_ar": "مقارنة مبيعات المعاريف نوفمبر(1).xlsx",
+      "repo": "source-material/workbooks/sales-comparison-nov-2026.xlsx",
+      "name_source": "Same index; matched to SRC-09 (12 of 12 heading cells)."
+    },
+    "weekly": {
+      "name_ar": "مقارنه يوميه المغرب (3) (1).xlsx",
+      "repo": "source-material/workbooks/مقارنه يوميه المغرب (3) (1).xlsx",
+      "name_source": "SRC-12: the repository file keeps its original name."
+    },
+    "ledger_nov": {
+      "name_ar": "يومية بلبن المعاريف شهر نونبر11 (1).xlsx",
+      "repo": "source-material/workbooks/daily-ledger-nov-2026.xlsx",
+      "name_source": "Original name recorded in the same index; matched to SRC-11 (12 of 12 heading cells)."
+    },
+    "statement_nov": {
+      "name_ar": "بيان يومى المغرب ( المعاريف) شهر 11(1).xlsx",
+      "repo": "source-material/workbooks/daily-statement-nov-2026.xlsx",
+      "name_source": "Original name recorded in the same index; matched to SRC-05 by the month in the name and the sheet count (39); day sheet 2 carries the date 2 Nov 2026."
+    },
+    "inv_nov": {
+      "name_ar": "شيت جرد بلبن فرع المعاريف نوفمبر 2026 (2).xlsx",
+      "repo": "source-material/workbooks/inventory-nov-2026-days-1-13.xlsx",
+      "name_source": "LOC-01 in the source inventory (file in the local 'abdo temp' folder); the repository copy (SRC-13) is byte-identical."
+    },
+    "order": {
+      "name_ar": "11 طلبية فرع المعاريف شهر (1).xlsx",
+      "repo": "source-material/workbooks/replenishment-order-nov-2026.xlsx",
+      "name_source": "Original name recorded in the same index (as recorded, the number 11 comes first); matched to SRC-01 (12 of 12 heading cells)."
+    }
+  },
+  "retired_questions": [
+    {
+      "finding": "P1-02",
+      "retired_on": "2026-11-20",
+      "reason": "Source verified; project owner confirmed the label دنيا البمبوظه. Retained to validate any previously saved answers.",
+      "options": [
+        {
+          "key": "approve",
+          "maps_to": "accept",
+          "label_ar": "أوافق على المقترح",
+          "detail_ar": "الأرقام مطابقة، واسم القسم الرابع «دنيا البمبوظه».",
+          "en": "Approve the transcription (M04 = «دنيا البمبوظه»)"
+        },
+        {
+          "key": "other",
+          "maps_to": "alternative",
+          "label_ar": "أقترح تعديلًا آخر",
+          "detail_ar": "فيه رقم أو اسم مش مطابق — اكتبه تحت.",
+          "needs_text": true,
+          "needs_agreement": true,
+          "en": "Propose a change to the transcription (text)"
+        },
+        {
+          "key": "keep",
+          "maps_to": "keep",
+          "label_ar": "نُبقي الوضع الحالي",
+          "detail_ar": "التفريغ يفضل غير معتمد، ونستخدم الصور كمرجع بس.",
+          "en": "Keep unapproved; use the photos only as reference"
+        },
+        {
+          "key": "unsure",
+          "maps_to": "unsure",
+          "label_ar": "مش متأكد / محتاج أراجع",
+          "detail_ar": "هنسيب السؤال مفتوح لحد ما ترجعلنا.",
+          "en": "Not sure — unresolved"
+        }
+      ],
+      "extras": []
+    }
+  ],
+  "questions": [
+    {
+      "n": 1,
+      "finding": "P1-03",
+      "title_ar": "متوسط الطلب: بيتحسب إزاي؟",
+      "where": [
+        {
+          "file_ar": "Daily Sales Maarief oct.xlsx",
+          "file": "sales_oct",
+          "tab_ar": "ورقة «Sheet1»",
+          "cells": [
+            {"ref": "D3:D32", "ar": "عمود «متوسط الطلب» (D3 ليوم 1 أكتوبر)"},
+            {"ref": "B3, C3", "ar": "مبيعات وطلبات 1 أكتوبر"}
+          ]
+        },
+        {
+          "file_ar": "Daily Sales Maarief  NOV(1).xlsx",
+          "file": "sales_nov",
+          "tab_ar": "ورقة «Sheet1»",
+          "cells": [
+            {"ref": "D4", "ar": "متوسط الطلب ليوم 2 نوفمبر"}
+          ]
+        },
+        {
+          "file_ar": "تقرير Foodics ليوم 7 نوفمبر (الصور)",
+          "tab_ar": "مش ملف Excel",
+          "cells": [
+            {"ref": "", "ar": "خانة متوسط الطلب في ملخص الطلبات"}
+          ]
+        }
+      ],
+      "now_ar": [
+        "1 أكتوبر: المبيعات 50,125 والطلبات 632، والمكتوب في الخانة 72.10.",
+        "المبيعات ÷ الطلبات = 79.31، والمكتوب 72.10 هو 79.31 ÷ 1.1.",
+        "نفس الشيء في 26 يومًا (من 1 إلى 26 أكتوبر؛ يومان منهم الرقم مقرّب لرقم صحيح).",
+        "أيام 28 و29 و30 أكتوبر المكتوب = المبيعات ÷ الطلبات من غير قسمة على 1.1.",
+        "27 أكتوبر المكتوب 73.50، ومش مطابق لأي طريقة (المبيعات ÷ الطلبات = 76.08).",
+        "2 نوفمبر: 48,695 ÷ 639 = 76.21، والمكتوب 76.",
+        "Foodics يوم 7 نوفمبر: 100,605 ÷ 1,185 = 84.90 (الضريبة فيه صفر)."
+      ],
+      "why_ar": [
+        "الطريقتين بتدي أرقام مختلفة بحوالي 10%، فمتوسط أكتوبر هيظهر أقل لو البرنامج نسخ القسمة على 1.1.",
+        "مفيش في الملفات أي إشارة لسبب القسمة على 1.1 (ممكن تكون «من غير 10%»، لكن ده مش مكتوب). هنعتبر السبب غير مؤكد لحد ما تشرحه إنت."
+      ],
+      "proposal_ar": [
+        "البرنامج يحسب متوسط الطلب = المبيعات ÷ عدد الطلبات، بنفس الطريقة كل يوم.",
+        "لو عايز رقم «من غير 10%»، يظهر كمؤشر منفصل باسم واضح."
+      ],
+      "example": {"before_ar": "1 أكتوبر في الملف: 72.10", "after_ar": "1 أكتوبر بعد الاقتراح: 79.31 (50,125 ÷ 632)"},
+      "table": null,
+      "ask_ar": "عايز متوسط الطلب يتحسب إزاي؟ ولو كنت بتقسم على 1.1، ليه؟",
+      "text_prompt_ar": "اكتب هنا الطريقة اللي تحبها، وسبب القسمة على 1.1 لو كنت بتستخدمها.",
+      "options": [
+        {"key": "sales_over_orders", "maps_to": "accept", "label_ar": "أوافق على المقترح", "detail_ar": "المبيعات ÷ عدد الطلبات في كل الأيام (زي Foodics).", "en": "Average = net sales ÷ orders (Foodics definition)"},
+        {"key": "other", "maps_to": "alternative", "label_ar": "أقترح تعديلًا آخر", "detail_ar": "اكتب الطريقة اللي تحبها، وليه الـ1.1.", "needs_text": true, "needs_agreement": true, "en": "Other definition (text, incl. reason for 1.1)"},
+        {"key": "keep_div_1_1", "maps_to": "keep", "label_ar": "نُبقي الوضع الحالي", "detail_ar": "نقسم على 1.1 زي أكتوبر — اكتب إمتى نقسم وإمتى لا، وليه.", "needs_text": true, "en": "Keep dividing by 1.1 as in October (text: when and why)"},
+        {"key": "unsure", "maps_to": "unsure", "label_ar": "مش متأكد / محتاج أراجع", "detail_ar": "هنسيب السؤال مفتوح لحد ما ترجعلنا.", "en": "Not sure — unresolved"}
+      ],
+      "extras": [],
+      "checks": [
+        {"file": "sales_oct", "sheet": "Sheet1", "cell": "D2", "equals": "متوسط الطلب"},
+        {"file": "sales_oct", "sheet": "Sheet1", "cell": "B3", "equals": 50125},
+        {"file": "sales_oct", "sheet": "Sheet1", "cell": "C3", "equals": 632},
+        {"file": "sales_oct", "sheet": "Sheet1", "cell": "D3", "equals": 72.1},
+        {"file": "sales_oct", "sheet": "Sheet1", "cell": "B29", "equals": 46635},
+        {"file": "sales_oct", "sheet": "Sheet1", "cell": "C29", "equals": 613},
+        {"file": "sales_oct", "sheet": "Sheet1", "cell": "D29", "equals": 73.5},
+        {"file": "sales_oct", "sheet": "Sheet1", "cell": "D30", "equals": 80.7},
+        {"computed": "oct_average_pattern", "equals": {"div_1_1_exact": 24, "div_1_1_rounded_to_whole": 2, "plain": 3, "neither": 1}},
+        {"computed": "round2", "num": 50125, "den": 632, "equals": 79.31},
+        {"computed": "round2_div", "num": 50125, "den": 632, "by": 1.1, "equals": 72.1},
+        {"computed": "round2", "num": 46635, "den": 613, "equals": 76.08},
+        {"computed": "round2", "num": 48695, "den": 639, "equals": 76.21},
+        {"computed": "round2", "num": 100605, "den": 1185, "equals": 84.9},
+        {"file": "sales_nov", "sheet": "Sheet1", "cell": "A4", "equals": "2026-11-02"},
+        {"file": "sales_nov", "sheet": "Sheet1", "cell": "B4", "equals": 48695},
+        {"file": "sales_nov", "sheet": "Sheet1", "cell": "C4", "equals": 639},
+        {"file": "sales_nov", "sheet": "Sheet1", "cell": "D4", "equals": 76},
+        {"json": "transcription", "path": "orders_summary.total_taxes", "equals": "0.00"}
+      ]
+    },
+    {
+      "n": 2,
+      "finding": "P1-08",
+      "title_ar": "النسبة في المقارنة الأسبوعية: نسبة ولا نمو؟",
+      "where": [
+        {
+          "file_ar": "مقارنه يوميه المغرب (3) (1).xlsx",
+          "file": "weekly",
+          "tab_ar": "ورقة «مبيعات شهر 8»",
+          "cells": [
+            {"ref": "A5, A6", "ar": "عمود «نسبه %» للإجمالي (A6)"},
+            {"ref": "W6", "ar": "نسبة فرع المعاريف"}
+          ]
+        },
+        {
+          "file_ar": "مقارنة مبيعات المعاريف اكتوبر (1).xlsx — ومقارنة مبيعات المعاريف نوفمبر(1).xlsx",
+          "file": "cmp_oct",
+          "tab_ar": "ورقة «مبيعات شهر 6»",
+          "cells": [
+            {"ref": "D5, D6", "ar": "عمود «نسبه النمو» (D6 ليوم 1)"}
+          ]
+        }
+      ],
+      "now_ar": [
+        "الأسبوعي — الإجمالي: المبيعات الحالية 136,170 والسابقة 120,420، والمكتوب في «نسبه %» = 113%.",
+        "الأسبوعي — المعاريف: 54,510 مقابل 46,485، والمكتوب 117%.",
+        "مقارنة أكتوبر، يوم 1: «نسبه النمو» = 170% (84,980 ÷ 50,125 — مقلوبة: المبيعات نزلت وظهرت كأنها زادت).",
+        "مقارنة نوفمبر، يوم 1: «نسبه النمو» = 173% (86,470 ÷ 50,125)."
+      ],
+      "why_ar": [
+        "النمو معناه الزيادة عن الفترة السابقة: (الحالي − السابق) ÷ السابق.",
+        "مثال بسيط: لو بعنا 120 مقابل 100 قبلها، نسبة الحالي للسابق = 120%، لكن النمو = 20%.",
+        "الملفات بتعرض الحالي ÷ السابق من غير ما تطرح الـ100%، وأكتوبر محسوبة بالعكس. فالاسم «نسبه النمو» والرقم المعروض مش بيقولوا نفس الشيء."
+      ],
+      "proposal_ar": [
+        "في مقارنتي أكتوبر ونوفمبر (العمود اسمه «نسبه النمو») عدّلنا في النسخة المصححة: أكتوبر −41.02%، نوفمبر +72.51%.",
+        "في المقارنة الأسبوعية نعرض عمودين: «الفرق» (الحالي − السابق) و«النمو %»."
+      ],
+      "example": {"before_ar": "الإجمالي الأسبوعي في الملف: 113%", "after_ar": "الفرق +15,750 درهم، والنمو +13.08%"},
+      "table": null,
+      "ask_ar": "في المقارنة الأسبوعية، تحب تشوف «نسبة الحالي للسابق» (113%) ولا «النمو» (+13.08%)؟",
+      "text_prompt_ar": "لو عايز شكل تاني (مثلًا الاتنين مع بعض)، اكتبه هنا.",
+      "options": [
+        {"key": "growth", "maps_to": "accept", "label_ar": "أوافق على المقترح", "detail_ar": "نعرض «الفرق» و«النمو %» (+13.08% للإجمالي).", "en": "Weekly report shows difference and growth %"},
+        {"key": "other", "maps_to": "alternative", "label_ar": "أقترح تعديلًا آخر", "detail_ar": "اكتب الشكل اللي تحبه.", "needs_text": true, "needs_agreement": true, "en": "Other display (text)"},
+        {"key": "keep_ratio", "maps_to": "keep", "label_ar": "نُبقي الوضع الحالي", "detail_ar": "نكمل نعرض «نسبة الحالي للسابق» (113%) باسم واضح.", "en": "Keep the current/prior ratio (113%) with a clear label"},
+        {"key": "unsure", "maps_to": "unsure", "label_ar": "مش متأكد / محتاج أراجع", "detail_ar": "هنسيب السؤال مفتوح لحد ما ترجعلنا.", "en": "Not sure — unresolved"}
+      ],
+      "extras": [],
+      "checks": [
+        {"file": "weekly", "sheet": "مبيعات شهر 8", "cell": "A5", "equals": "نسبه %"},
+        {"file": "weekly", "sheet": "مبيعات شهر 8", "cell": "C6", "equals": 136170},
+        {"file": "weekly", "sheet": "مبيعات شهر 8", "cell": "G6", "equals": 120420},
+        {"file": "weekly", "sheet": "مبيعات شهر 8", "cell": "A6", "approx": 1.13079, "tol": 0.00001},
+        {"file": "weekly", "sheet": "مبيعات شهر 8", "cell": "Y6", "equals": 54510},
+        {"file": "weekly", "sheet": "مبيعات شهر 8", "cell": "AC6", "equals": 46485},
+        {"file": "weekly", "sheet": "مبيعات شهر 8", "cell": "W6", "approx": 1.17264, "tol": 0.00001},
+        {"computed": "growth_pct", "cur": 136170, "prev": 120420, "equals": 13.08},
+        {"computed": "diff", "cur": 136170, "prev": 120420, "equals": 15750},
+        {"file": "cmp_oct", "sheet": "مبيعات شهر 6", "cell": "D5", "equals": "نسبه النمو"},
+        {"file": "cmp_oct", "sheet": "مبيعات شهر 6", "cell": "F6", "equals": 84980},
+        {"file": "cmp_oct", "sheet": "مبيعات شهر 6", "cell": "J6", "equals": 50125},
+        {"file": "cmp_oct", "sheet": "مبيعات شهر 6", "cell": "D6", "formula": "=F6/J6"},
+        {"file": "cmp_nov", "sheet": "مبيعات شهر 6", "cell": "F6", "equals": 50125},
+        {"file": "cmp_nov", "sheet": "مبيعات شهر 6", "cell": "J6", "equals": 86470},
+        {"file": "cmp_nov", "sheet": "مبيعات شهر 6", "cell": "D6", "formula": "=J6/F6"},
+        {"computed": "growth_pct", "cur": 50125, "prev": 84980, "equals": -41.02},
+        {"computed": "growth_pct", "cur": 86470, "prev": 50125, "equals": 72.51}
+      ]
+    },
+    {
+      "n": 3,
+      "finding": "P1-10",
+      "title_ar": "المقارنة الأسبوعية: رقم بورجون كان ليوم كام؟",
+      "where": [
+        {
+          "file_ar": "مقارنه يوميه المغرب (3) (1).xlsx",
+          "file": "weekly",
+          "tab_ar": "ورقة «مبيعات شهر 8»",
+          "cells": [
+            {"ref": "AL6, AP6", "ar": "تاريخ بورجون: الأسبوع الحالي والسابق"},
+            {"ref": "AJ6, AI6", "ar": "مبيعات وطلبات بورجون (الحالي)"},
+            {"ref": "E6, I6", "ar": "تاريخ الإجمالي: الحالي والسابق"},
+            {"ref": "P6, T6 و AA6, AE6", "ar": "تواريخ القدس والمعاريف"}
+          ]
+        }
+      ],
+      "now_ar": [
+        "القدس والمعاريف: الأسبوع الحالي 10 نوفمبر والسابق 3 نوفمبر.",
+        "بورجون: الحالي 3 نوفمبر والسابق 3 نوفمبر (نفس اليوم مكرر).",
+        "الإجمالي: الحالي 9 نوفمبر والسابق 2 نوفمبر، ومكتوب جنبهم «الثلاثاء» مع إن 9 و2 نوفمبر 2026 يوم اثنين.",
+        "الإجمالي الحالي 136,170 = القدس 52,685 + المعاريف 54,510 + بورجون 28,975 (374 طلب)."
+      ],
+      "why_ar": [
+        "لو رقم بورجون ليوم 3 نوفمبر، يبقى الإجمالي بيجمع أيام مختلفة. ولو ليوم 10 نوفمبر، يبقى التاريخ المكتوب هو الغلط.",
+        "مفيش ملف تاني عندنا نطابق بيه أرقام بورجون، فمش هنخمن التاريخ."
+      ],
+      "proposal_ar": [
+        "نستخدم تاريخين بس لكل الفروع والإجمالي: الأسبوع الحالي والأسبوع السابق.",
+        "الإجمالي يتجمع من نفس التواريخ فقط، ولو فرع ناقص نكتب إن الإجمالي ناقص.",
+        "التواريخ نفسها بنحددها بعد ما تقولنا رقم بورجون كان ليوم كام."
+      ],
+      "example": {"before_ar": "بورجون: 3/11 مقابل 3/11. الإجمالي: 9/11 مقابل 2/11.", "after_ar": "كل الفروع والإجمالي: تاريخ واحد للحالي وتاريخ واحد للسابق (بعد ما تأكد التاريخ)."},
+      "table": null,
+      "ask_ar": "رقم بورجون 28,975 (374 طلب) كان ليوم كام؟",
+      "text_prompt_ar": "لو رقم بورجون للأسبوع السابق أو تاريخ الإجمالي مختلف، اكتبه هنا.",
+      "options": [
+        {"key": "bourgogne_10_nov", "maps_to": "accept", "label_ar": "أوافق على المقترح", "detail_ar": "رقم بورجون كان ليوم 10 نوفمبر (زي القدس والمعاريف)، ونوحد التواريخ.", "en": "Bourgogne figure is for 10 Nov; use one date pair (10 Nov / 3 Nov)"},
+        {"key": "bourgogne_3_nov", "maps_to": "alternative", "label_ar": "أقترح تعديلًا آخر", "detail_ar": "رقم بورجون كان ليوم 3 نوفمبر (يعني الإجمالي كان بيجمع يومين مختلفين).", "needs_agreement": false, "en": "Bourgogne figure is for 3 Nov"},
+        {"key": "other_date", "maps_to": "alternative", "label_ar": "أقترح تعديلًا آخر", "detail_ar": "تاريخ تاني — اكتبه تحت.", "needs_text": true, "needs_agreement": true, "en": "Another date (text)"},
+        {"key": "keep", "maps_to": "keep", "label_ar": "نُبقي الوضع الحالي", "detail_ar": "الملف يفضل مرجع شكل بس، ومش هنستخدم أرقامه في الاختبار.", "en": "Keep as layout reference only; do not use its figures"},
+        {"key": "unsure", "maps_to": "unsure", "label_ar": "مش متأكد / محتاج أراجع", "detail_ar": "هنسيب السؤال مفتوح لحد ما ترجعلنا.", "en": "Not sure — unresolved"}
+      ],
+      "extras": [],
+      "checks": [
+        {"file": "weekly", "sheet": "مبيعات شهر 8", "cell": "E6", "equals": "2026-11-09"},
+        {"file": "weekly", "sheet": "مبيعات شهر 8", "cell": "I6", "equals": "2026-11-02"},
+        {"file": "weekly", "sheet": "مبيعات شهر 8", "cell": "D6", "equals": "الثلاثاء"},
+        {"file": "weekly", "sheet": "مبيعات شهر 8", "cell": "H6", "equals": "الثلاثاء"},
+        {"file": "weekly", "sheet": "مبيعات شهر 8", "cell": "P6", "equals": "2026-11-10"},
+        {"file": "weekly", "sheet": "مبيعات شهر 8", "cell": "T6", "equals": "2026-11-03"},
+        {"file": "weekly", "sheet": "مبيعات شهر 8", "cell": "AA6", "equals": "2026-11-10"},
+        {"file": "weekly", "sheet": "مبيعات شهر 8", "cell": "AE6", "equals": "2026-11-03"},
+        {"file": "weekly", "sheet": "مبيعات شهر 8", "cell": "AL6", "equals": "2026-11-03"},
+        {"file": "weekly", "sheet": "مبيعات شهر 8", "cell": "AP6", "equals": "2026-11-03"},
+        {"file": "weekly", "sheet": "مبيعات شهر 8", "cell": "N6", "equals": 52685},
+        {"file": "weekly", "sheet": "مبيعات شهر 8", "cell": "Y6", "equals": 54510},
+        {"file": "weekly", "sheet": "مبيعات شهر 8", "cell": "AJ6", "equals": 28975},
+        {"file": "weekly", "sheet": "مبيعات شهر 8", "cell": "AI6", "equals": 374},
+        {"file": "weekly", "sheet": "مبيعات شهر 8", "cell": "C6", "equals": 136170},
+        {"computed": "sum", "values": [52685, 54510, 28975], "equals": 136170},
+        {"computed": "weekday", "date": "2026-11-09", "equals": "Monday"},
+        {"computed": "weekday", "date": "2026-11-02", "equals": "Monday"},
+        {"computed": "weekday", "date": "2026-11-10", "equals": "Tuesday"},
+        {"computed": "weekday", "date": "2026-11-03", "equals": "Tuesday"}
+      ]
+    },
+    {
+      "n": 4,
+      "finding": "P1-13",
+      "title_ar": "الخزينة: بتتعد قبل التوريد للبنك ولا بعده؟",
+      "where": [
+        {
+          "file_ar": "يومية بلبن المعاريف شهر نونبر11 (1).xlsx",
+          "file": "ledger_nov",
+          "tab_ar": "ورقة «2» (يوم 2 نوفمبر حسب بيان نفس اليوم؛ تاريخ ورقة اليومية نفسها فاضي)",
+          "cells": [
+            {"ref": "K11:M20", "ar": "عدّ الفئات (الإجمالي M20)"},
+            {"ref": "O14", "ar": "رسالة الخزينة"},
+            {"ref": "F63", "ar": "سطر «توريد بنك»"}
+          ]
+        },
+        {
+          "file_ar": "بيان يومى المغرب ( المعاريف) شهر 11(1).xlsx",
+          "file": "statement_nov",
+          "tab_ar": "ورقة «2» (التاريخ المكتوب فيها 2 نوفمبر 2026)",
+          "cells": [
+            {"ref": "D12", "ar": "«توريد بنك»"},
+            {"ref": "I17", "ar": "«اوفركاش او عجز»"},
+            {"ref": "I25", "ar": "إيراد السيستم"}
+          ]
+        }
+      ],
+      "now_ar": [
+        "اليومية: عدّ الخزينة 36,945 (100 ورقة من فئة 200، و169 من فئة 100، وورقتان من فئة 20، وورقة من فئة 5).",
+        "في نفس اليوم «توريد بنك» = 36,945، ورسالة اليومية: «زيادة قيمتها 36945».",
+        "البيان: «اوفركاش» = 3 دراهم.",
+        "المبيعات 48,695، الفيزا 11,300، والمصروفات غير التوريد 453."
+      ],
+      "why_ar": [
+        "اليومية خصمت التوريد قبل المقارنة، فالمتوقع في الخزينة بقى صفر وظهر العد كله كزيادة.",
+        "لو العد حصل قبل التوريد: المتوقع = 48,695 − 11,300 − 453 = 36,942، والمعدود 36,945، يعني زيادة 3 دراهم (ودي نفس الـ3 المكتوبة في البيان).",
+        "لو العد حصل بعد التوريد: الزيادة تبقى 36,945.",
+        "مفيش وقت مكتوب للعد في أي ملف، فمش هنخمن."
+      ],
+      "proposal_ar": [
+        "البرنامج يسجل وقت العد ووقت التوريد.",
+        "الكاش المتوقع يشمل بس الحركات اللي حصلت قبل وقت العد.",
+        "ليوم 2 نوفمبر: لو العد كان قبل التوريد، النتيجة زيادة 3 دراهم."
+      ],
+      "example": {"before_ar": "في الملف: «زيادة قيمتها 36945».", "after_ar": "لو العد قبل التوريد: متوقع 36,942، معدود 36,945، زيادة 3 دراهم."},
+      "table": null,
+      "ask_ar": "الخزينة بتتعد قبل التوريد للبنك ولا بعده؟",
+      "text_prompt_ar": "اكتب هنا أي توضيح (مثلًا العد بيحصل في وقت معين من اليوم).",
+      "options": [
+        {"key": "before_remittance", "maps_to": "accept", "label_ar": "أوافق على المقترح", "detail_ar": "العد بيحصل قبل التوريد للبنك.", "en": "Count happens before the bank remittance"},
+        {"key": "after_remittance", "maps_to": "alternative", "label_ar": "أقترح تعديلًا آخر", "detail_ar": "العد بيحصل بعد التوريد للبنك — اكتب ليه الـ36,945 زيادة فعلًا.", "needs_text": true, "needs_agreement": false, "en": "Count happens after the remittance (text)"},
+        {"key": "varies", "maps_to": "alternative", "label_ar": "أقترح تعديلًا آخر", "detail_ar": "بيختلف من يوم ليوم أو حاجة تانية — اكتبها.", "needs_text": true, "needs_agreement": true, "en": "Varies by day / other (text)"},
+        {"key": "keep", "maps_to": "keep", "label_ar": "نُبقي الوضع الحالي", "detail_ar": "نخصم التوريد دايمًا قبل المقارنة (يوم 2 نوفمبر هيطلع زيادة 36,945).", "en": "Always subtract the remittance before comparing"},
+        {"key": "unsure", "maps_to": "unsure", "label_ar": "مش متأكد / محتاج أراجع", "detail_ar": "هنسيب السؤال مفتوح لحد ما ترجعلنا.", "en": "Not sure — unresolved"}
+      ],
+      "extras": [
+        {"key": "counted_daily", "ask_ar": "الخزينة بتتعد كل يوم؟", "options": [{"key": "yes", "label_ar": "أيوه، كل يوم"}, {"key": "no", "label_ar": "لأ، مش كل يوم"}, {"key": "unsure", "label_ar": "مش متأكد"}]}
+      ],
+      "checks": [
+        {"file": "ledger_nov", "sheet": "2", "cell": "K11", "equals": 100},
+        {"file": "ledger_nov", "sheet": "2", "cell": "L11", "equals": 200},
+        {"file": "ledger_nov", "sheet": "2", "cell": "K12", "equals": 169},
+        {"file": "ledger_nov", "sheet": "2", "cell": "L12", "equals": 100},
+        {"file": "ledger_nov", "sheet": "2", "cell": "K14", "equals": 2},
+        {"file": "ledger_nov", "sheet": "2", "cell": "L14", "equals": 20},
+        {"file": "ledger_nov", "sheet": "2", "cell": "K16", "equals": 1},
+        {"file": "ledger_nov", "sheet": "2", "cell": "L16", "equals": 5},
+        {"file": "ledger_nov", "sheet": "2", "cell": "M20", "equals": 36945},
+        {"computed": "sum", "values": [20000, 16900, 40, 5], "equals": 36945},
+        {"file": "ledger_nov", "sheet": "2", "cell": "O14", "contains": "زيادة قيمتها 36945"},
+        {"file": "ledger_nov", "sheet": "2", "cell": "D63", "equals": "توريد بنك"},
+        {"file": "ledger_nov", "sheet": "2", "cell": "F63", "equals": 36945},
+        {"file": "ledger_nov", "sheet": "2", "cell": "E45", "equals": 0},
+        {"file": "ledger_nov", "sheet": "2", "cell": "E17", "equals": 48695},
+        {"file": "ledger_nov", "sheet": "2", "cell": "F20", "equals": 11300},
+        {"file": "ledger_nov", "sheet": "2", "cell": "G4", "equals": "1900-01-01"},
+        {"file": "statement_nov", "sheet": "2", "cell": "I3", "equals": "2026-11-02"},
+        {"file": "statement_nov", "sheet": "2", "cell": "E12", "equals": "توريد بنك"},
+        {"file": "statement_nov", "sheet": "2", "cell": "D12", "equals": 36945},
+        {"file": "statement_nov", "sheet": "2", "cell": "I17", "equals": 3},
+        {"file": "statement_nov", "sheet": "2", "cell": "I20", "equals": 11300},
+        {"file": "statement_nov", "sheet": "2", "cell": "I25", "equals": 48695},
+        {"file": "statement_nov", "sheet": "2", "cell": "D28", "equals": 37398},
+        {"computed": "diff", "cur": 37398, "prev": 36945, "equals": 453},
+        {"computed": "expected_cash", "sales": 48695, "visa": 11300, "expenses": 453, "equals": 36942}
+      ]
+    },
+    {
+      "n": 5,
+      "finding": "P1-29",
+      "title_ar": "كيكة الهبة دبي بصوص الكيندر: «صغيرة» في الجرد هي «كبير» في Foodics؟",
+      "where": [
+        {
+          "file_ar": "شيت جرد بلبن فرع المعاريف نوفمبر 2026 (2).xlsx",
+          "file": "inv_nov",
+          "tab_ar": "ورقة «7» (يوم 7 نوفمبر: أرقامها بتطابق تقرير Foodics ليوم 7 ما عدا الفروق دي، والورقة نفسها مفيهاش تاريخ)",
+          "cells": [
+            {"ref": "F327", "ar": "الكمية (Qty) لسطر «كيكة هبة دبى صوص كيندر صغيرة»"},
+            {"ref": "F325", "ar": "سطر «كيكة هبة دبى شيكولاتة صغيرة» (للمقارنة)"}
+          ]
+        },
+        {
+          "file_ar": "صور Products Mix لتقرير Foodics ليوم 7 نوفمبر",
+          "tab_ar": "مش ملف Excel",
+          "cells": [
+            {"ref": "", "ar": "قسم «دنيا الكيك»، سطر «كيكة الهبة دبي صوص كيندر كبير»"}
+          ]
+        }
+      ],
+      "now_ar": [
+        "مجموع الأصناف في ورقة «7»: 2,249 قطعة. تقرير Foodics: 2,182. الفرق 67 قطعة.",
+        "الفرق في 6 أسطر (الجدول تحت). الأسطر الخمسة الأولى اتصححت في النسخة المصححة لأن أسماءها متطابقة.",
+        "سطر الكيندر سبناه 12 لحد ما تجاوب، ولذلك مجموع النسخة المصححة 2,192 (والفرق 10 عن Foodics هو السطر ده)."
+      ],
+      "why_ar": [
+        "الاسم مختلف في الحجم: «صغيرة» في الجرد و«كبير» في Foodics، وملف الجرد فيه سطر واحد بس لكيك الكيندر.",
+        "لو هما نفس المنتج، يبقى الـ12 غلط، واستهلاك الخامات ليوم 7 نوفمبر هيطلع أكبر من الحقيقي.",
+        "لو منتجين مختلفين، السطر الصح مش موجود في الملف."
+      ],
+      "proposal_ar": [
+        "لو هما نفس المنتج: نغيّر 12 إلى 2، ويبقى مجموع الجرد 2,182 زي Foodics.",
+        "لحد ما تجاوب: الـ12 زي ما هي، وأرقام Foodics محفوظة عندنا كمرجع."
+      ],
+      "example": {"before_ar": "الجرد: «كيكة هبة دبى صوص كيندر صغيرة» = 12", "after_ar": "لو نفس المنتج: = 2 (حسب Foodics: «…كيندر كبير» = 2)"},
+      "table": {
+        "headers_ar": ["الصنف في ملف الجرد", "في الجرد", "في Foodics", "الحالة"],
+        "rows_ar": [
+          ["قشطوطة كراميل", "36", "16", "اتصحح"],
+          ["سوبر الملوك", "59", "52", "اتصحح"],
+          ["قشطوطة رز ب لبن + مانجا زبده قطع", "59", "49", "اتصحح"],
+          ["الغوريلا", "80", "70", "اتصحح"],
+          ["المتكندرة صغير", "147", "137", "اتصحح"],
+          ["كيكة هبة دبى صوص كيندر صغيرة", "صغيرة: 12", "كبير: 2", "محتاج تأكيدك"]
+        ],
+        "highlight_last": true
+      },
+      "ask_ar": "هل «كيكة هبة دبى صوص كيندر صغيرة» (12) في الجرد هي نفس «كيكة الهبة دبي صوص كيندر كبير» (2) في Foodics؟",
+      "text_prompt_ar": "لو مش نفس المنتج، اكتب الصنف الصح.",
+      "options": [
+        {"key": "same_product", "maps_to": "accept", "label_ar": "أوافق على المقترح", "detail_ar": "أيوه نفس المنتج — نصحح الـ12 إلى 2.", "en": "Same product: set the Kinder line to 2"},
+        {"key": "other", "maps_to": "alternative", "label_ar": "أقترح تعديلًا آخر", "detail_ar": "لأ، مختلفين — اكتب الصنف الصح.", "needs_text": true, "needs_agreement": true, "en": "Different product (text: which item)"},
+        {"key": "keep", "maps_to": "keep", "label_ar": "نُبقي الوضع الحالي", "detail_ar": "نسيب الـ12 زي ما هي في ملف الجرد.", "en": "Keep 12 as in the inventory file"},
+        {"key": "unsure", "maps_to": "unsure", "label_ar": "مش متأكد / محتاج أراجع", "detail_ar": "هنسيب السؤال مفتوح لحد ما ترجعلنا.", "en": "Not sure — unresolved"}
+      ],
+      "extras": [],
+      "checks": [
+        {"file": "inv_nov", "sheet": "7", "cell": "D327", "equals": "كيكة هبة دبى صوص كيندر صغيرة"},
+        {"file": "inv_nov", "sheet": "7", "cell": "F327", "equals": 12},
+        {"file": "inv_nov", "sheet": "7", "cell": "D325", "equals": "كيكة هبة دبى شيكولاتة صغيرة"},
+        {"file": "inv_nov", "sheet": "7", "cell": "F325", "equals": 109},
+        {"file": "inv_nov", "sheet": "7", "cell": "D351", "equals": "قشطوطة كراميل"},
+        {"file": "inv_nov", "sheet": "7", "cell": "F351", "equals": 36},
+        {"file": "inv_nov", "sheet": "7", "cell": "D360", "equals": "سوبر الملوك"},
+        {"file": "inv_nov", "sheet": "7", "cell": "F360", "equals": 59},
+        {"file": "inv_nov", "sheet": "7", "cell": "D365", "equals": "قشطوطة رز ب لبن + مانجا زبده قطع"},
+        {"file": "inv_nov", "sheet": "7", "cell": "F365", "equals": 59},
+        {"file": "inv_nov", "sheet": "7", "cell": "D239", "equals": "الغوريلا"},
+        {"file": "inv_nov", "sheet": "7", "cell": "F239", "equals": 80},
+        {"file": "inv_nov", "sheet": "7", "cell": "D288", "equals": "المتكندرة صغير"},
+        {"file": "inv_nov", "sheet": "7", "cell": "F288", "equals": 147},
+        {"computed": "inv7_items_sum", "file": "inv_nov", "equals": 2249},
+        {"computed": "inv7_items_sum", "file": "inv_nov_corrected", "equals": 2192},
+        {"file": "inv_nov_corrected", "sheet": "7", "cell": "F327", "equals": 12},
+        {"json": "transcription_corrected", "line_cell": "F327", "path": "quantity", "equals": 2},
+        {"json": "transcription_corrected", "line_cell": "F327", "path": "amount", "equals": "100.00"},
+        {"json": "transcription_corrected", "line_cell": "F351", "path": "quantity", "equals": 16},
+        {"json": "transcription_corrected", "line_cell": "F360", "path": "quantity", "equals": 52},
+        {"json": "transcription_corrected", "line_cell": "F365", "path": "quantity", "equals": 49},
+        {"json": "transcription_corrected", "line_cell": "F239", "path": "quantity", "equals": 70},
+        {"json": "transcription_corrected", "line_cell": "F288", "path": "quantity", "equals": 137},
+        {"computed": "photo_manual", "note": "Kinder line «كيكة الهبة دبي صوص كيندر كبير» 2 / 100.00 and the five other lines read on product-mix-bottom-2026-11-07.jpg on 20 Nov 2026."}
+      ]
+    },
+    {
+      "n": 6,
+      "finding": "P1-35",
+      "title_ar": "طلبية 4 نوفمبر: التاريخ ده يوم الطلب ولا يوم الاستلام؟",
+      "where": [
+        {
+          "file_ar": "11 طلبية فرع المعاريف شهر (1).xlsx",
+          "file": "order",
+          "tab_ar": "ورقة «Sheet1»",
+          "cells": [
+            {"ref": "C6", "ar": "تاريخ الطلبية المكتوب «04\\11/2026» (يوم أربعاء)"},
+            {"ref": "D12, D16, D20", "ar": "كميات سلانكاتيه وقشطوطه كراميل والغوريلا"}
+          ]
+        },
+        {
+          "file_ar": "شيت جرد بلبن فرع المعاريف نوفمبر 2026 (2).xlsx",
+          "file": "inv_nov",
+          "tab_ar": "ورقة «4» (يوم 4 نوفمبر حسب ترقيم أوراق الشهر)",
+          "cells": [
+            {"ref": "Q19, Q10, Q51", "ar": "عمود «الوارد» للأصناف نفسها"}
+          ]
+        }
+      ],
+      "now_ar": [
+        "الطلبية مكتوب عليها 4 نوفمبر 2026، وده يوم أربعاء.",
+        "سلانكاتيه: المطلوب 80 والوارد المسجل يوم 4 = 80. قشطوطه كراميل: 20 و20. الغوريلا: 50 و50.",
+        "في الجرد وارد متسجل كل يوم من 1 إلى 13 نوفمبر (28 صنف على الأقل في اليوم).",
+        "خطة البرنامج: الطلبية اللي تتعمل الأربعاء بالليل تتسلم الجمعة، يعني بعد يومين."
+      ],
+      "why_ar": [
+        "لو 4 نوفمبر يوم الطلب، كان المفروض الوارد يتسجل يوم الجمعة 6، لكنه اتسجل يوم 4.",
+        "يعني يا إما التاريخ هو يوم الاستلام، يا إما فيه طلبيات يومية بتوصل في نفس اليوم جنب طلبية الأربعاء. الملفات لوحدها ما بتحسمش ده."
+      ],
+      "proposal_ar": [
+        "البرنامج يسجل لكل طلبية: تاريخ إنشائها، وتاريخ الاستلام المتوقع، ونوعها.",
+        "قاعدة الاستلام الافتراضية (بعد يومين أو نفس اليوم) تتحدد حسب ردك لكل نوع، ويتعدل التاريخ مع كتابة السبب.",
+        "الاستلام الفعلي يتسجل لوحده ومربوط بالطلبية."
+      ],
+      "example": {"before_ar": "طلبية 4/11 ← متوقع 6/11 حسب القاعدة، والوارد اتسجل 4/11.", "after_ar": "طلبية يومية ← نفس اليوم. طلبية الأربعاء بالليل ← الجمعة."},
+      "table": null,
+      "ask_ar": "التاريخ المكتوب على الطلبية (4 نوفمبر) هو يوم الطلب ولا يوم الاستلام؟",
+      "text_prompt_ar": "اكتب هنا أي توضيح عن مواعيد وصول البضاعة.",
+      "options": [
+        {"key": "order_day", "maps_to": "accept", "label_ar": "أوافق على المقترح", "detail_ar": "التاريخ المكتوب هو يوم الطلب، والبضاعة بتوصل بعده.", "en": "Date on the order = order day"},
+        {"key": "delivery_day", "maps_to": "accept", "label_ar": "أوافق على المقترح", "detail_ar": "التاريخ المكتوب هو يوم الاستلام.", "en": "Date on the order = delivery day"},
+        {"key": "other", "maps_to": "alternative", "label_ar": "أقترح تعديلًا آخر", "detail_ar": "حاجة تانية — اكتبها تحت.", "needs_text": true, "needs_agreement": true, "en": "Something else (text)"},
+        {"key": "keep", "maps_to": "keep", "label_ar": "نُبقي الوضع الحالي", "detail_ar": "نطبق قاعدة «بعد يومين» على كل الطلبيات.", "en": "Apply the two-day rule to every order"},
+        {"key": "unsure", "maps_to": "unsure", "label_ar": "مش متأكد / محتاج أراجع", "detail_ar": "هنسيب السؤال مفتوح لحد ما ترجعلنا.", "en": "Not sure — unresolved"}
+      ],
+      "extras": [
+        {"key": "daily_deliveries", "ask_ar": "فيه بضاعة بتوصل كل يوم غير طلبية الأربعاء اللي بتوصل الجمعة؟", "options": [{"key": "yes", "label_ar": "أيوه"}, {"key": "no", "label_ar": "لأ"}, {"key": "unsure", "label_ar": "مش متأكد"}]}
+      ],
+      "checks": [
+        {"file": "order", "sheet": "Sheet1", "cell": "C6", "equals": "04\\11/2026"},
+        {"file": "order", "sheet": "Sheet1", "cell": "B12", "equals": "سلانكاتيه"},
+        {"file": "order", "sheet": "Sheet1", "cell": "D12", "equals": 80},
+        {"file": "order", "sheet": "Sheet1", "cell": "B16", "equals": "قشطوطه كراميل"},
+        {"file": "order", "sheet": "Sheet1", "cell": "D16", "equals": 20},
+        {"file": "order", "sheet": "Sheet1", "cell": "B20", "equals": "الغوريلا"},
+        {"file": "order", "sheet": "Sheet1", "cell": "D20", "equals": 50},
+        {"file": "inv_nov", "sheet": "4", "cell": "M19", "contains": "سلانكاتيه"},
+        {"file": "inv_nov", "sheet": "4", "cell": "Q19", "equals": 80},
+        {"file": "inv_nov", "sheet": "4", "cell": "M10", "contains": "قشطوطه كراميل"},
+        {"file": "inv_nov", "sheet": "4", "cell": "Q10", "equals": 20},
+        {"file": "inv_nov", "sheet": "4", "cell": "M51", "contains": "الغوريلا"},
+        {"file": "inv_nov", "sheet": "4", "cell": "Q51", "equals": 50},
+        {"computed": "weekday", "date": "2026-11-04", "equals": "Wednesday"},
+        {"computed": "weekday", "date": "2026-11-06", "equals": "Friday"},
+        {"computed": "inv_received_min_per_day", "file": "inv_nov", "days": [1, 13], "at_least": 28}
+      ]
+    }
+  ]
+}

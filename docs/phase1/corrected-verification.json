@@ -1,0 +1,872 @@
+{
+ "checks": [
+  {
+   "finding": "P1-07",
+   "basis": "construction",
+   "check": "SRC-02 title names October 2026",
+   "got": "تقرير المبيعات فرع المعاريف أكتوبر 2026",
+   "want": "تقرير المبيعات فرع المعاريف أكتوبر 2026",
+   "ok": true
+  },
+  {
+   "finding": "P1-07",
+   "basis": "construction",
+   "check": "SRC-02 A3 date",
+   "got": "2026-10-01",
+   "want": "2026-10-01",
+   "ok": true
+  },
+  {
+   "finding": "P1-07",
+   "basis": "construction",
+   "check": "SRC-02 A8 date (was 1900)",
+   "got": "2026-10-06",
+   "want": "2026-10-06",
+   "ok": true
+  },
+  {
+   "finding": "P1-07",
+   "basis": "independent",
+   "check": "SRC-02 31 Oct sales = statement sheet 31 system revenue",
+   "got": 101110,
+   "want": 101110,
+   "ok": true
+  },
+  {
+   "finding": "P1-07",
+   "basis": "independent",
+   "check": "SRC-02 31 Oct visa = statement sheet 31 visa",
+   "got": 25465,
+   "want": 25465,
+   "ok": true
+  },
+  {
+   "finding": "P1-07",
+   "basis": "independent",
+   "check": "SRC-02 October total = original 1-30 Oct total + 31 Oct",
+   "got": 2055675,
+   "want": 2055675,
+   "ok": true
+  },
+  {
+   "finding": "P1-05",
+   "basis": "independent",
+   "check": "SRC-02 7 Oct expenses = statement sheet 7 total expenses",
+   "got": 36720,
+   "want": 36720,
+   "ok": true
+  },
+  {
+   "finding": "P1-06",
+   "basis": "independent",
+   "check": "SRC-02 18 Oct G/H = statement sheet 18 (total, bank)",
+   "got": [
+    73436,
+    73176
+   ],
+   "want": [
+    73436,
+    73176
+   ],
+   "ok": true
+  },
+  {
+   "finding": "P1-04",
+   "basis": "independent",
+   "check": "SRC-02 sales − visa − (expenses incl. remittance) within 5 MAD on every day",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "finding": "P1-03",
+   "basis": "decision",
+   "check": "SRC-02 1 Oct average = 50,125 / 632 (Abdo: net sales / orders)",
+   "got": 79.31,
+   "want": 79.31,
+   "ok": true
+  },
+  {
+   "finding": "P1-03",
+   "basis": "decision",
+   "check": "SRC-02 every October average = round(sales / orders, 2)",
+   "got": [],
+   "want": [],
+   "ok": true
+  },
+  {
+   "finding": "P1-03",
+   "basis": "decision",
+   "check": "SRC-02 31 Oct average = 101,110 / 1,166",
+   "got": 86.72,
+   "want": 86.72,
+   "ok": true
+  },
+  {
+   "finding": "P1-03",
+   "basis": "decision",
+   "check": "SRC-03 2 Nov average = 48,695 / 639 (Abdo: net sales / orders)",
+   "got": 76.21,
+   "want": 76.21,
+   "ok": true
+  },
+  {
+   "finding": "P1-03",
+   "basis": "construction",
+   "check": "SRC-03 days without orders keep a blank average",
+   "got": null,
+   "want": null,
+   "ok": true
+  },
+  {
+   "finding": "P1-07",
+   "basis": "construction",
+   "check": "SRC-03 A32 date",
+   "got": "2026-11-30",
+   "want": "2026-11-30",
+   "ok": true
+  },
+  {
+   "finding": "P1-11",
+   "basis": "construction",
+   "check": "SRC-03 I5 blank on an empty day",
+   "got": null,
+   "want": null,
+   "ok": true
+  },
+  {
+   "finding": "P1-23",
+   "basis": "construction",
+   "check": "SRC-08 sheet name",
+   "got": "سبتمبر-أكتوبر 2026",
+   "want": "سبتمبر-أكتوبر 2026",
+   "ok": true
+  },
+  {
+   "finding": "P1-08",
+   "basis": "independent",
+   "check": "SRC-08 1 Oct growth = 50,125 / 84,980 − 1",
+   "got": -0.41015533066603904,
+   "want": -0.4102,
+   "ok": true
+  },
+  {
+   "finding": "P1-07",
+   "basis": "independent",
+   "check": "SRC-08 31 Oct sales = Daily Sales 31 Oct",
+   "got": 101110,
+   "want": 101110,
+   "ok": true
+  },
+  {
+   "finding": "P1-09",
+   "basis": "construction",
+   "check": "SRC-08 period growth over the 30 matching days",
+   "got": -0.2404825466400874,
+   "want": -0.2405,
+   "ok": true
+  },
+  {
+   "finding": "P1-09",
+   "basis": "independent",
+   "check": "SRC-09 1 Nov growth = 86,470 / 50,125 − 1",
+   "got": 0.7250872817955112,
+   "want": 0.7251,
+   "ok": true
+  },
+  {
+   "finding": "P1-09",
+   "basis": "construction",
+   "check": "SRC-09 3 Nov (not entered) blank",
+   "got": null,
+   "want": null,
+   "ok": true
+  },
+  {
+   "finding": "P1-10",
+   "basis": "decision",
+   "check": "SRC-12 one date pair for every branch and the total: current 10 Nov, prior 3 Nov (Abdo)",
+   "got": [
+    "2026-11-10",
+    "2026-11-10",
+    "2026-11-10",
+    "2026-11-10",
+    "2026-11-03",
+    "2026-11-03",
+    "2026-11-03",
+    "2026-11-03"
+   ],
+   "want": [
+    "2026-11-10",
+    "2026-11-10",
+    "2026-11-10",
+    "2026-11-10",
+    "2026-11-03",
+    "2026-11-03",
+    "2026-11-03",
+    "2026-11-03"
+   ],
+   "ok": true
+  },
+  {
+   "finding": "P1-10",
+   "basis": "independent",
+   "check": "SRC-12 every date is a Tuesday, matching the 'الثلاثاء' labels",
+   "got": [
+    [
+     1,
+     "الثلاثاء"
+    ],
+    [
+     1,
+     "الثلاثاء"
+    ],
+    [
+     1,
+     "الثلاثاء"
+    ],
+    [
+     1,
+     "الثلاثاء"
+    ]
+   ],
+   "want": [
+    [
+     1,
+     "الثلاثاء"
+    ],
+    [
+     1,
+     "الثلاثاء"
+    ],
+    [
+     1,
+     "الثلاثاء"
+    ],
+    [
+     1,
+     "الثلاثاء"
+    ]
+   ],
+   "ok": true
+  },
+  {
+   "finding": "P1-10",
+   "basis": "construction",
+   "check": "SRC-12 branch and total figures unchanged by the date fix",
+   "got": [
+    1699,
+    136170,
+    1542,
+    120420,
+    374,
+    28975,
+    345,
+    27020
+   ],
+   "want": [
+    1699,
+    136170,
+    1542,
+    120420,
+    374,
+    28975,
+    345,
+    27020
+   ],
+   "ok": true
+  },
+  {
+   "finding": "P1-08",
+   "basis": "decision",
+   "check": "SRC-12 weekly current/prior ratio kept as recorded (Abdo)",
+   "got": [
+    1.1307922272047832,
+    1.1229883832462966,
+    1.1726363343013875,
+    1.0723538119911178
+   ],
+   "want": [
+    1.1307922272047832,
+    1.1229883832462966,
+    1.1726363343013875,
+    1.0723538119911178
+   ],
+   "ok": true
+  },
+  {
+   "finding": "P1-08",
+   "basis": "decision",
+   "check": "SRC-12 ratio header kept",
+   "got": "نسبه %",
+   "want": "نسبه %",
+   "ok": true
+  },
+  {
+   "finding": "P1-10",
+   "basis": "independent",
+   "check": "SRC-12 branch sales and orders add up to the total (both weeks)",
+   "got": [
+    136170,
+    120420,
+    1699,
+    1542
+   ],
+   "want": [
+    136170,
+    120420,
+    1699,
+    1542
+   ],
+   "ok": true
+  },
+  {
+   "finding": "P1-16",
+   "basis": "construction",
+   "check": "SRC-04 has sheet 29",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "finding": "P1-16",
+   "basis": "construction",
+   "check": "SRC-04 stray sheets removed",
+   "got": [],
+   "want": [],
+   "ok": true
+  },
+  {
+   "finding": "P1-14",
+   "basis": "independent",
+   "check": "SRC-04 over/short per day (Oct 8 = +1, others 0)",
+   "got": {
+    "8": 1
+   },
+   "want": {
+    "8": 1
+   },
+   "ok": true
+  },
+  {
+   "finding": "P1-15",
+   "basis": "independent",
+   "check": "SRC-04 7 Oct system revenue = Daily Sales 7 Oct",
+   "got": 50060,
+   "want": 50060,
+   "ok": true
+  },
+  {
+   "finding": "P1-16",
+   "basis": "independent",
+   "check": "SRC-04 29 Oct total expenses = ledger-based rebuild (130+100+30+219+35,971)",
+   "got": 36450,
+   "want": 36450,
+   "ok": true
+  },
+  {
+   "finding": "P1-16",
+   "basis": "independent",
+   "check": "SRC-04 29 Oct total expenses = Daily Sales 29 Oct expenses",
+   "got": 36450,
+   "want": 36450,
+   "ok": true
+  },
+  {
+   "finding": "P1-16",
+   "basis": "construction",
+   "check": "SRC-04 dates",
+   "got": [
+    "2026-10-10",
+    "2026-10-23",
+    "2026-10-29"
+   ],
+   "want": [
+    "2026-10-10",
+    "2026-10-23",
+    "2026-10-29"
+   ],
+   "ok": true
+  },
+  {
+   "finding": "P1-16",
+   "basis": "construction",
+   "check": "SRC-05 day sheets 1-30 present, 31/564 removed",
+   "got": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30
+   ],
+   "want": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30
+   ],
+   "ok": true
+  },
+  {
+   "finding": "P1-16",
+   "basis": "construction",
+   "check": "SRC-05 29 Nov stale total cleared",
+   "got": 0,
+   "want": 0,
+   "ok": true
+  },
+  {
+   "finding": "P1-14",
+   "basis": "independent",
+   "check": "SRC-05 2 Nov over/short = +3 (as in the original)",
+   "got": 3,
+   "want": 3,
+   "ok": true
+  },
+  {
+   "finding": "P1-16",
+   "basis": "construction",
+   "check": "SRC-05 sheet 10 leftover July 2025 block cleared",
+   "got": [],
+   "want": [],
+   "ok": true
+  },
+  {
+   "finding": "P1-16",
+   "basis": "construction",
+   "check": "SRC-05 dates",
+   "got": [
+    "2026-11-03",
+    "2026-11-15",
+    "2026-11-30"
+   ],
+   "want": [
+    "2026-11-03",
+    "2026-11-15",
+    "2026-11-30"
+   ],
+   "ok": true
+  },
+  {
+   "finding": "P1-18",
+   "basis": "construction",
+   "check": "SRC-10 summary rows 22/23 read sheets 22/23",
+   "got": [
+    "='22'!$E$41",
+    "='23'!$E$41"
+   ],
+   "want": [
+    "='22'!$E$41",
+    "='23'!$E$41"
+   ],
+   "ok": true
+  },
+  {
+   "finding": "P1-18",
+   "basis": "independent",
+   "check": "SRC-10 summary day-22 value = sheet 22 E41",
+   "got": 78000,
+   "want": 78000,
+   "ok": true
+  },
+  {
+   "finding": "P1-20",
+   "basis": "construction",
+   "check": "SRC-10 cancellations column has no #REF!",
+   "got": [],
+   "want": [],
+   "ok": true
+  },
+  {
+   "finding": "P1-20",
+   "basis": "independent",
+   "check": "SRC-10 cancellations total = sum of day cancellation tables",
+   "got": 0,
+   "want": 0,
+   "ok": true
+  },
+  {
+   "finding": "P1-21",
+   "basis": "construction",
+   "check": "SRC-10 no external link left",
+   "got": [],
+   "want": [],
+   "ok": true
+  },
+  {
+   "finding": "P1-17",
+   "basis": "construction",
+   "check": "SRC-10 day sheets still protected (password not used)",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "finding": "P1-18",
+   "basis": "construction",
+   "check": "SRC-11 summary rows 22/23 read sheets 22/23",
+   "got": [
+    "='22'!$E$41",
+    "='23'!$E$41"
+   ],
+   "want": [
+    "='22'!$E$41",
+    "='23'!$E$41"
+   ],
+   "ok": true
+  },
+  {
+   "finding": "P1-18",
+   "basis": "independent",
+   "check": "SRC-11 summary day-22 value = sheet 22 E41",
+   "got": 0,
+   "want": 0,
+   "ok": true
+  },
+  {
+   "finding": "P1-20",
+   "basis": "construction",
+   "check": "SRC-11 cancellations column has no #REF!",
+   "got": [],
+   "want": [],
+   "ok": true
+  },
+  {
+   "finding": "P1-20",
+   "basis": "independent",
+   "check": "SRC-11 cancellations total = sum of day cancellation tables",
+   "got": 0,
+   "want": 0,
+   "ok": true
+  },
+  {
+   "finding": "P1-21",
+   "basis": "construction",
+   "check": "SRC-11 no external link left",
+   "got": [],
+   "want": [],
+   "ok": true
+  },
+  {
+   "finding": "P1-17",
+   "basis": "construction",
+   "check": "SRC-11 day sheets still protected (password not used)",
+   "got": true,
+   "want": true,
+   "ok": true
+  },
+  {
+   "finding": "P1-21",
+   "basis": "construction",
+   "check": "SRC-11 hidden journal difference after the VISA-row fix = 0",
+   "got": 0,
+   "want": 0,
+   "ok": true
+  },
+  {
+   "finding": "P1-18",
+   "basis": "independent",
+   "check": "SRC-10 changed cells only on unprotected sheets",
+   "got": [],
+   "want": [],
+   "ok": true
+  },
+  {
+   "finding": "P1-18",
+   "basis": "independent",
+   "check": "SRC-11 changed cells only on unprotected sheets",
+   "got": [],
+   "want": [],
+   "ok": true
+  },
+  {
+   "finding": "P1-24",
+   "basis": "construction",
+   "check": "SRC-13 day 2 opening for uncounted item keeps book balance (row 40)",
+   "got": 4,
+   "want": 4,
+   "ok": true
+  },
+  {
+   "finding": "P1-24",
+   "basis": "construction",
+   "check": "SRC-13 day 1 deviation blank when not counted (row 40)",
+   "got": null,
+   "want": null,
+   "ok": true
+  },
+  {
+   "finding": "P1-29",
+   "basis": "independent",
+   "check": "SRC-13 7 Nov Product Mix item units = Foodics total 2,182 + the unconfirmed Kinder line difference (12 - 2)",
+   "got": 2192,
+   "want": 2192,
+   "ok": true
+  },
+  {
+   "finding": "P1-29",
+   "basis": "decision",
+   "check": "SRC-13 Kinder Dubai cake row kept at 12 (Abdo)",
+   "got": 12,
+   "want": 12,
+   "ok": true
+  },
+  {
+   "finding": "P1-29",
+   "basis": "independent",
+   "check": "SRC-13 7 Nov lines with a confirmed mapping = Foodics photo lines (Gorilla, Mtkandra, caramel, super kings, mango rice, gelato x4)",
+   "got": {
+    "F239": 70,
+    "F288": 137,
+    "F351": 16,
+    "F360": 52,
+    "F365": 49,
+    "F202": 1,
+    "F199": 1,
+    "F200": 1,
+    "F201": 3
+   },
+   "want": {
+    "F239": 70,
+    "F288": 137,
+    "F351": 16,
+    "F360": 52,
+    "F365": 49,
+    "F202": 1,
+    "F199": 1,
+    "F200": 1,
+    "F201": 3
+   },
+   "ok": true
+  },
+  {
+   "finding": "P1-28",
+   "basis": "independent",
+   "check": "SRC-13 pecan row 202 is the row the pecan recipe reads",
+   "got": "جيلاتيتو روما بيكان",
+   "want": "جيلاتيتو روما بيكان",
+   "ok": true
+  },
+  {
+   "finding": "P1-37",
+   "basis": "construction",
+   "check": "SRC-13 deviation format shows minus",
+   "got": "0.00;[Red]-0.00",
+   "want": "0.00;[Red]-0.00",
+   "ok": true
+  },
+  {
+   "finding": "P1-31",
+   "basis": "construction",
+   "check": "SRC-13 mixed-nuts units left as recorded (P1-31 pending)",
+   "got": 10,
+   "want": 10,
+   "ok": true
+  },
+  {
+   "finding": "P1-31",
+   "basis": "construction",
+   "check": "SRC-13 no 'KGM' unit left",
+   "got": 0,
+   "want": 0,
+   "ok": true
+  },
+  {
+   "finding": "P1-25",
+   "basis": "construction",
+   "check": "SRC-06 monthly deviation (ice cream row 89) = cumulative deviation of day 31",
+   "got": 107.34,
+   "want": 107.34,
+   "ok": true
+  },
+  {
+   "finding": "P1-25",
+   "basis": "construction",
+   "check": "SRC-13 monthly deviation (ice cream row 89) = cumulative deviation of day 31",
+   "got": -23.38,
+   "want": -23.38,
+   "ok": true
+  },
+  {
+   "finding": "P1-34",
+   "basis": "construction",
+   "check": "SRC-14 difference blank before count",
+   "got": null,
+   "want": null,
+   "ok": true
+  },
+  {
+   "finding": "P1-34",
+   "basis": "construction",
+   "check": "SRC-14 expected = total − consumption",
+   "got": 45,
+   "want": 45,
+   "ok": true
+  },
+  {
+   "finding": "P1-36",
+   "basis": "construction",
+   "check": "SRC-01 order date stored as a date (same day as the text)",
+   "got": "2026-11-04",
+   "want": "2026-11-04",
+   "ok": true
+  },
+  {
+   "finding": "P1-36",
+   "basis": "construction",
+   "check": "SRC-01 unknown quantity D38 left as recorded",
+   "got": ",",
+   "want": ",",
+   "ok": true
+  },
+  {
+   "finding": "all",
+   "basis": "independent",
+   "check": "No unexplained cell or sheet change in any corrected copy (diff_corrected.py)",
+   "got": 0,
+   "want": 0,
+   "ok": true
+  }
+ ],
+ "errors": {
+  "daily-ledger-nov-2026.xlsx": {
+   "original": {
+    "#VALUE!": 37,
+    "#REF!": 7
+   },
+   "corrected": {
+    "#VALUE!": 37,
+    "#REF!": 5
+   }
+  },
+  "daily-ledger-oct-2026.xlsx": {
+   "original": {
+    "#VALUE!": 37,
+    "#REF!": 8
+   },
+   "corrected": {
+    "#VALUE!": 37,
+    "#REF!": 6
+   }
+  },
+  "daily-sales-nov-2026.xlsx": {
+   "original": {
+    "#DIV/0!": 62,
+    "#REF!": 10
+   },
+   "corrected": {}
+  },
+  "daily-sales-oct-2026.xlsx": {
+   "original": {
+    "#DIV/0!": 6,
+    "#REF!": 10
+   },
+   "corrected": {}
+  },
+  "daily-statement-nov-2026.xlsx": {
+   "original": {},
+   "corrected": {}
+  },
+  "daily-statement-oct-2026.xlsx": {
+   "original": {},
+   "corrected": {}
+  },
+  "inventory-nov-2026-days-1-13.xlsx": {
+   "original": {
+    "#VALUE!": 33,
+    "#DIV/0!": 31103
+   },
+   "corrected": {}
+  },
+  "inventory-oct-2026.xlsx": {
+   "original": {
+    "#DIV/0!": 22977,
+    "#VALUE!": 4
+   },
+   "corrected": {}
+  },
+  "inventory-review-template-nov-2026.xlsx": {
+   "original": {},
+   "corrected": {}
+  },
+  "replenishment-order-nov-2026.xlsx": {
+   "original": {},
+   "corrected": {}
+  },
+  "sales-comparison-nov-2026.xlsx": {
+   "original": {},
+   "corrected": {}
+  },
+  "sales-comparison-oct-2026.xlsx": {
+   "original": {
+    "#DIV/0!": 1
+   },
+   "corrected": {}
+  },
+  "weekly-comparison-nov-2026.xlsx": {
+   "original": {},
+   "corrected": {}
+  }
+ },
+ "summary": {
+  "checks": 71,
+  "passed": 71,
+  "independent": 26,
+  "construction": 37,
+  "decision": 8,
+  "errors_original": 54295,
+  "errors_corrected": 85,
+  "errors_original_without_ledgers": 54206
+ }
+}

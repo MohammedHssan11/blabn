@@ -1,0 +1,254 @@
+{
+  "record_type": "visually_transcribed_report_sample",
+  "business_date": "2026-11-07",
+  "currency": "MAD",
+  "branch_reference": "B01",
+  "source_timezone": null,
+  "owner_approved": false,
+  "automated_ocr_tested": false,
+  "full_line_item_transcription": false,
+  "orders_summary": {
+    "image": "C:/Users/mh978/Downloads/abdo/sources/2026-11-07/orders-summary.jpg",
+    "report_title": "Orders Summary",
+    "opened_at_local": "2026-11-07T10:37:20",
+    "printed_at_local": "2026-11-08T01:11:24",
+    "closed_at": null,
+    "printed_at_is_not_closed_at": true,
+    "orders_count_from_report": 1185,
+    "gross_sales": "100605.00",
+    "gross_sales_without_tax": "100605.00",
+    "total_discounts": "0.00",
+    "total_charges": "0.00",
+    "total_taxes": "0.00",
+    "net_sales": "100605.00",
+    "guest_count": 1185,
+    "reported_average_per_order": "84.90",
+    "reported_average_per_guest": "84.90",
+    "void_count": 1,
+    "void_amount": "55.00",
+    "rounding": "0.00",
+    "cash_payment_count": 626,
+    "cash_sales_receipts": "55105.00",
+    "visa_payment_count": 559,
+    "visa_sales_receipts": "45500.00",
+    "total_payments": "100605.00",
+    "return_count": 0,
+    "return_amount": "0.00",
+    "net_payments": "100605.00",
+    "order_types": [
+      {
+        "label": "Dine In",
+        "count": 0,
+        "amount": "0.00"
+      },
+      {
+        "label": "Pick Up",
+        "count": 1185,
+        "amount": "100605.00"
+      },
+      {
+        "label": "Delivery",
+        "count": 0,
+        "amount": "0.00"
+      },
+      {
+        "label": "Drive Thru",
+        "count": 0,
+        "amount": "0.00"
+      }
+    ],
+    "not_observed": [
+      "actual_cash_count",
+      "operating_expenses",
+      "cash_opening_float",
+      "executed_bank_deposit",
+      "cash_reserved_for_bank",
+      "staff_attendance"
+    ],
+    "interpretation_rules": [
+      "Cash payment amount is sales collected in cash, not proof of physical cash after expenses or bank remittance.",
+      "Void amount is reported separately and must not be subtracted a second time from the reported net sales without evidence.",
+      "A dash in the Quantity column is a missing-count marker, not an inferred negative monetary amount.",
+      "The report states printing time; it does not state the actual session closing time.",
+      "Business date is preserved separately from the next-calendar-day printing date.",
+      "This sample does not retroactively resolve conflicting dates or reporting bases in older workbooks."
+    ]
+  },
+  "product_mix": {
+    "images": [
+      "C:/Users/mh978/Downloads/abdo/sources/2026-11-07/product-mix-top.jpg",
+      "C:/Users/mh978/Downloads/abdo/sources/2026-11-07/product-mix-bottom.jpg"
+    ],
+    "report_title": "Products Mix",
+    "printed_at_local": "2026-11-08T02:11:37",
+    "photos_overlap": true,
+    "same_report_not_two_sales_batches": true,
+    "columns": [
+      "Name",
+      "Quantity",
+      "Amount"
+    ],
+    "amount_semantics": "reported sales amount for the line, not unit purchase cost or guaranteed catalog unit price",
+    "contains_sold_products_and_addons_not_raw_ingredient_costs": true,
+    "sections": [
+      {
+        "section_id": "M01",
+        "readable_label_ar": "دنيا الأرز",
+        "quantity": 119,
+        "amount": "4460.00"
+      },
+      {
+        "section_id": "M02",
+        "readable_label_ar": "الإضافات",
+        "quantity": 139,
+        "amount": "1695.00"
+      },
+      {
+        "section_id": "M03",
+        "readable_label_ar": "دنيا الآيس",
+        "quantity": 8,
+        "amount": "240.00"
+      },
+      {
+        "section_id": "M04",
+        "readable_label_ar": "دنيا البمبوظه",
+        "quantity": 17,
+        "amount": "680.00",
+        "label_confirmation": {
+          "by": "project owner (current conversation)",
+          "date": "2026-11-20",
+          "method": "Read the source photo and confirmed the exact spelling: دنيا البمبوظه."
+        }
+      },
+      {
+        "section_id": "M05",
+        "readable_label_ar": "دنيا السلانكاتيه",
+        "quantity": 138,
+        "amount": "7125.00"
+      },
+      {
+        "section_id": "M06",
+        "readable_label_ar": "دنيا القشطوطة",
+        "quantity": 464,
+        "amount": "21180.00"
+      },
+      {
+        "section_id": "M07",
+        "readable_label_ar": "دنيا الكشري",
+        "quantity": 395,
+        "amount": "18985.00"
+      },
+      {
+        "section_id": "M08",
+        "readable_label_ar": "دنيا الكيك",
+        "quantity": 902,
+        "amount": "46240.00"
+      }
+    ],
+    "derived_total_quantity": 2182,
+    "derived_total_amount": "100605.00",
+    "quantity_includes_addons_and_is_not_orders_count": true,
+    "unit_sales_value_example": {
+      "item_identity_requires_review": true,
+      "quantity": 3,
+      "line_amount": "105.00",
+      "derived_average_unit_sales_value": "35.00"
+    },
+    "small_item_names_require_review_before_catalog_mapping": true,
+    "lines_compared_with_inventory_workbook": [
+      {
+        "foodics_name_as_read": "الغوريلا",
+        "quantity": 70,
+        "amount": "4200.00",
+        "workbook_cell": "SRC-13 '7'!F239",
+        "workbook_row": "الغوريلا",
+        "workbook_quantity_original": 80,
+        "mapping": "confirmed",
+        "note": "same name"
+      },
+      {
+        "foodics_name_as_read": "المتكندرة صغير",
+        "quantity": 137,
+        "amount": "7535.00",
+        "workbook_cell": "SRC-13 '7'!F288",
+        "workbook_row": "المتكندرة صغير",
+        "workbook_quantity_original": 147,
+        "mapping": "confirmed",
+        "note": "same name"
+      },
+      {
+        "foodics_name_as_read": "قشطوطة كراميل",
+        "quantity": 16,
+        "amount": "560.00",
+        "workbook_cell": "SRC-13 '7'!F351",
+        "workbook_row": "قشطوطة كراميل",
+        "workbook_quantity_original": 36,
+        "mapping": "confirmed",
+        "note": "same name"
+      },
+      {
+        "foodics_name_as_read": "سوبر الملوك",
+        "quantity": 52,
+        "amount": "2600.00",
+        "workbook_cell": "SRC-13 '7'!F360",
+        "workbook_row": "سوبر الملوك",
+        "workbook_quantity_original": 59,
+        "mapping": "confirmed",
+        "note": "same name"
+      },
+      {
+        "foodics_name_as_read": "قشطوطة أرز ب بلبن مانجا",
+        "quantity": 49,
+        "amount": "1960.00",
+        "workbook_cell": "SRC-13 '7'!F365",
+        "workbook_row": "قشطوطة رز ب لبن + مانجا زبده قطع",
+        "workbook_quantity_original": 59,
+        "mapping": "confirmed",
+        "note": "only mango rice-pudding qashtouta line on either side; no conflicting attribute"
+      },
+      {
+        "foodics_name_as_read": "جيلاتوتي روما- بيكان",
+        "quantity": 1,
+        "amount": "35.00",
+        "workbook_cell": "SRC-13 '7'!F202",
+        "workbook_row": "جيلاتيتو روما بيكان (row unnamed; the pecan recipe reads F202)",
+        "workbook_quantity_original": null,
+        "mapping": "confirmed",
+        "note": "Foodics shows no lotus gelato, so the workbook's lotus 1 (F210) was cleared"
+      },
+      {
+        "foodics_name_as_read": "كيكة الهبة دبي صوص كيندر كبير",
+        "quantity": 2,
+        "amount": "100.00",
+        "workbook_cell": "SRC-13 '7'!F327",
+        "workbook_row": "كيكة هبة دبى صوص كيندر صغيرة",
+        "workbook_quantity_original": 12,
+        "mapping": "unconfirmed",
+        "note": "size differs (Foodics large, workbook small; the workbook has no large row). Workbook value kept at 12 until Abdo confirms the mapping (P1-29)."
+      },
+      {
+        "foodics_name_as_read": "كيكة الهبة دبي شيكولاتة كبير",
+        "quantity": 109,
+        "amount": "5450.00",
+        "workbook_cell": "SRC-13 '7'!F325",
+        "workbook_row": "كيكة هبة دبى شيكولاتة صغيرة",
+        "workbook_quantity_original": 109,
+        "mapping": "unconfirmed",
+        "note": "quantities already equal; same size difference, mapping confirmed in Phase 5 (P1-28)"
+      }
+    ]
+  },
+  "checks": {
+    "cash_plus_visa_equals_reported_payments": true,
+    "payment_counts_sum_to_reported_orders_in_this_sample": true,
+    "rounded_revenue_per_order_matches_printed_average": true,
+    "distinct_section_amounts_sum_to_reported_net_sales": true,
+    "all_item_names_transcribed_and_matched_to_workbook": false
+  },
+  "team_verified": {
+    "by": "development team (Phase 1 findings P1-02, P1-29)",
+    "date": "2026-11-20",
+    "method": "Every Product Mix line read from the photos; line sums equal each printed section total and qty x unit price equals each printed line amount; cash + visa = net sales; net / orders = 84.90.",
+    "note": "P1-02 resolved by source verification. The project owner confirmed the M04 label as 'دنيا البمبوظه' on 2026-11-20. owner_approved retains its original value and is not a prerequisite for source verification."
+  }
+}

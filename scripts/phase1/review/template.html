@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>أسئلة المراجعة — فرع المعاريف</title>
+<style>
+:root{
+  --bg:#f5f6f4; --surface:#ffffff; --surface2:#f0f2ef; --text:#1d2522; --muted:#5c6762; --line:#d9ddd8;
+  --accent:#0b6e62; --accent-ink:#ffffff; --accent-soft:#e2f1ee;
+  --warn:#9a5b00; --warn-soft:#fff3dc; --bad:#a1302a; --bad-soft:#fbe7e5; --ok:#226b2c; --ok-soft:#e5f3e6;
+  --q:#3c3f9e; --q-soft:#ebecfb;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121615; --surface:#1b2120; --surface2:#222a28; --text:#e7ece9; --muted:#a3ada8; --line:#33403c;
+    --accent:#4fbfae; --accent-ink:#06201c; --accent-soft:#183531;
+    --warn:#f0b35a; --warn-soft:#3a2c14; --bad:#f08a80; --bad-soft:#3d1d1a; --ok:#7fcf88; --ok-soft:#1b3420;
+    --q:#a9acff; --q-soft:#24264a;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121615; --surface:#1b2120; --surface2:#222a28; --text:#e7ece9; --muted:#a3ada8; --line:#33403c;
+  --accent:#4fbfae; --accent-ink:#06201c; --accent-soft:#183531;
+  --warn:#f0b35a; --warn-soft:#3a2c14; --bad:#f08a80; --bad-soft:#3d1d1a; --ok:#7fcf88; --ok-soft:#1b3420;
+  --q:#a9acff; --q-soft:#24264a;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text)}
+body{font-family:"Segoe UI","Tahoma","Noto Sans Arabic","Arial",sans-serif;font-size:17px;line-height:1.8}
+button,input,textarea{font:inherit;color:inherit}
+header.top{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--line);padding:10px 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+header.top h1{font-size:19px;margin:0 0 0 auto;white-space:nowrap}
+.progress{flex:1 1 240px;min-width:190px}
+.bar{height:10px;border-radius:6px;background:var(--surface2);overflow:hidden;border:1px solid var(--line)}
+.bar>span{display:block;height:100%;background:var(--accent);width:0}
+.ptext{font-size:14px;color:var(--muted)}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 14px;cursor:pointer}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.layout{display:grid;grid-template-columns:300px 1fr;gap:16px;max-width:1180px;margin:0 auto;padding:16px}
+nav.list{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px;align-self:start;position:sticky;top:76px}
+.item{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:right;border:0;background:none;padding:9px 8px;border-radius:9px;cursor:pointer;font-size:16px;line-height:1.55}
+.item:hover{background:var(--surface2)}
+.item[aria-current="true"]{background:var(--accent-soft);outline:1px solid var(--accent)}
+.num{flex:0 0 auto;width:28px;height:28px;border-radius:50%;display:inline-grid;place-items:center;font-size:14px;font-weight:700;border:1.5px solid var(--muted);color:var(--muted)}
+.num.done{background:var(--ok);border-color:var(--ok);color:var(--surface)}
+.num.unsure{background:var(--warn-soft);border-color:var(--warn);color:var(--warn)}
+.item small{display:block;color:var(--muted);font-size:13px}
+.item small.unsure{color:var(--warn);font-weight:600}
+main{min-width:0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:14px}
+.qno{color:var(--muted);font-size:14px}
+h2.title{font-size:23px;line-height:1.5;margin:2px 0 8px}
+section.block{margin-top:16px}
+section.block h3{font-size:15px;color:var(--muted);margin:0 0 4px;font-weight:700}
+section.block p{margin:0}
+ul.plain,ol.steps{margin:4px 0 0;padding-inline-start:22px}
+ul.plain li,ol.steps li{margin-bottom:4px}
+.where{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--surface2);margin-top:6px}
+.where .f{font-weight:700;word-break:break-word}
+.where .t{color:var(--muted);font-size:15px}
+.where ul{margin:4px 0 0;padding-inline-start:20px}
+.cellref{display:inline-block;direction:ltr;unicode-bidi:isolate;font-family:Consolas,"Courier New",monospace;font-size:14px;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:0 6px;margin-inline-end:4px}
+.ba{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+.ba div{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--surface2)}
+.ba b{display:block;font-size:13px;color:var(--muted)}
+.tbl{width:100%;border-collapse:collapse;margin-top:6px;font-size:15px}
+.tbl th,.tbl td{border:1px solid var(--line);padding:6px 8px;text-align:right}
+.tbl th{background:var(--surface2);font-weight:700}
+.tbl tr.hl td{background:var(--warn-soft);font-weight:700}
+.tblwrap{overflow-x:auto}
+.ask{background:var(--q-soft);border:2px solid var(--q);border-radius:12px;padding:12px 14px;margin-top:18px}
+.ask h3{color:var(--q)!important;margin:0 0 2px!important}
+.ask p{font-size:19px;font-weight:700}
+.answer h2{font-size:20px;margin:0 0 10px}
+.choices{display:grid;gap:10px}
+.choice{display:flex;gap:12px;align-items:flex-start;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;cursor:pointer;background:var(--surface)}
+.choice:hover{border-color:var(--accent)}
+.choice input{margin-top:7px;width:20px;height:20px;accent-color:var(--accent);flex:0 0 auto}
+.choice.on{border-color:var(--accent);background:var(--accent-soft)}
+.choice b{display:block;font-size:17px}
+.choice small{display:block;color:var(--text);font-size:16px;line-height:1.6}
+.choice.unsure small{color:var(--muted)}
+.extra{margin-top:14px;border-top:1px dashed var(--line);padding-top:12px}
+.extra .eq{font-weight:700;margin-bottom:6px}
+.pills{display:flex;gap:8px;flex-wrap:wrap}
+.pill{display:inline-flex;gap:6px;align-items:center;border:1.5px solid var(--line);border-radius:999px;padding:4px 14px;cursor:pointer;background:var(--surface)}
+.pill input{accent-color:var(--accent)}
+.pill.on{border-color:var(--accent);background:var(--accent-soft)}
+label.tlabel{display:block;margin:14px 0 6px;font-weight:700}
+textarea{width:100%;min-height:110px;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--surface);resize:vertical;line-height:1.7}
+textarea:focus{outline:2px solid var(--accent);border-color:var(--accent)}
+.err{color:var(--bad);font-size:15px;margin-top:6px;min-height:1.4em}
+.actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+.saved{font-size:15px;color:var(--ok);font-weight:600}
+.status{border-radius:10px;padding:8px 12px;margin-bottom:12px;font-size:15px}
+.status.pending{background:var(--warn-soft);color:var(--warn)}
+.status.done{background:var(--ok-soft);color:var(--ok)}
+.status.unsure{background:var(--warn-soft);color:var(--warn)}
+.history{margin-top:12px;font-size:14px;color:var(--muted)}
+.history ol{margin:6px 0 0;padding-inline-start:20px}
+.navbtns{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:4px}
+.guide ol{padding-inline-start:24px;margin:6px 0 10px}
+.guide li{margin-bottom:6px;font-size:18px}
+.note{background:var(--surface2);border-radius:10px;padding:10px 12px;font-size:15px;margin-top:8px}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 18px;border-radius:12px;font-size:15px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:20}
+.toast.show{opacity:1}
+.mode{font-size:13px;border-radius:999px;padding:2px 10px;background:var(--surface2);border:1px solid var(--line);white-space:nowrap}
+.banner{max-width:1180px;margin:12px auto 0;padding:10px 14px;border-radius:12px;font-size:15px;line-height:1.7}
+.banner.trial{background:var(--warn-soft);color:var(--warn);border:2px dashed var(--warn)}
+.banner.bad{background:var(--bad-soft);color:var(--bad);border:2px solid var(--bad)}
+.unsent{color:var(--warn);font-weight:600}
+#menuBtn{display:none}
+@media (max-width: 860px){
+  body{font-size:16px}
+  .layout{grid-template-columns:1fr;padding:12px 16px}
+  nav.list{position:static;display:none}
+  nav.list.open{display:block}
+  #menuBtn{display:inline-block}
+  .ba{grid-template-columns:1fr}
+  header.top{position:static;padding:8px 16px;gap:8px}
+  header.top h1{margin:0;font-size:18px}
+  .banner{margin:10px 16px 0}
+  .card{padding:16px}
+  h2.title{font-size:21px}
+}
+@media print{header.top,nav.list,.answer,.navbtns{display:none}.layout{display:block}}
+</style>
+</head>
+<body>
+<header class="top">
+  <h1>أسئلة المراجعة — فرع المعاريف</h1>
+  <div class="progress" aria-live="polite">
+    <div class="bar"><span id="barFill"></span></div>
+    <div class="ptext" id="progressText"></div>
+  </div>
+  <span class="mode" id="modeBadge"></span>
+  <button class="btn" id="menuBtn" type="button" aria-controls="list">الأسئلة</button>
+  <button class="btn" type="button" id="introBtn">طريقة الإجابة</button>
+  <button class="btn primary" type="button" id="exportBtn">تنزيل ملف الردود</button>
+</header>
+<div id="banners"></div>
+<div class="layout">
+  <nav class="list" id="list" aria-label="أسئلة المراجعة"><div id="items"></div></nav>
+  <main id="main"></main>
+</div>
+<input type="file" id="importFile" accept=".json,application/json" hidden>
+<div class="toast" id="toast" role="status"></div>
+
+<script id="qdata" type="application/json">/*QUESTIONS_JSON*/</script>
+<script>
+(function(){
+"use strict";
+var DATA = JSON.parse(document.getElementById("qdata").textContent);
+var Q = DATA.questions;
+// Trial copy (abdo-review-trial.html): separate browser storage, never talks to the team server,
+// and its answers file is marked "trial" so the import script refuses it for the real record.
+var TRIAL = /*TRIAL*/false;
+var KEY = "blabn-phase1-review" + (TRIAL ? "-trial" : "");
+var DRAFT_KEY = KEY + "-drafts";
+var EXPORT_KEY = KEY + "-last-export";
+var CHOICES = {accept: 1, alternative: 1, keep: 1, unsure: 1};
+var CHOICE_AR = {accept: "أوافق على المقترح", alternative: "أقترح تعديلًا آخر", keep: "نُبقي الوضع الحالي", unsure: "مش متأكد / محتاج أراجع"};
+var server = false, storageOk = true;
+var state = {schema: "blabn-phase1-decisions/1", reviewer: "Abdo", findings_version: DATA.findings_version, questions_version: DATA.questions_version, decisions: {}};
+var drafts = {};
+var current = null;
+
+function $(id){ return document.getElementById(id); }
+function esc(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
+function nowIso(){ return new Date().toISOString(); }
+function fmtTime(iso){ try { return new Date(iso).toLocaleString("ar-MA-u-nu-latn", {dateStyle: "medium", timeStyle: "short"}); } catch(e){ return iso; } }
+function toast(msg){ var t = $("toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(toast._t); toast._t = setTimeout(function(){ t.classList.remove("show"); }, 2800); }
+function qOf(id){ for (var i = 0; i < Q.length; i++) if (Q[i].finding === id) return Q[i]; return null; }
+function optOf(q, key){ for (var i = 0; i < q.options.length; i++) if (q.options[i].key === key) return q.options[i]; return null; }
+
+function readLocal(){ try { var s = localStorage.getItem(KEY); return s ? JSON.parse(s) : null; } catch(e){ return null; } }
+function writeLocal(){ try { localStorage.setItem(KEY, JSON.stringify(state)); return true; } catch(e){ return false; } }
+function readDrafts(){ try { return JSON.parse(localStorage.getItem(DRAFT_KEY) || "{}"); } catch(e){ return {}; } }
+function writeDrafts(){ try { localStorage.setItem(DRAFT_KEY, JSON.stringify(drafts)); } catch(e){} }
+function lastExport(){ try { return localStorage.getItem(EXPORT_KEY) || ""; } catch(e){ return ""; } }
+
+// ---- merge (same rule as scripts/phase1/review/decision-rules.mjs) ----
+function entry(e){
+  var o = {choice: e.choice, comment: e.comment || "", saved_at: e.saved_at};
+  if (e.option) o.option = e.option;
+  if (e.extras && Object.keys(e.extras).length) o.extras = e.extras;
+  return o;
+}
+function sig(h){ return h.saved_at + "|" + h.choice + "|" + (h.option || ""); }
+function merge(a, b){
+  var out = {}, ids = {};
+  Object.keys(a || {}).forEach(function(k){ ids[k] = 1; });
+  Object.keys(b || {}).forEach(function(k){ ids[k] = 1; });
+  Object.keys(ids).forEach(function(id){
+    var x = (a || {})[id], y = (b || {})[id];
+    if (!x) { out[id] = y; return; }
+    if (!y) { out[id] = x; return; }
+    var newer = (x.saved_at >= y.saved_at) ? x : y;
+    var older = newer === x ? y : x;
+    var hist = [].concat(newer.history || []);
+    var seen = {};
+    hist.forEach(function(h){ seen[sig(h)] = 1; });
+    (older.history || []).concat([entry(older)]).forEach(function(h){
+      if (h.saved_at !== newer.saved_at && !seen[sig(h)]) { hist.push(h); seen[sig(h)] = 1; }
+    });
+    hist.sort(function(p, q){ return p.saved_at < q.saved_at ? -1 : 1; });
+    var res = entry(newer); res.history = hist; out[id] = res;
+  });
+  return out;
+}
+
+function persist(){
+  state.updated_at = nowIso();
+  var okLocal = writeLocal();
+  if (!server) return Promise.resolve(okLocal);
+  return fetch("api/decisions", {method: "PUT", headers: {"Content-Type": "application/json"}, body: JSON.stringify(state)})
+    .then(function(r){ if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function(saved){ state.decisions = merge(state.decisions, saved.decisions); writeLocal(); return true; })
+    .catch(function(){ toast("تعذر الحفظ على جهاز الفريق — الإجابة محفوظة في المتصفح فقط"); return okLocal; });
+}
+
+// "not sure" is saved but stays unresolved.
+function status(q){
+  var d = state.decisions[q.finding];
+  if (!d || !d.choice) return "none";
+  return d.choice === "unsure" ? "unsure" : "done";
+}
+function count(st){ return Q.filter(function(q){ return status(q) === st; }).length; }
+function unsent(){ var t = lastExport(); return Object.keys(state.decisions).filter(function(k){ return state.decisions[k].saved_at > t; }).length; }
+
+function renderProgress(){
+  var n = count("done"), u = count("unsure"), s = unsent();
+  $("barFill").style.width = (100 * n / Q.length) + "%";
+  $("progressText").innerHTML = "تم الرد على " + n + " من " + Q.length + " أسئلة" + (n === Q.length ? " ✓" : "") +
+    (u ? " · محتاج أراجع: " + u : "") +
+    (s && !server ? ' · <span class="unsent">' + s + " إجابة لسه ما اتبعتتش للفريق — اضغط «تنزيل ملف الردود»</span>" : "");
+}
+function renderList(){
+  $("items").innerHTML = Q.map(function(q){
+    var st = status(q);
+    var sub = st === "done" ? "تم الرد" : (st === "unsure" ? "محتاج أراجع" : "بانتظار إجابتك");
+    return '<button type="button" class="item" data-id="' + q.finding + '"' + (current === q.finding ? ' aria-current="true"' : "") + '>' +
+      '<span class="num ' + (st === "done" ? "done" : (st === "unsure" ? "unsure" : "")) + '">' + (st === "done" ? "✓" : (st === "unsure" ? "؟" : q.n)) + "</span>" +
+      "<span>" + esc(q.title_ar) + '<small class="' + (st === "unsure" ? "unsure" : "") + '">سؤال ' + q.n + " — " + sub + "</small></span></button>";
+  }).join("");
+}
+
+function list(items, ordered){
+  var tag = ordered ? "ol" : "ul";
+  return "<" + tag + ' class="' + (ordered ? "steps" : "plain") + '">' + items.map(function(t){ return "<li>" + esc(t) + "</li>"; }).join("") + "</" + tag + ">";
+}
+function block(title, html){ return '<section class="block"><h3>' + title + "</h3>" + html + "</section>"; }
+
+function renderIntro(){
+  current = null;
+  var firstOpen = Q.filter(function(q){ return status(q) !== "done"; })[0];
+  var where = TRIAL
+    ? "ده نسخة تجربة: إجاباتك بتتحفظ في المتصفح ده بس للتجربة، ومش بتتحسب كقرارات."
+    : (server
+      ? "الصفحة شغالة من جهاز الفريق، فإجاباتك بتتحفظ عندهم مباشرة، وكمان في المتصفح ده."
+      : "إجاباتك بتتحفظ في المتصفح ده على جهازك بس، مش على الإنترنت. لو قفلت الصفحة وفتحتها تاني من نفس المتصفح هتلاقيها.");
+  var reach = server
+    ? "ومع ذلك نزّل ملف الردود وابعتُه لنا بعد ما تخلص."
+    : "الفريق مش بيشوف إجاباتك لحد ما تنزّل ملف الردود وتبعته لنا (واتساب أو إيميل). تقدر تنزّله وتبعته أكتر من مرة، وبناخد آخر إجابة لكل سؤال.";
+  $("main").innerHTML =
+    '<div class="card guide"><h2 class="title">طريقة الإجابة</h2>' +
+    "<ol>" + DATA.usage_ar.map(function(t){ return "<li>" + esc(t) + "</li>"; }).join("") + "</ol>" +
+    '<p class="note">' + esc(where) + " " + esc(reach) + "</p>" +
+    '<p class="note">لو اخترت «مش متأكد / محتاج أراجع» السؤال بيفضل مفتوح، ومش هنعتبره إجابة.</p>' +
+    '<div class="actions"><button class="btn primary" type="button" id="startBtn">' + (firstOpen ? (count("done") || count("unsure") ? "كمل من أول سؤال لسه محتاج رد (سؤال " + firstOpen.n + ")" : "ابدأ من سؤال 1") : "راجع الأسئلة") + "</button>" +
+    '<button class="btn" type="button" id="importBtn">استرجاع ردود من ملف</button>' +
+    '<button class="btn" type="button" id="csvBtn">تنزيل نسخة Excel</button></div></div>';
+  $("startBtn").onclick = function(){ go((firstOpen || Q[0]).finding); };
+  $("importBtn").onclick = function(){ $("importFile").click(); };
+  $("csvBtn").onclick = exportCsv;
+  renderList();
+  if (location.hash) history.replaceState(null, "", location.pathname + location.search);
+  $("list").classList.remove("open");
+}
+
+function selectedOption(q){
+  var d = state.decisions[q.finding], dr = drafts[q.finding];
+  if (dr) return dr.option || "";
+  if (!d) return "";
+  if (d.option) return d.option;
+  // answer saved without a specific option: show the first option of the same kind
+  for (var i = 0; i < q.options.length; i++) if (q.options[i].maps_to === d.choice) return q.options[i].key;
+  return "";
+}
+
+function renderQuestion(id){
+  var q = qOf(id);
+  if (!q) return renderIntro();
+  current = id;
+  var idx = Q.indexOf(q);
+  var d = state.decisions[id];
+  var dr = drafts[id] || null;
+  var selKey = selectedOption(q);
+  var extrasNow = dr ? (dr.extras || {}) : ((d && d.extras) || {});
+  var comment = dr ? dr.comment : (d ? d.comment : "");
+  var st = status(q);
+
+  var where = q.where.map(function(w){
+    return '<div class="where"><div class="f"><bdi>' + esc(w.file_ar) + '</bdi></div><div class="t">' + esc(w.tab_ar) + "</div>" +
+      (w.cells && w.cells.length ? "<ul>" + w.cells.map(function(c){ return "<li>" + (c.ref ? '<span class="cellref">' + esc(c.ref) + "</span> " : "") + esc(c.ar) + "</li>"; }).join("") + "</ul>" : "") + "</div>";
+  }).join("");
+  var table = "";
+  if (q.table) {
+    table = '<div class="tblwrap"><table class="tbl"><thead><tr>' + q.table.headers_ar.map(function(h){ return "<th>" + esc(h) + "</th>"; }).join("") + "</tr></thead><tbody>" +
+      q.table.rows_ar.map(function(r, i){ return "<tr" + (q.table.highlight_last && i === q.table.rows_ar.length - 1 ? ' class="hl"' : "") + ">" + r.map(function(c){ return "<td>" + esc(c) + "</td>"; }).join("") + "</tr>"; }).join("") + "</tbody></table></div>";
+  }
+  var example = q.example ? '<div class="ba"><div><b>قبل</b>' + esc(q.example.before_ar) + "</div><div><b>بعد</b>" + esc(q.example.after_ar) + "</div></div>" : "";
+  var choiceHtml = q.options.map(function(o){
+    return '<label class="choice' + (selKey === o.key ? " on" : "") + (o.maps_to === "unsure" ? " unsure" : "") + '"><input type="radio" name="opt" value="' + o.key + '"' + (selKey === o.key ? " checked" : "") + '><span><b>' + esc(o.label_ar) + "</b><small>" + esc(o.detail_ar) + "</small></span></label>";
+  }).join("");
+  var extraHtml = (q.extras || []).map(function(ex){
+    return '<div class="extra" data-extra="' + ex.key + '"><div class="eq">' + esc(ex.ask_ar) + ' <span class="ptext">(اختياري)</span></div><div class="pills">' +
+      ex.options.map(function(o){ var on = extrasNow[ex.key] === o.key; return '<label class="pill' + (on ? " on" : "") + '"><input type="radio" name="ex_' + ex.key + '" value="' + o.key + '"' + (on ? " checked" : "") + ">" + esc(o.label_ar) + "</label>"; }).join("") + "</div></div>";
+  }).join("");
+  var hist = (d && d.history && d.history.length) ? '<div class="history"><b>الإجابات السابقة:</b><ol>' + d.history.map(function(h){
+    var ho = optOf(q, h.option);
+    return "<li>" + fmtTime(h.saved_at) + " — " + esc(CHOICE_AR[h.choice] || h.choice) + (ho ? " (" + esc(ho.detail_ar) + ")" : "") + (h.comment ? ": " + esc(h.comment) : "") + "</li>"; }).join("") + "</ol></div>" : "";
+  var curOpt = d ? (d.option ? optOf(q, d.option) : null) : null;
+  var statusHtml = st === "none" ? '<div class="status pending">بانتظار إجابتك</div>' :
+    (st === "unsure" ? '<div class="status unsure">اخترت «مش متأكد / محتاج أراجع» — السؤال لسه مفتوح. آخر حفظ ' + fmtTime(d.saved_at) + "</div>" :
+      '<div class="status done">تم الرد: <b>' + esc(CHOICE_AR[d.choice]) + "</b>" + (curOpt ? " — " + esc(curOpt.detail_ar) : "") + " · آخر حفظ " + fmtTime(d.saved_at) + "</div>");
+
+  $("main").innerHTML =
+    '<div class="card">' +
+      '<div class="qno">سؤال ' + q.n + " من " + Q.length + "</div>" +
+      '<h2 class="title">' + esc(q.title_ar) + "</h2>" +
+      block("مكانها", where) +
+      block("المسجل حاليًا", list(q.now_ar)) +
+      (q.table ? block("الفروق", table) : "") +
+      block("ليه محتاجة انتباه", list(q.why_ar)) +
+      block("المقترح", list(q.proposal_ar, true) + example) +
+      '<div class="ask"><section class="block" style="margin:0"><h3>سؤالنا ليك</h3><p>' + esc(q.ask_ar) + "</p></section></div>" +
+    "</div>" +
+    '<div class="card answer"><h2>إجابتك على سؤال ' + q.n + "</h2>" + statusHtml +
+      '<div class="choices" role="radiogroup" aria-label="اختيار الإجابة">' + choiceHtml + "</div>" +
+      extraHtml +
+      '<label class="tlabel" for="comment" id="commentLabel"></label>' +
+      '<textarea id="comment" placeholder="اكتب هنا…">' + esc(comment) + "</textarea>" +
+      '<div class="err" id="err" role="alert"></div>' +
+      '<div class="actions"><button class="btn primary" type="button" id="saveBtn">حفظ الإجابة</button><span class="saved" id="savedMsg"></span>' +
+      (dr ? '<span class="ptext">فيه تعديل لسه ما اتحفظش</span> <button class="btn" type="button" id="discardBtn">تجاهل التعديل</button>' : "") + "</div>" +
+      hist +
+    "</div>" +
+    '<div class="navbtns"><button class="btn" type="button" id="prevBtn"' + (idx === 0 ? " disabled" : "") + '>→ السؤال السابق</button>' +
+    '<button class="btn" type="button" id="nextOpenBtn">أول سؤال لسه محتاج رد</button>' +
+    '<button class="btn" type="button" id="nextBtn"' + (idx === Q.length - 1 ? " disabled" : "") + ">السؤال التالي ←</button></div>";
+
+  function selected(){ var r = document.querySelector('input[name="opt"]:checked'); return r ? r.value : ""; }
+  function extrasSel(){
+    var out = {};
+    (q.extras || []).forEach(function(ex){ var r = document.querySelector('input[name="ex_' + ex.key + '"]:checked'); if (r) out[ex.key] = r.value; });
+    return out;
+  }
+  function updateLabel(){
+    var o = optOf(q, selected());
+    $("commentLabel").textContent = o && o.needs_text ? "اكتب هنا (مطلوب)" : (q.text_prompt_ar + " (اختياري)");
+  }
+  function saveDraft(){
+    var o = selected(), t = $("comment").value, ex = extrasSel();
+    var same = d && (o === selectedOptionOf(d)) && t === (d.comment || "") && JSON.stringify(ex) === JSON.stringify(d.extras || {});
+    if (same || (!d && !o && !t && !Object.keys(ex).length)) delete drafts[id];
+    else drafts[id] = {option: o, extras: ex, comment: t};
+    writeDrafts();
+  }
+  function selectedOptionOf(dd){ if (dd.option) return dd.option; for (var i = 0; i < q.options.length; i++) if (q.options[i].maps_to === dd.choice) return q.options[i].key; return ""; }
+  Array.prototype.forEach.call(document.querySelectorAll('input[name="opt"]'), function(r){
+    r.addEventListener("change", function(){
+      Array.prototype.forEach.call(document.querySelectorAll(".choice"), function(l){ l.classList.toggle("on", l.querySelector("input").checked); });
+      $("err").textContent = ""; updateLabel(); saveDraft();
+    });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll(".extra input"), function(r){
+    r.addEventListener("change", function(){
+      Array.prototype.forEach.call(document.querySelectorAll(".pill"), function(l){ l.classList.toggle("on", l.querySelector("input").checked); });
+      saveDraft();
+    });
+  });
+  $("comment").addEventListener("input", function(){ $("err").textContent = ""; saveDraft(); });
+  updateLabel();
+  $("saveBtn").onclick = function(){
+    var key = selected(), t = $("comment").value.trim(), ex = extrasSel();
+    var o = optOf(q, key);
+    if (!o){ $("err").textContent = "اختار إجابة من الاختيارات الأول."; return; }
+    if (o.needs_text && t.length < 3){ $("err").textContent = "الإجابة دي محتاجة تكتب توضيحك في الخانة اللي تحت."; $("comment").focus(); return; }
+    var prev = state.decisions[id];
+    if (prev && prev.choice === o.maps_to && (prev.option || "") === o.key && (prev.comment || "") === t && JSON.stringify(prev.extras || {}) === JSON.stringify(ex)){
+      delete drafts[id]; writeDrafts(); $("savedMsg").textContent = "محفوظة بالفعل ✓"; return;
+    }
+    var hist = prev ? (prev.history || []).concat([entry(prev)]) : [];
+    var rec = {choice: o.maps_to, option: o.key, comment: t, saved_at: nowIso(), history: hist};
+    if (Object.keys(ex).length) rec.extras = ex;
+    state.decisions[id] = rec;
+    delete drafts[id]; writeDrafts();
+    persist().then(function(ok){
+      renderProgress(); renderQuestion(id);
+      $("savedMsg").textContent = ok ? ("تم الحفظ ✓ " + fmtTime(state.decisions[id].saved_at)) : "ما اتحفظتش في المتصفح — نزّل ملف الردود دلوقتي";
+    });
+  };
+  if ($("discardBtn")) $("discardBtn").onclick = function(){ delete drafts[id]; writeDrafts(); renderQuestion(id); };
+  $("prevBtn").onclick = function(){ go(Q[idx - 1].finding); };
+  $("nextBtn").onclick = function(){ go(Q[idx + 1].finding); };
+  $("nextOpenBtn").onclick = function(){
+    var rest = Q.slice(idx + 1).concat(Q.slice(0, idx));
+    var p = rest.filter(function(x){ return status(x) !== "done"; })[0];
+    if (p) go(p.finding); else toast("كل الأسئلة اتردت");
+  };
+  renderList();
+  window.scrollTo(0, 0);
+  $("list").classList.remove("open");
+}
+
+function go(id){ if (location.hash !== "#" + id) location.hash = id; else route(id); }
+function route(id){ if (id) renderQuestion(id); else renderIntro(); }
+
+function download(name, text, type){
+  var blob = new Blob([text], {type: type});
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+}
+function stamp(){ var d = new Date(); function p(n){ return (n < 10 ? "0" : "") + n; } return d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate()) + "-" + p(d.getHours()) + p(d.getMinutes()); }
+function exportJson(){
+  var out = JSON.parse(JSON.stringify(state));
+  out.exported_at = nowIso();
+  out.answered = count("done"); out.unsure = count("unsure"); out.total = Q.length;
+  out.required_answered = out.answered; out.required_total = Q.length;
+  if (TRIAL) out.trial = true;
+  download((TRIAL ? "abdo-TRIAL-decisions-" : "abdo-decisions-") + stamp() + ".json", JSON.stringify(out, null, 1), "application/json");
+  try { localStorage.setItem(EXPORT_KEY, out.exported_at); } catch(e){}
+  renderProgress();
+  toast("تم تنزيل ملف الردود — ابعته للفريق");
+}
+function csvCell(s){ s = String(s == null ? "" : s); return '"' + s.replace(/"/g, '""') + '"'; }
+function exportCsv(){
+  var rows = [["رقم السؤال", "السؤال", "حالة الإجابة", "إجابتك", "التفاصيل", "إجابات إضافية", "توضيحك", "تاريخ آخر حفظ", "عدد الإجابات السابقة"]];
+  Q.forEach(function(q){
+    var d = state.decisions[q.finding], o = d && d.option ? optOf(q, d.option) : null;
+    var ex = d && d.extras ? Object.keys(d.extras).map(function(k){
+      var e = (q.extras || []).filter(function(x){ return x.key === k; })[0], v = e ? e.options.filter(function(y){ return y.key === d.extras[k]; })[0] : null;
+      return (e ? e.ask_ar : k) + " " + (v ? v.label_ar : d.extras[k]); }).join(" | ") : "";
+    rows.push([q.n, q.title_ar, status(q) === "done" ? "تم الرد" : (status(q) === "unsure" ? "محتاج أراجع (مفتوح)" : "بانتظار الرد"),
+      d ? CHOICE_AR[d.choice] : "", o ? o.detail_ar : "", ex, d ? d.comment : "", d ? d.saved_at : "", d ? (d.history || []).length : 0]);
+  });
+  download("abdo-decisions-" + stamp() + ".csv", "﻿" + rows.map(function(r){ return r.map(csvCell).join(","); }).join("\r\n"), "text/csv;charset=utf-8");
+}
+
+$("exportBtn").onclick = exportJson;
+$("introBtn").onclick = function(){ renderIntro(); };
+$("menuBtn").onclick = function(){ $("list").classList.toggle("open"); };
+$("importFile").onchange = function(e){
+  var file = e.target.files[0]; if (!file) return;
+  var rd = new FileReader();
+  rd.onload = function(){
+    try {
+      var j = JSON.parse(rd.result);
+      if (!j || typeof j.decisions !== "object") throw new Error("bad");
+      if (!!j.trial !== TRIAL) { toast(TRIAL ? "الملف ده مش ملف تجربة" : "الملف ده ملف تجربة — مش هيتسجل"); e.target.value = ""; return; }
+      var inc = {}, skipped = 0;
+      Object.keys(j.decisions).forEach(function(k){
+        var x = j.decisions[k], q = qOf(k), ok = /^P1-\d\d$/.test(k) && x && CHOICES[x.choice] && typeof x.saved_at === "string";
+        if (ok && q && x.option) {
+          var oo = optOf(q, x.option);
+          if (!oo || oo.maps_to !== x.choice || (oo.needs_text && !String(x.comment || "").trim())) ok = false;
+        } else if (ok && x.choice === "alternative" && !String(x.comment || "").trim()) ok = false;
+        if (ok) inc[k] = x; else skipped++;
+      });
+      state.decisions = merge(state.decisions, inc);
+      persist().then(function(){ renderProgress(); renderIntro(); toast("تم استرجاع " + Object.keys(inc).length + " إجابة من الملف" + (skipped ? " (" + skipped + " ما اتقبلتش)" : "")); });
+    } catch(err){ toast("الملف ده مش ملف ردود صحيح"); }
+    e.target.value = "";
+  };
+  rd.readAsText(file, "utf-8");
+};
+document.getElementById("items").addEventListener("click", function(e){ var b = e.target.closest(".item"); if (b) go(b.getAttribute("data-id")); });
+window.addEventListener("hashchange", function(){ route(location.hash.slice(1)); });
+window.addEventListener("beforeunload", function(e){ if (Object.keys(drafts).length) { e.preventDefault(); e.returnValue = ""; } });
+
+function checkStorage(){
+  try { var k = KEY + "-probe"; localStorage.setItem(k, "1"); var ok = localStorage.getItem(k) === "1"; localStorage.removeItem(k); return ok; }
+  catch(e){ return false; }
+}
+function renderBanners(){
+  var h = "";
+  if (TRIAL) h += '<div class="banner trial"><b>نسخة تجربة.</b> جرّب براحتك: الإجابات هنا للتجربة بس ومش هتتسجل كقرارات. بعد التجربة هنبعتلك النسخة الحقيقية.</div>';
+  if (!storageOk) h += '<div class="banner bad"><b>المتصفح ده مش بيحفظ الإجابات.</b> كمّل عادي، بس بعد كل إجابة اضغط «تنزيل ملف الردود» وابعته للفريق، لأن الإجابات هتضيع لو قفلت الصفحة. أو افتح الملف في Chrome أو Edge على الكمبيوتر.</div>';
+  $("banners").innerHTML = h;
+}
+function start(){
+  storageOk = checkStorage();
+  renderBanners();
+  var local = readLocal();
+  drafts = readDrafts();
+  if (local && local.decisions) state.decisions = merge({}, local.decisions);
+  (TRIAL ? Promise.reject(0) : fetch("api/decisions", {cache: "no-store"})).then(function(r){ if (!r.ok) throw 0; return r.json(); }).then(function(remote){
+    server = true;
+    state.decisions = merge(state.decisions, remote.decisions || {});
+    return persist();
+  }).catch(function(){ server = false; }).then(function(){
+    $("modeBadge").textContent = TRIAL ? "تجربة — الحفظ في هذا المتصفح" : (server ? "الحفظ: جهاز الفريق + المتصفح" : (storageOk ? "الحفظ: في هذا المتصفح" : "الحفظ: غير متاح — نزّل ملف الردود"));
+    renderProgress();
+    renderList();
+    route(location.hash.slice(1));
+  });
+}
+start();
+})();
+</script>
+</body>
+</html>

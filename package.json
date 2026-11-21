@@ -1,0 +1,36 @@
+{
+  "name": "balaban-branch-operations",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Balaban branch operations - Arabic and English web application",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:smoke": "node scripts/phase2/smoke.mjs",
+    "seed:build": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/phase2/build-seed.mjs",
+    "seed:check": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/phase2/build-seed.mjs --check",
+    "db:check": "node scripts/phase2/db-check.mjs",
+    "check": "npm run typecheck && npm run test && npm run build"
+  },
+  "dependencies": {
+    "@fontsource-variable/noto-sans-arabic": "^5.3.0",
+    "@supabase/supabase-js": "^2.119.2",
+    "next": "^16.4.6",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "server-only": "^0.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.1"
+  }
+}

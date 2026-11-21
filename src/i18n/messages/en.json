@@ -1,0 +1,201 @@
+{
+  "app": {
+    "name": "Balaban",
+    "tagline": "Branch operations",
+    "prototypeBanner": "Prototype with synthetic test data. These are not real branch figures.",
+    "skipToContent": "Skip to content",
+    "notFoundTitle": "Page not found",
+    "notFoundBody": "This page does not exist. Use the menu to go back."
+  },
+  "nav": {
+    "label": "Main navigation",
+    "home": "Home",
+    "dailyClose": "Daily close",
+    "cashCount": "Cash count",
+    "comparison": "Branch comparison",
+    "reportMap": "Report map",
+    "language": "Language",
+    "switchTo": "العربية"
+  },
+  "common": {
+    "blank": "Blank",
+    "blankMeaning": "A dash (—) means a blank, not-yet-entered value. It is not 0.",
+    "zeroMeaning": "0.00 means a recorded zero.",
+    "field": "Field",
+    "record": "Source record",
+    "phase": "Phase {n}",
+    "awaitingPhase": "Awaiting decision in Phase {n}",
+    "pending": "Pending",
+    "settled": "Agreed",
+    "closed": "Closed",
+    "open": "Open",
+    "notClosed": "Not closed",
+    "date": "Date",
+    "branch": "Branch",
+    "show": "Show",
+    "apply": "Apply",
+    "notSaved": "Preview only. Nothing is saved.",
+    "dataSource": "Data: synthetic fixtures {version}",
+    "traceHint": "Each value carries its report field ID and the saved record it comes from.",
+    "calculatedOnServer": "Calculated on the server",
+    "businessDate": "Business date",
+    "eventTime": "Event time",
+    "timezone": "Timezone"
+  },
+  "validation": {
+    "invalidAmount": "Enter a valid amount in MAD, for example 603 or 603.50.",
+    "negativeAmount": "The amount cannot be negative.",
+    "invalidDate": "That date is not valid. The default date is shown instead."
+  },
+  "home": {
+    "title": "Branch operations",
+    "intro": "Phase 2 foundation: Arabic and English screens, shared calculations on the server, and three working prototypes built on synthetic data.",
+    "prototypesTitle": "Prototypes",
+    "prototypes": {
+      "dailyClose": "A month of closed days with sales, orders, average order value, card and remittance ratios.",
+      "cashCount": "A saved cash count, its reconciliation at count time, and a later bank deposit.",
+      "comparison": "One shared date pair for Maarif, Al Quds and Bourgogne, with missing figures marked."
+    },
+    "modulesTitle": "Application areas",
+    "modulesIntro": "The structure is in place; each area is built in the phase shown.",
+    "modules": {
+      "access": { "name": "Access control", "description": "Branches, users, roles and permissions" },
+      "closing": { "name": "Daily closing", "description": "Business days, payments, expenses, remittances, cash counts" },
+      "ledgers": { "name": "Ledgers", "description": "Cash and purchasing-custody entries" },
+      "catalog": { "name": "Catalog and recipes", "description": "Products, units and recipe versions" },
+      "inventory": { "name": "Inventory", "description": "Product Mix, stock movements, counts, variance" },
+      "comparisons": { "name": "Comparisons", "description": "Cross-branch sales comparison" },
+      "replenishment": { "name": "Replenishment", "description": "Planning, purchase orders and receiving" },
+      "reports": { "name": "Reports", "description": "The five Excel report families" },
+      "attendance": { "name": "Attendance", "description": "Employee IDs, kiosk and hours (future)" }
+    }
+  },
+  "dailyClose": {
+    "title": "Daily close",
+    "reportTitle": "Daily Sales · {branch} · {month}",
+    "intro": "One row per business day. A day that is not closed shows its date and blank figures.",
+    "month": "Month",
+    "dayDetail": "Day detail",
+    "selectDay": "Day",
+    "columns": {
+      "date": "Date",
+      "sales": "Sales",
+      "orders": "Orders",
+      "average": "Average order",
+      "expenses": "Expenses incl. remittance",
+      "remittance": "Cash (bank remittance)",
+      "remittanceRatio": "Remittance ratio",
+      "card": "Card / Visa",
+      "cardRatio": "Card ratio"
+    },
+    "totals": "Month totals",
+    "totalsNote": "{days} closed days included. The average is total sales divided by total orders.",
+    "ordersMissingNote": "{days} closed days have no order count, so the average may be overstated.",
+    "dayNotClosed": "This day is not closed. No figures are shown.",
+    "dayNoRecord": "No business day was recorded for this date.",
+    "expenseLines": "Cash movements of the day",
+    "noMovements": "No expense or remittance recorded.",
+    "kind": { "expense": "Expense", "bank_remittance": "Bank remittance" },
+    "totalExpenses": "Total expenses (cash)",
+    "viewDay": "Open day"
+  },
+  "cashCount": {
+    "title": "Cash count",
+    "intro": "Expected cash is the cash expected at the moment of the count. A deposit made later does not change the count result.",
+    "chooseDay": "Business day",
+    "dayNotClosed": "This day is not closed, so there is no count to show.",
+    "dayNoRecord": "No business day was recorded for this date.",
+    "dayFigures": "Figures of the day",
+    "opening": "Opening cash",
+    "systemRevenue": "System revenue (net sales)",
+    "card": "Card / Visa",
+    "movements": "Cash movements",
+    "movementTime": "Time",
+    "savedCount": "Saved count",
+    "counted": "Counted cash",
+    "expected": "Expected cash at count time",
+    "variance": "Over / short",
+    "statementTotal": "Statement total (counted + card + cash expenses)",
+    "countedAt": "Counted at",
+    "businessDateOfCount": "Business date of the count",
+    "recalcOk": "Recalculating at count time gives the same stored result.",
+    "recalcDiffers": "Recalculation differs from the stored result.",
+    "noCount": "No cash count was saved for this day. It is not counted, and no match is shown.",
+    "status": {
+      "match": "Match: the count equals the expected cash.",
+      "over": "Over: more cash than expected.",
+      "short": "Short: less cash than expected.",
+      "not_counted": "Not counted.",
+      "cannot_reconcile": "Counted, but the expected cash cannot be calculated because opening cash, sales or card is blank."
+    },
+    "afterCount": "After the count",
+    "afterCountNote": "These movements happened after the count. They change the cash in the drawer, not the count result.",
+    "noLater": "No movement after the count.",
+    "drawerAfter": "Cash in the drawer after later movements",
+    "expectedAtClose": "Expected cash after all movements of the day",
+    "previewTitle": "Try a count",
+    "previewHelp": "Type a counted amount to see the result as at {time}. Leave it empty for “not counted”. 0 is a real count of zero.",
+    "countedInput": "Counted amount (MAD)",
+    "previewResult": "Result of the preview",
+    "pendingTitle": "Waiting for a later decision",
+    "pendingBody": "Who counted the cash and who was the cashier are not recorded yet. The role rules are decided in Phase 4.",
+    "pendingFieldNote": "Not available until Phase 4"
+  },
+  "comparison": {
+    "title": "Branch comparison",
+    "intro": "One date pair is used for every branch. A branch with no figure is marked missing, never shown as 0.",
+    "currentDate": "Current date",
+    "priorDate": "Prior date",
+    "showDates": "Show comparison",
+    "columns": {
+      "branch": "Branch",
+      "current": "Current",
+      "prior": "Prior",
+      "ratio": "Current ÷ prior"
+    },
+    "missing": "Missing",
+    "source": {
+      "closed_day": "Closed day",
+      "reporting_only": "Reporting only",
+      "missing": "Missing"
+    },
+    "total": "Total of branches",
+    "coverage": "{present} of {total} branches",
+    "incomplete": "Incomplete total",
+    "complete": "Complete total",
+    "ratioReason": {
+      "prior_missing_or_zero": "No ratio: the prior figure is missing or zero.",
+      "different_branches": "No ratio: the two totals cover different branches."
+    },
+    "examples": "Sample dates",
+    "reportingOnlyNote": "Al Quds and Bourgogne figures are entered for reporting only. Maarif comes from its closed days."
+  },
+  "reportMap": {
+    "title": "Report map",
+    "intro": "Every report field with its legacy cell, source record, unit, date basis, rounding, blank behavior and any open decision. Source: the reviewed Phase 1 field map.",
+    "summary": "{total} fields: {settled} agreed, {pending} waiting for a later-phase decision.",
+    "usedBy": "Shown in",
+    "notShown": "Not in the Phase 2 prototypes",
+    "columns": {
+      "id": "ID",
+      "field": "Field",
+      "legacy": "Legacy cell",
+      "meaning": "Meaning",
+      "source": "Source record",
+      "unit": "Unit",
+      "dateBasis": "Date basis",
+      "rounding": "Rounding",
+      "blank": "Blank behavior",
+      "status": "Status",
+      "decision": "Decision",
+      "phase": "Built in"
+    },
+    "reports": {
+      "Daily Sales": "Daily Sales Maarif",
+      "Daily statement": "Daily statement",
+      "Daily ledger": "Yawmeya (daily ledger)",
+      "Sales comparison": "Sales comparison",
+      "Inventory and order": "Inventory and replenishment"
+    }
+  }
+}
