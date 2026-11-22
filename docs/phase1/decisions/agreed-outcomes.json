@@ -8,6 +8,20 @@
    "agreed_on": "2026-11-21",
    "recorded_at": "2026-11-21T19:29:37",
    "history": []
+  },
+  "P1-24": {
+   "rule": "Maarif counts products, oil, sauces and other items above the Packaging section daily, and counts Packaging monthly. There is no weekly count. A missed count stays blank.",
+   "agreed_with": "Abdo",
+   "agreed_on": "2026-11-22",
+   "recorded_at": "2026-11-22T02:56:21",
+   "history": []
+  },
+  "P1-35": {
+   "rule": "Abdo confirmed SRC-01 Sheet1!C6 is the expected receipt date. Use separate creation, expected receipt and actual receipt dates.",
+   "agreed_with": "Abdo",
+   "agreed_on": "2026-11-22",
+   "recorded_at": "2026-11-22T02:56:21",
+   "history": []
   }
  }
 }

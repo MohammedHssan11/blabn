@@ -20,7 +20,8 @@
     "staff": "Staff accounts",
     "audit": "Audit history",
     "inventoryAdjustments": "Inventory adjustments",
-    "account": "Account"
+    "account": "Account",
+    "catalog": "Catalog and recipes"
   },
   "common": {
     "blank": "Blank",
@@ -75,7 +76,8 @@
       "reports": "Review report fields and their sources.",
       "inventory": "Record or review adjustments for Maarif.",
       "staff": "Manage accounts, branches, and permissions.",
-      "audit": "Review changes and who made them."
+      "audit": "Review changes and who made them.",
+      "catalog": "Items, Foodics names, units and recipe versions."
     },
     "modulesTitle": "Application areas",
     "modulesIntro": "The structure is in place; each area is built in the phase shown.",
@@ -304,7 +306,13 @@
     "not_found": "That staff account was not found.",
     "invalid_access": "That branch and group combination is not allowed.",
     "unavailable": "The service did not answer. Nothing was changed. Try again in a moment.",
-    "unexpected": "Something went wrong. Nothing was changed. Try again."
+    "unexpected": "Something went wrong. Nothing was changed. Try again.",
+    "catalog_stale": "Someone else changed this record. Reload the page and try again.",
+    "catalog_duplicate": "That name, code or Foodics name is already in use.",
+    "catalog_overlap": "Those dates overlap another approved recipe version of the same product.",
+    "catalog_date_unconfirmed": "The effective date of this recipe set is not confirmed yet, or the dates do not follow it.",
+    "catalog_incomplete": "A recipe line is incomplete: every line needs an ingredient, a quantity and a unit.",
+    "catalog_unit": "A recipe line uses a unit that does not convert to its ingredient's base unit. Fix the unit or add the approved conversion."
   },
   "notices": {
     "created": "The account was created. Give the temporary password to the person privately.",
@@ -314,7 +322,19 @@
     "reactivated": "The account is active again.",
     "password_reset": "The temporary password was set. The person must choose their own at the next sign-in.",
     "password_changed": "Your password was changed.",
-    "adjustment_saved": "The adjustment was recorded."
+    "adjustment_saved": "The adjustment was recorded.",
+    "catalog_item_saved": "The item was saved.",
+    "catalog_conversion_saved": "The conversion was saved.",
+    "catalog_mapping_saved": "The mapping decision was saved.",
+    "catalog_review_saved": "The review entry was updated.",
+    "catalog_date_answered": "The date was recorded. The linked recipe versions can now be approved on it.",
+    "catalog_recipe_created": "The draft recipe was created.",
+    "catalog_line_saved": "The recipe line was saved.",
+    "catalog_line_removed": "The recipe line was removed.",
+    "catalog_recipe_saved": "The recipe details were saved.",
+    "catalog_recipe_approved": "The recipe version was approved.",
+    "catalog_recipe_withdrawn": "The draft was withdrawn.",
+    "catalog_names_queued": "The names were added to the review queue."
   },
   "warnings": {
     "auth_not_updated": "The change was saved, but the sign-in service did not confirm it. Every request from this person is already refused; try the same action again to finish."
@@ -457,7 +477,21 @@
       "cash_movements_created": "Cash movement recorded",
       "cash_counts_created": "Cash count recorded",
       "comparison_figures_created": "Comparison figure entered",
-      "inventory_adjustments_created": "Inventory adjustment recorded"
+      "inventory_adjustments_created": "Inventory adjustment recorded",
+      "catalog_item_saved": "Catalog item saved",
+      "catalog_item_status_changed": "Catalog item status changed",
+      "catalog_conversion_saved": "Unit conversion saved",
+      "catalog_mapping_decided": "Foodics name decided",
+      "catalog_names_queued": "Names added to the review queue",
+      "catalog_review_resolved": "Review entry updated",
+      "catalog_recipe_created": "Recipe version created",
+      "catalog_recipe_line_saved": "Recipe line saved",
+      "catalog_recipe_line_removed": "Recipe line removed",
+      "catalog_recipe_details_saved": "Recipe details saved",
+      "catalog_recipe_approved": "Recipe version approved",
+      "catalog_recipe_range_closed": "Earlier recipe version ended",
+      "catalog_recipe_withdrawn": "Draft recipe withdrawn",
+      "catalog_date_decision_answered": "Recipe start date recorded"
     }
   },
   "forbidden": {
@@ -479,7 +513,7 @@
   },
   "operations": {
     "roleRule": "Record the branch manager who counted, the cashier, and the staff member who entered the count.",
-  "countRecorder": "Count entered by",
+    "countRecorder": "Count entered by",
     "ledger": {
       "cash": "Cash",
       "custody": "Purchasing custody"
@@ -493,7 +527,13 @@
     "newAccount": "Add account",
     "countHome": "Record denominations and reconcile cash at the time of counting.",
     "closeHome": "Review business days, cash and purchasing custody in one place.",
-    "kind": {"cash_receipt":"Cash received","cash_expense":"Cash expense","remittance":"Bank remittance","custody_receipt":"Custody received","custody_expense":"Custody expense"},
+    "kind": {
+      "cash_receipt": "Cash received",
+      "cash_expense": "Cash expense",
+      "remittance": "Bank remittance",
+      "custody_receipt": "Custody received",
+      "custody_expense": "Custody expense"
+    },
     "statement": "Daily statement",
     "yawmeya": "Yawmeya · daily ledger",
     "openingCash": "Opening cash",
@@ -596,5 +636,316 @@
     "enterCancellation": "Add cancellation",
     "history": "Revision history",
     "download": "Download the day and its report basis (CSV)"
+  },
+  "catalog": {
+    "title": "Catalog and recipes",
+    "intro": "Sold products, ingredients and packaging, their units, the Foodics names that map to them, and the recipe versions that turn a sale into consumption. Nothing here posts stock; that starts in Phase 6.",
+    "tabs": {
+      "items": "Items",
+      "review": "Review queue",
+      "recipes": "Recipes",
+      "consumption": "Consumption check"
+    },
+    "itemKind": {
+      "sold": "Sold product",
+      "ingredient": "Ingredient",
+      "packaging": "Packaging",
+      "all": "All kinds"
+    },
+    "status": {
+      "active": "Active",
+      "discontinued": "Discontinued",
+      "all": "All statuses"
+    },
+    "items": {
+      "searchLabel": "Search by name or code",
+      "filter": "Filter",
+      "showing": "Showing {from}–{to} of {total}",
+      "empty": "No items match.",
+      "add": "Add an item",
+      "manage": "Open",
+      "previous": "Previous",
+      "next": "Next",
+      "englishMissing": "English name needed",
+      "addOn": "Add-on",
+      "notTracked": "Not in the inventory list",
+      "columns": {
+        "name": "Name",
+        "kind": "Kind",
+        "code": "Code",
+        "unit": "Base unit",
+        "status": "Status"
+      },
+      "newTitle": "New item",
+      "detailsTitle": "Details",
+      "nameAr": "Arabic name",
+      "nameEn": "English name",
+      "code": "Code",
+      "section": "Section in the source",
+      "baseUnit": "Base unit",
+      "purchaseUnit": "Purchase unit",
+      "storageUnit": "Storage unit",
+      "isAddOn": "This is an add-on sold with another product",
+      "noUnit": "None",
+      "save": "Save item",
+      "unitsHint": "Every unit must convert to the base unit: the same kind of unit converts automatically, a carton or a sack needs an approved conversion below.",
+      "statusTitle": "Status",
+      "discontinue": "Discontinue",
+      "discontinuedFrom": "Last day in use",
+      "reactivate": "Reactivate",
+      "statusHint": "A discontinued item stays in the catalog. Its recipes, its names and every past day keep resolving to it.",
+      "usedIn": "Used in {n} recipe lines",
+      "back": "Back to the items",
+      "recipeLink": "Open the recipes of this product",
+      "noName": "(no name)"
+    },
+    "conversions": {
+      "title": "Unit conversions",
+      "intro": "How many {unit} one of another unit holds, for this item only. Units of the same kind (kg and g) need none.",
+      "none": "No item-specific conversion.",
+      "unit": "Unit",
+      "perUnit": "{unit} in one",
+      "basis": "Basis (who confirmed it, or the source)",
+      "add": "Save conversion",
+      "factor": "1 {from} =",
+      "locked": "A conversion used by an approved recipe cannot change."
+    },
+    "labels": {
+      "title": "Names in the sources",
+      "empty": "No source name is stored for this item.",
+      "system": {
+        "foodics": "Foodics",
+        "inventory_workbook": "Inventory workbook",
+        "recipe_workbook": "Recipe list",
+        "decision_record": "Decision record",
+        "manual": "Entered by hand"
+      },
+      "status": {
+        "pending": "Waiting",
+        "approved": "Approved",
+        "rejected": "Rejected"
+      }
+    },
+    "review": {
+      "title": "Review queue",
+      "intro": "Names, add-ons and units that cannot be used until a person decides them. Each entry names the exact source rows. Only the affected consumption stays blocked.",
+      "filter": "Kind",
+      "statusFilter": "Status",
+      "allKinds": "All kinds",
+      "open": "Open",
+      "resolved": "Resolved",
+      "dismissed": "Dismissed",
+      "allStatuses": "All",
+      "empty": "Nothing in this list.",
+      "count": "{n} open",
+      "source": "Source rows",
+      "mapTo": "Map to the sold product",
+      "choose": "Choose a product",
+      "basis": "Basis (who confirmed it)",
+      "approve": "Approve mapping",
+      "reject": "Reject name",
+      "note": "Note",
+      "resolve": "Mark resolved",
+      "dismiss": "Dismiss",
+      "reopen": "Reopen",
+      "resolvedBy": "Closed: {note}",
+      "baseUnitIs": "Base unit now: {unit}",
+      "noBaseUnit": "no base unit set",
+      "limit": "Showing the first {n} entries. Use the filters to narrow the list.",
+      "row": "row {n}",
+      "sheet": "sheet {name}",
+      "kinds": {
+        "unmapped_name": {
+          "name": "Unmapped Foodics name",
+          "help": "This name came from Foodics and no product is approved for it."
+        },
+        "unconfirmed_mapping": {
+          "name": "Mapping to confirm",
+          "help": "The two source names may be the same product, but a person has not confirmed it."
+        },
+        "ambiguous_addon": {
+          "name": "Ambiguous add-on",
+          "help": "The add-on is written differently on the sales row and in its recipe."
+        },
+        "missing_unit": {
+          "name": "Missing unit",
+          "help": "A recipe line has a quantity but no unit."
+        },
+        "unit_conflict": {
+          "name": "Conflicting units",
+          "help": "The same ingredient is written in different units; recipes with these lines cannot be approved."
+        },
+        "missing_quantity": {
+          "name": "Missing quantity",
+          "help": "A recipe line has no quantity (or a zero)."
+        },
+        "missing_component": {
+          "name": "Missing ingredient",
+          "help": "A recipe line has a quantity or unit but no ingredient."
+        },
+        "untracked_component": {
+          "name": "Ingredient outside the inventory list",
+          "help": "Recipes use this ingredient but the inventory list has no row for it."
+        },
+        "empty_sales_row": {
+          "name": "Recipe on an empty sales row",
+          "help": "The recipe reads a Product Mix row that has no name, so Foodics has nothing to match."
+        },
+        "unlinked_recipe": {
+          "name": "Recipe without a sales row",
+          "help": "The recipe is not linked to any Product Mix row."
+        },
+        "recipe_effective_date": {
+          "name": "Recipe start date",
+          "help": "Only Abdo can say when the November recipe set started."
+        }
+      },
+      "dateTitle": "A question for Abdo",
+      "dateAnswered": "Answered: {date}",
+      "dateEvidence": "Confirmed by: {evidence}",
+      "dateHold": "The November recipe versions stay drafts until this is answered.",
+      "dateAnswer": "Day the November recipes started",
+      "dateWho": "Who confirmed it, and how",
+      "dateSave": "Record the answer"
+    },
+    "recipes": {
+      "title": "Recipes",
+      "intro": "One or more versions per sold product. A version is a draft until it is approved with its effective dates. Approved versions never change; a later version takes over from its start date.",
+      "show": "Show",
+      "all": "All products",
+      "approved": "With an approved recipe",
+      "draft": "Drafts only",
+      "none": "No recipe yet",
+      "gated": "Waiting for a date",
+      "searchLabel": "Search by product name",
+      "empty": "No product matches.",
+      "columns": {
+        "product": "Product",
+        "section": "Section",
+        "versions": "Versions",
+        "current": "Latest approved",
+        "state": "State"
+      },
+      "draftCount": "{n} draft",
+      "approvedCount": "{n} approved",
+      "noneYet": "No recipe",
+      "from": "from {date}",
+      "range": "{from} to {to}",
+      "open": "Open",
+      "gate": "Date pending",
+      "productTitle": "Recipes of {name}",
+      "back": "Back to the recipes",
+      "versionHeading": "Version {n} · {label}",
+      "noVersions": "This product has no recipe yet.",
+      "state": {
+        "draft": "Draft",
+        "approved": "Approved",
+        "withdrawn": "Withdrawn"
+      },
+      "effective": "Effective {from} to {to}",
+      "openEnd": "no end date",
+      "yield": "Batch yield",
+      "yieldHint": "Leave blank when the lines are per sold unit (the default).",
+      "sources": "Source",
+      "note": "Note",
+      "lines": {
+        "component": "Ingredient or packaging",
+        "quantity": "Quantity",
+        "unit": "Unit",
+        "source": "Source row",
+        "written": "written {label}",
+        "noUnit": "no unit",
+        "noQuantity": "no quantity",
+        "noComponent": "no ingredient",
+        "none": "No lines.",
+        "save": "Save line",
+        "remove": "Remove",
+        "add": "Add a line",
+        "choose": "Choose an ingredient",
+        "kindPackaging": "Packaging",
+        "kindIngredient": "Ingredient",
+        "unitResolved": "Unit approved by Abdo",
+        "perSold": "per sold unit"
+      },
+      "details": {
+        "title": "Version details",
+        "label": "Label",
+        "save": "Save details"
+      },
+      "approve": {
+        "title": "Approve this version",
+        "from": "First day",
+        "to": "Last day (leave blank for no end)",
+        "button": "Approve",
+        "hint": "Approving fixes the recipe for these dates. An open earlier version ends the day before the first day.",
+        "gatedNote": "The dates must follow Abdo's confirmed start date. Until it is recorded in the review queue this version cannot be approved.",
+        "startsOn": "Starts on the confirmed date: {date}",
+        "endsBefore": "Ends the day before the confirmed date: {date}"
+      },
+      "withdraw": {
+        "title": "Withdraw this draft",
+        "note": "Reason",
+        "button": "Withdraw"
+      },
+      "create": {
+        "title": "New version",
+        "label": "Label",
+        "copy": "Copy lines from",
+        "blank": "Start empty",
+        "button": "Create draft"
+      }
+    },
+    "consumption": {
+      "title": "Consumption check",
+      "intro": "Enter the sold lines of a business day to see which can be consumed through an approved mapping, a convertible unit and an approved recipe, and which are blocked and why. Nothing is saved or posted here.",
+      "date": "Business date",
+      "lines": "Sold lines",
+      "linesHint": "One per row: Foodics name | quantity",
+      "run": "Check",
+      "summary": "{eligible} can be consumed, {blocked} blocked",
+      "columns": {
+        "line": "Line",
+        "name": "Name",
+        "quantity": "Quantity",
+        "result": "Result",
+        "product": "Product",
+        "recipe": "Recipe",
+        "details": "Details"
+      },
+      "eligible": "Can be consumed",
+      "blocked": "Blocked",
+      "components": "Ingredients and packaging",
+      "totals": "Total consumption of the eligible lines",
+      "colItem": "Item",
+      "colKind": "Kind",
+      "colQty": "Quantity",
+      "colFrom": "Recipe line",
+      "inexact": "rounded; exact value {num}/{den}",
+      "queue": "Add the unmapped names to the review queue",
+      "unreadable": "Row {rows} could not be read as «name | quantity». It is shown as blocked.",
+      "recipeVersion": "version {n} · {label}",
+      "tooManyLines": "Enter up to 500 lines and 20,000 characters per check.",
+      "dateInvalid": "Enter a valid business date.",
+      "noLines": "Enter at least one line.",
+      "reason": {
+        "invalid_quantity": "The quantity is not a positive number.",
+        "unknown_product": "This item is not a sold product.",
+        "unmapped_name": "No product is approved for this Foodics name. Add it to the review queue.",
+        "mapping_pending": "The mapping for this name is waiting for approval.",
+        "mapping_rejected": "This name was rejected and has no product.",
+        "no_recipe": "This product has no recipe.",
+        "recipe_not_approved": "The recipe of this product is still a draft.",
+        "no_recipe_for_date": "No approved recipe covers this business date.",
+        "recipe_empty": "The approved recipe has no lines.",
+        "recipe_line_incomplete": "Recipe line {line} has no ingredient or quantity.",
+        "unit_missing": "Recipe line {line} ({component}) has no unit.",
+        "base_unit_missing": "{component} has no base unit (recipe line {line}).",
+        "unit_incompatible": "Recipe line {line}: {unit} does not convert to the base unit {base} of {component}.",
+        "unknown": "Blocked ({code})."
+      },
+      "warning": {
+        "discontinued_before_date": "This product was discontinued on {date}; the sale is still consumed."
+      }
+    }
   }
 }

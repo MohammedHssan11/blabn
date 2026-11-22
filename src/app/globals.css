@@ -430,3 +430,21 @@ pre.changes { white-space: pre-wrap; word-break: break-word; margin: 6px 0 0; fo
 [data-reversed="true"] { opacity: 0.7; }
 .ops-form .ops-check { display: flex; align-items: center; }
 .ops-form .ops-check input { width: auto; }
+
+/* Phase 5: catalog and recipes */
+.plain-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; font-size: 0.875rem; }
+.catalog-filters { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; margin: 8px 0 12px; }
+.catalog-filters label { min-width: 0; flex: 1 1 150px; }
+.catalog-filters button { align-self: end; }
+.mini-form { display: flex; flex-wrap: wrap; gap: 8px; align-items: end; }
+.mini-form label { min-width: 0; flex: 1 1 140px; }
+.mini-form input, .mini-form select, .catalog-filters input, .catalog-filters select { max-width: 100%; min-width: 0; width: 100%; }
+.recipe-version { border-inline-start: 4px solid var(--border); }
+.recipe-version.approved { border-inline-start-color: var(--ok); }
+.recipe-version.draft { border-inline-start-color: var(--warn); }
+.recipe-version.withdrawn { opacity: 0.7; }
+td.numeric, th.numeric { text-align: end; }
+.result-eligible { background: var(--ok-soft); }
+.result-blocked { background: var(--bad-soft); }
+.pager { display: flex; gap: 12px; align-items: center; margin: 12px 0; }
+select.wide { max-width: 100%; min-width: 0; width: 100%; }

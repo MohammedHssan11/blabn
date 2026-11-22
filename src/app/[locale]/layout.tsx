@@ -62,6 +62,7 @@ export default async function LocaleLayout({
           ...(holds(access, "inventory.adjust", OPERATING_BRANCH_CODE)
             ? [{ href: `/${locale}/inventory/adjustments`, label: t("nav.inventoryAdjustments") }]
             : []),
+          ...(holds(access, "recipes.manage") ? [{ href: `/${locale}/catalog`, label: t("nav.catalog") }] : []),
           ...(holds(access, "admin.users.manage") ? [{ href: `/${locale}/admin/staff`, label: t("nav.staff") }] : []),
           ...(holds(access, "admin.audit.view") ? [{ href: `/${locale}/admin/audit`, label: t("nav.audit") }] : []),
         ]

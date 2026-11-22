@@ -23,7 +23,13 @@
     "test:browser": "node scripts/phase3/browser-check.mjs",
     "test:concurrency": "node scripts/phase3/concurrency-test.mjs",
     "db:check:phase4": "node scripts/phase3/db-check.mjs phase4_checks.sql",
-    "test:phase4": "node scripts/phase4/browser-check.mjs"
+    "test:phase4": "node scripts/phase4/browser-check.mjs",
+    "seed:catalog": "node scripts/phase5/build-catalog-seed.mjs",
+    "seed:catalog:check": "node scripts/phase5/build-catalog-seed.mjs --check",
+    "catalog:extract": "python -I -X utf8 scripts/phase5/extract_catalog.py",
+    "db:check:phase5": "node scripts/phase3/db-check.mjs phase5_checks.sql",
+    "test:phase5": "node scripts/phase5/e2e.mjs",
+    "test:phase5:browser": "node scripts/phase5/browser-check.mjs"
   },
   "dependencies": {
     "@fontsource-variable/noto-sans-arabic": "^5.3.0",
