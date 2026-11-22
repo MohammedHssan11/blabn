@@ -1,3 +1,4 @@
+import { usesDemoFixtures } from "@/modules/closing/operations";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isLocale } from "@/i18n/config";
@@ -26,8 +27,8 @@ export default async function HomePage({
   const shortcuts = [
     ...(holds(access, "daily_close.view", OPERATING_BRANCH_CODE)
       ? [
-          { href: `/${locale}/daily-close`, title: t("nav.dailyClose"), body: t("home.prototypes.dailyClose") },
-          { href: `/${locale}/cash-count`, title: t("nav.cashCount"), body: t("home.prototypes.cashCount") },
+          { href: `/${locale}/daily-close`, title: t("nav.dailyClose"), body: t(usesDemoFixtures() ? "home.prototypes.dailyClose" : "operations.closeHome") },
+          { href: `/${locale}/cash-count`, title: t("nav.cashCount"), body: t(usesDemoFixtures() ? "home.prototypes.cashCount" : "operations.countHome") },
         ]
       : []),
     ...(ALL_BRANCH_CODES.every((code) => holds(access, "comparison.view", code))

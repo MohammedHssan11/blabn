@@ -19,4 +19,4 @@ Use identical saved values in Arabic and English. Format the labels, digits, amo
 
 ## Scheduled dependencies
 
-Fields ST-09 and LG-08 are pending implementation. Use the [confirmed Phase 4 count-role rule](../phase4/ABDO_DECISIONS.md) when implementing them. Keep INV-01, INV-03, INV-06 and INV-12 marked with their Phase 5 catalog, unit and recipe dependencies. Use creation, expected receipt and actual receipt for new orders. Confirm what the historical order-sheet date means in Phase 8 before mapping it.
+The Phase 2 demo marks ST-09 and LG-08 as pending. The [live Phase 4 workflow](../phase4/OPERATING_CLOSE.md) records the physical counter, their role, the cashier and the person who entered the count. Keep INV-01, INV-03, INV-06 and INV-12 marked with their Phase 5 catalog, unit and recipe dependencies. Use creation, expected receipt and actual receipt for new orders. Confirm what the historical order-sheet date means in Phase 8 before mapping it.

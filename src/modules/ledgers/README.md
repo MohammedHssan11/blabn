@@ -1,7 +1,5 @@
 # Ledgers
 
-Cash and purchasing-custody entries, cancellations and adjustments. Carries each ledger's closing balance into the next day's opening balance (LG-06, LG-07).
+Phase 4 records the cash and purchasing-custody ledgers and their cancellations in the daily-close workflow. The Phase 4 migration calculates both balances and the carry-forward. The Yawmeya view and draft CSV use the resulting report basis.
 
-Built in Phase 4 (see docs/IMPLEMENTATION_PLAN.md). Phase 2 provides only this placeholder so the module boundaries exist.
-
-Rules that apply here: financial, stock and report calculations run in server code; saved values are the same in Arabic and English; a blank (NULL) is never treated as zero.
+See the [Phase 4 workflow](../../../docs/phase4/OPERATING_CLOSE.md) for entries, corrections and balance calculations.

@@ -88,6 +88,11 @@ begin
     'only System Admin exports comparison data';
 end $$;
 
+-- These historical checks exercise the original RLS policy. Restore its table privileges
+-- inside this roll-back-only test; Phase 4 acceptance tests check they are revoked in normal use.
+grant insert, update on public.business_days to authenticated;
+grant insert on public.cash_movements, public.cash_counts to authenticated;
+
 -- ===================================================================== 3. Test helpers (rolled back)
 create function public.zz_act_as(uid uuid) returns void language plpgsql as $$
 begin
