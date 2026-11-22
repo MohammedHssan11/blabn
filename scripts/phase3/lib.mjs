@@ -226,7 +226,7 @@ export const plainText = (html) =>
     .replace(/&#x27;/g, "'")
     .replace(/\s+/g, " ");
 
-export async function mailFor(address, { subject = "", timeoutMs = 15000, mailpit = "http://127.0.0.1:55324", after = 0 } = {}) {
+export async function mailFor(address, { subject = "", timeoutMs = 15000, mailpit = process.env.SUPABASE_TEST_MAILPIT_URL ?? "http://127.0.0.1:55324", after = 0 } = {}) {
   const start = Date.now();
   while (Date.now() - start < timeoutMs) {
     const list = await (await fetch(`${mailpit}/api/v1/messages`)).json();

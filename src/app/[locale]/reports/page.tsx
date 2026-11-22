@@ -6,6 +6,7 @@ import { requireAccess } from "@/modules/access/guard";
 import { OPERATING_BRANCH_CODE } from "@/modules/access/catalog";
 import { createTranslator, type MessageKey } from "@/i18n/dictionary";
 import { PROTOTYPE_FIELDS, prototypesUsing, type PrototypeId } from "@/modules/reports/contracts";
+import { usesDemoFixtures } from "@/modules/closing/operations";
 import { awaitingPhase, FIELD_MAP, FIELD_MAP_FINDINGS_VERSION, isPending, type FieldDef } from "@/modules/reports/field-map";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -19,6 +20,13 @@ const PROTOTYPE_PATH: Record<PrototypeId, { path: string; label: MessageKey }> =
   comparison: { path: "comparison", label: "nav.comparison" },
 };
 
+const PHASE_4_FIELDS: Partial<Record<string, PrototypeId>> = {
+  "ST-01": "cashCount", "ST-09": "cashCount",
+  "LG-01": "dailyClose", "LG-02": "dailyClose", "LG-03": "dailyClose",
+  "LG-04": "dailyClose", "LG-05": "dailyClose", "LG-06": "dailyClose",
+  "LG-07": "dailyClose", "LG-08": "dailyClose", "LG-09": "dailyClose",
+};
+
 export default async function ReportMapPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
@@ -26,8 +34,10 @@ export default async function ReportMapPage({ params }: { params: Promise<{ loca
   const t = createTranslator(locale);
 
   const reports = [...new Set(FIELD_MAP.map((f) => f.report))];
-  const pendingCount = FIELD_MAP.filter(isPending).length;
-  const shownCount = new Set(Object.values(PROTOTYPE_FIELDS).flat()).size;
+  const demo = usesDemoFixtures();
+  const pendingField = (field: FieldDef) => isPending(field) && (demo || !PHASE_4_FIELDS[field.id]);
+  const pendingCount = FIELD_MAP.filter(pendingField).length;
+  const shownCount = new Set([...Object.values(PROTOTYPE_FIELDS).flat(), ...(!demo ? Object.keys(PHASE_4_FIELDS) : [])]).size;
 
   // Content of the Phase 1 field map is written in English; mark it so Arabic pages read it correctly.
   const en = { lang: "en", dir: "ltr" } as const;
@@ -70,22 +80,24 @@ export default async function ReportMapPage({ params }: { params: Promise<{ loca
                 <tbody>
                   {fields.map((field: FieldDef) => {
                     const phase = awaitingPhase(field);
-                    const used = prototypesUsing(field.id);
+                    const live = demo ? undefined : PHASE_4_FIELDS[field.id];
+                    const used = [...new Set([...prototypesUsing(field.id), ...(live ? [live] : [])])];
+                    const roleField = !demo && (field.id === "ST-09" || field.id === "LG-08");
                     return (
-                      <tr key={field.id} id={field.id} data-field-row={field.id} data-pending={isPending(field) ? "true" : "false"}>
+                      <tr key={field.id} id={field.id} data-field-row={field.id} data-pending={pendingField(field) ? "true" : "false"}>
                         <th scope="row" style={{ fontFamily: "var(--font-mono)" }}>
                           {field.id}
                         </th>
                         <td>{locale === "ar" ? field.field_ar : field.field_en}</td>
                         <td {...en}>{field.legacy_location}</td>
-                        <td {...en}>{field.meaning}</td>
+                        <td {...(roleField ? {} : en)}>{roleField ? t("operations.roleRule") : field.meaning}</td>
                         <td {...en}>{field.source_record}</td>
                         <td {...en}>{field.unit}</td>
                         <td {...en}>{field.date_basis}</td>
                         <td {...en}>{field.rounding}</td>
                         <td {...en}>{field.blank_behaviour}</td>
                         <td>
-                          {isPending(field) ? (
+                          {pendingField(field) ? (
                             <span className="badge pending">{t("common.pending")}</span>
                           ) : (
                             <span className="badge ok">{t("common.settled")}</span>
@@ -93,7 +105,7 @@ export default async function ReportMapPage({ params }: { params: Promise<{ loca
                         </td>
                         <td {...en}>
                           {field.findings.join(", ") || "—"}
-                          {isPending(field) && phase ? (
+                          {pendingField(field) && phase ? (
                             <span className="trace" style={{ fontFamily: "inherit" }}>
                               {t("common.awaitingPhase", { n: phase })}
                             </span>

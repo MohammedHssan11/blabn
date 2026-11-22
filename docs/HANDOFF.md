@@ -2,9 +2,9 @@
 
 Read this first in every session, then compare it with the actual repository state (`git status`, `git log -3`, `git fetch` and the PR list) before continuing. Update it after each meaningful task and before ending a session.
 
-_Last updated: 21 November 2026. Phase 1 closed with documented deferrals. Phase 2 complete (merged to `main` as `2d21e31`). **Phase 3 (accounts, permissions, audit history) is complete for local development. See "Phase 3 status" for the acceptance and audit results. Production provisioning of Abdo's account is pending.**_
+_Last updated: 22 November 2026. Phases 1 through 4 are complete for local development. Phase 5 is the next implementation milestone. Production provisioning of Abdo's account is pending._
 
-The [B.Laban interface refresh](BRAND_DESIGN.md) updates sign-in and recovery, the workspace, navigation, tables, and forms. The production build, 162 unit tests, and 69 smoke checks passed. Browser checks covered the English desktop and Arabic mobile views, including signed-in pages. Phase 4 remains the next delivery milestone. [Abdo's Phase 4 voice-note decisions](phase4/ABDO_DECISIONS.md) are recorded and ready for implementation.
+The bilingual workspace uses the [B.Laban interface refresh](BRAND_DESIGN.md). Phase 4 implements the [confirmed daily close and Yawmeya workflow](phase4/OPERATING_CLOSE.md) on the signed-in person's Supabase session.
 
 ## Where things are
 
@@ -12,9 +12,20 @@ The [B.Laban interface refresh](BRAND_DESIGN.md) updates sign-in and recovery, t
 |---|---|
 | Repository | https://github.com/MohammedHssan11/blabn (private) |
 | Phase 3 branch | `codex/phase-3-accounts-permissions`, based on `main` at the Phase 2 merge (`2d21e31`). |
-| Development baseline | Fetch `origin/main` before starting Phase 4. |
+| Development baseline | Fetch `origin/main` before starting Phase 5. |
 | Phase 2 pull request | [PR #2](https://github.com/MohammedHssan11/blabn/pull/2), merged. |
 | Local-only material | `C:\Users\mh978\Downloads\abdo\abdo temp\`, `...\outputs\`, `...\archive\`, `...\screenshot\` — outside Git; keep them out of commits. |
+
+## Phase 4 status
+
+- Delivered daily-close drafts and review, cash denomination counts, cash and purchasing-custody entries, cancellations, ledger account configuration, bank remittance, posted revisions, corrections and approval.
+- Daily Sales Maarif, the daily statement and Yawmeya draw from the same revisions. The CSV identifies its report basis. Earlier exports can be reproduced after current carry-forward updates.
+- PostgreSQL alone determines the live business date and branch-local event times. The tested Casablanca data uses GMT in November 2026 and GMT+1 before the September change. This resolves the Phase 2 timing caveat. The rollover tests cover midnight, 01:00, and both sides of the 02:00 cutoff.
+- Phase 4 SQL acceptance passed on fresh and upgraded Supabase. Checks cover separate carry-forward, missing and explicit zero counts, match, shortage, overage, duplicate deposit, unchanged variance after remittance, rejection of a failed partial write, original export basis and branch permissions.
+- Phase 4 browser acceptance passed 30/30 with the production build in English desktop and Arabic at 375 px. A real concurrent save produced one accepted revision and one conflict.
+- Earlier-phase regressions passed with 162 unit tests, a clean type check and production build, 69 smoke checks, 27 permission-concurrency checks, 372 HTTP checks and 105 browser checks.
+- The additional private 2 November reference passed 25/25. The daily statement and Yawmeya showed +3 MAD before and after the one recorded remittance. The reference inputs stayed in the isolated local test stack and outside Git.
+- The reviewed account codes came from the workbook's accessible reference sheet. Validation used the already available 2 November evidence, so the deferred protected-sheet operations were unnecessary. Hosted Supabase deployment and production opening balances are scheduled separately.
 
 ## Current phase and status
 
@@ -47,7 +58,7 @@ The owner moved the final confirmation of the six recorded answers to the Phase 
 
 **How the database check went.** The first `npx supabase start` filled the C: drive while pulling images, and Docker's engine then stopped answering. With the project owner's approval Docker Desktop and its WSL distro were restarted (the owner's other containers came back on their own; nothing was deleted). The rerun applied the three migrations and the seed. The first `db:check` failed on one assertion of mine (below), which was corrected; the check then passed, again after `db reset`.
 
-**Time-zone caveat for Phase 4 (found by the database check).** This local PostgreSQL 17.12 gives `Africa/Casablanca` an offset of +00:00 on 3 Nov 2026, while Node (tzdata 2025b) gives +01:00 (Morocco's actual offset since 2018, except during Ramadan). The two server-side layers can therefore disagree about the business date of an instant near midnight. The synthetic data is far from midnight, so Phase 2 results are unaffected, and the rollover assertion in `phase2_checks.sql` now builds its instant from local time so it tests the logic only. Before Phase 4 stores real event times, compute the business date in one place only (preferably the database, with its time-zone data updated and verified against a known Moroccan date) and add a test around midnight.
+**Time-zone caveat for Phase 4 (found by the database check).** This local PostgreSQL 17.12 gives `Africa/Casablanca` an offset of +00:00 on 3 Nov 2026, while Node (tzdata 2025b) gives +01:00 (the earlier legal offset outside Ramadan). The Phase 4 investigation above verified that the November PostgreSQL result is correct. The two server-side layers can therefore disagree about the business date of an instant near midnight. The synthetic data is far from midnight, so Phase 2 results are unaffected, and the rollover assertion in `phase2_checks.sql` now builds its instant from local time so it tests the logic only. Before Phase 4 stores real event times, compute the business date in one place only (preferably the database, with its time-zone data updated and verified against a known Moroccan date) and add a test around midnight.
 
 ## Phase 3 status (21 November 2026): accounts, permissions and audit history
 
@@ -149,7 +160,7 @@ The follow-up audit reran the suite on a disposable local Supabase project with 
 
 The six review answers are in the [decision summary](phase1/decisions/DECISIONS_SUMMARY.md). Save further operational questions for the phase that uses them.
 
-**Phase 4 answers are recorded.** Abdo counts the drawer as branch manager. The normal business-day cutoff is 02:00 local time. An overnight sale at 01:00 and a late close of that business day belong to the prior operating date. Abdo closes, corrects and approves his own corrections, and the branch takes cash and card. Start with the [implementation handoff](phase4/ABDO_DECISIONS.md).
+**Phase 4 answers are recorded.** Abdo counts the drawer as branch manager. The normal business-day cutoff is 02:00 local time. An overnight sale at 01:00 and a late close of that business day belong to the prior operating date. Abdo closes, corrects and approves his own corrections, and the branch takes cash and card. See the [implemented workflow](phase4/OPERATING_CLOSE.md).
 
 Still open for later: P1-28 chocolate Dubai cake size and other name differences, P1-31 units, and P1-32 recipe effective date and the 6-spoon line (Phase 5); P1-24 count cadence (Phase 6); P1-35 meaning of the old order template's date (Phase 8); P1-33 opening balances (Phase 11).
 
@@ -318,6 +329,6 @@ Environment: the checks ran on this project's own local Supabase instance (`bala
 
 ## Next steps (in order)
 
-1. Start Phase 4 from the updated `origin/main` and use [Abdo's confirmed rules](phase4/ABDO_DECISIONS.md). Read and write business data with the signed-in person’s client so the row-level policies apply. Call the guard with the permission and branch first.
+1. Start Phase 5 from updated `origin/main`. Implement the catalog, Foodics mapping, units, and effective-dated recipes. Use the [Phase 5 acceptance checks](IMPLEMENTATION_PLAN.md#phase-5--products-units-and-recipes). Resolve P1-28, P1-31 and P1-32 with Abdo or the catalog owner before approving affected configuration.
 2. Before production rollout, provision an authorized hosted Supabase project, set the Auth options and `SITE_URL`, configure SMTP, and bootstrap Abdo. See the [accounts and permissions runbook](phase3/ACCOUNTS_AND_PERMISSIONS.md).
-3. Carry the Phase 2 caveats forward: single place for business-date calculation and the Casablanca time-zone data check (Phase 4), implementation of the confirmed Maarif cash and card rules (Phase 4), the weekly total-ratio rule (Phase 7). The scheduled follow-ups stay as they were: protected ledger edits (Phase 4, only if needed), the historical order-sheet date (Phase 8), Abdo's final confirmation (Phase 10).
+3. Carry forward the weekly total-ratio rule (Phase 7), the historical order-sheet date (Phase 8), and Abdo's final confirmation (Phase 10).

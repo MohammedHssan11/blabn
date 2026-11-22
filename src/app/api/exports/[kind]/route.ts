@@ -1,5 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { toDecimalString } from "@/lib/money";
+import { isBusinessDate, isMonth } from "@/lib/dates";
+import { readOperatingReport, ReportBasisNotFound, usesDemoFixtures } from "@/modules/closing/operations";
 import { getRepository } from "@/lib/repository";
 import { ALL_BRANCH_CODES, OPERATING_BRANCH_CODE } from "@/modules/access/catalog";
 import { authorizeRequest, type Requirement } from "@/modules/access/guard";
@@ -16,7 +18,9 @@ import { authorizeRequest, type Requirement } from "@/modules/access/guard";
  */
 
 const csvCell = (value: string | number | null): string => {
-  const text = value === null ? "" : String(value);
+  let text = value === null ? "" : String(value);
+  // Cells that originate from user-entered text must remain data when opened in Excel.
+  if (/^[\s\uFEFF]*[=+\-@]/.test(text) && !/^-\d+(\.\d+)?$/.test(text)) text = "'" + text;
   return /[",\r\n]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
 };
 
@@ -44,6 +48,38 @@ export async function GET(request: NextRequest, context: { params: Promise<{ kin
     if (!decision.ok) return decision.response;
     // Only the operating branch has daily-close data.
     if (branch !== OPERATING_BRANCH_CODE) return NextResponse.json({ error: "not_found" }, { status: 404 });
+
+    if (!usesDemoFixtures()) {
+      const date = request.nextUrl.searchParams.get("date");
+      const month = request.nextUrl.searchParams.get("month");
+      const basisParam = request.nextUrl.searchParams.get("basis");
+      const basis = basisParam === null ? null : Number(basisParam);
+      if ((date && (!isBusinessDate(date) || date.startsWith("0000-"))) || (month && (!isMonth(month) || month.startsWith("0000-"))) ||
+        (basis !== null && (!Number.isSafeInteger(basis) || basis < 1))) {
+        return NextResponse.json({ error: "invalid_input" }, { status: 400 });
+      }
+
+      const initial = await readOperatingReport(date, date ? date.slice(0, 7) : month, basis).catch((error: unknown) => {
+        if (error instanceof ReportBasisNotFound) return null;
+        throw error;
+      });
+      if (!initial) return NextResponse.json({ error: "not_found" }, { status: 404 });
+      const report = date || month ? initial : await readOperatingReport(null, initial.branch.today.slice(0, 7), basis);
+      if (date && !report.day) return NextResponse.json({ error: "not_found" }, { status: 404 });
+      const mad = (value: number | null) => value === null ? null : toDecimalString(value);
+      const rows = date ? report.days.filter((row) => row.date === date) : report.days;
+      return csvResponse(
+        `daily-close-${branch}-basis-${report.basis}.csv`,
+        ["branch", "business_date", "state", "net_sales_mad", "order_count", "card_mad", "operating_expenses_mad",
+          "remittance_mad", "opening_cash_mad", "closing_cash_mad", "opening_custody_mad",
+          "closing_custody_mad", "expected_at_count_mad", "variance_mad", "report_basis"],
+        rows.map((row) => [
+          branch, row.date, row.state, mad(row.sales), row.orders, mad(row.card), mad(row.summary.expenses),
+          mad(row.summary.remittances), mad(row.summary.openingCash), mad(row.summary.closingCash),
+          mad(row.summary.openingCustody), mad(row.summary.closingCustody), mad(row.summary.expected), mad(row.summary.variance), report.basis,
+        ]),
+      );
+    }
 
     const days = await getRepository().listBusinessDays(branch);
     return csvResponse(

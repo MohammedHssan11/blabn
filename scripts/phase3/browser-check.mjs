@@ -32,7 +32,7 @@ if (!process.argv.includes("--no-reset")) {
 }
 const env = loadEnv();
 const service = serviceClient(env);
-const server = startServer(PORT, { SITE_URL: BASE });
+const server = startServer(PORT, { SITE_URL: BASE, BALABAN_DEMO_FIXTURES: "1" });
 
 const TEXT = {
   en: {

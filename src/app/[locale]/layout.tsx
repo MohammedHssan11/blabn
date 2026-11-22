@@ -1,3 +1,4 @@
+import { usesDemoFixtures } from "@/modules/closing/operations";
 import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
@@ -100,9 +101,9 @@ export default async function LocaleLayout({
             </div>
           ) : null}
         </header>
-        <div className="banner" role="note">
+        {usesDemoFixtures() ? <div className="banner" role="note">
           {t("app.prototypeBanner")}
-        </div>
+        </div> : null}
         <main id="content">{children}</main>
       </body>
     </html>

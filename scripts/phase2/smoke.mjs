@@ -28,6 +28,7 @@ function check(name, condition, detail = "") {
 
 const server = spawn(process.execPath, [nextBin, "start", "-p", port, "-H", "127.0.0.1"], {
   cwd: root,
+  env: { ...process.env, SITE_URL: base, BALABAN_DEMO_FIXTURES: "1" },
   stdio: ["ignore", "pipe", "pipe"],
 });
 let serverLog = "";
