@@ -27,16 +27,18 @@ export default async function ConsumptionPage({
   if (!isLocale(locale)) notFound();
   const sp = await searchParams;
   const dateParam = first(sp.date) ?? "";
-  const text = (first(sp.lines) ?? "").slice(0, 20_000);
+  const raw = first(sp.lines) ?? "";
+  const text = raw.slice(0, 20_000);
   const path = `/${locale}/catalog/consumption`;
   await requireAccess({ locale, path, require: { permission: "recipes.manage" } });
   const t = createTranslator(locale);
 
   const submitted = first(sp.run) !== undefined;
-  const dateOk = isBusinessDate(dateParam);
+  const dateOk = isBusinessDate(dateParam) && !dateParam.startsWith("0000-");
   const parsed = parseConsumptionLines(text);
+  const tooManyLines = raw.length > text.length || parsed.lines.length > 500;
   let result: Consumption | null = null;
-  if (submitted && dateOk && parsed.lines.length > 0) {
+  if (submitted && dateOk && !tooManyLines && parsed.lines.length > 0) {
     // Unreadable rows are sent with their typed quantity so the database blocks them with its own reason.
     result = await runConsumptionCheck(dateParam, parsed.lines.map((line, index) => ({ ...line, ref: String(index + 1) })));
   }
@@ -65,7 +67,8 @@ export default async function ConsumptionPage({
       </form>
 
       {submitted && !dateOk ? <p className="notice bad" role="alert" data-testid="check-error">{t("catalog.consumption.dateInvalid")}</p> : null}
-      {submitted && dateOk && parsed.lines.length === 0 ? <p className="notice bad" role="alert" data-testid="check-error">{t("catalog.consumption.noLines")}</p> : null}
+      {submitted && dateOk && tooManyLines ? <p className="notice bad" role="alert" data-testid="check-error">{t("catalog.consumption.tooManyLines")}</p> : null}
+      {submitted && dateOk && !tooManyLines && parsed.lines.length === 0 ? <p className="notice bad" role="alert" data-testid="check-error">{t("catalog.consumption.noLines")}</p> : null}
       {submitted && parsed.unreadable.length > 0 ? (
         <p className="notice warn" data-testid="unreadable">{t("catalog.consumption.unreadable", { rows: parsed.unreadable.join(", ") })}</p>
       ) : null}

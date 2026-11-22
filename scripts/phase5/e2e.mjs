@@ -280,6 +280,10 @@ async function main() {
     const bad = await get(admin, url("2026-02-30", "x | 1"));
     check("an impossible date is explained, nothing is calculated", /Enter a valid business date/.test(bad.html) && !/data-section="consumption-result"/.test(bad.html));
 
+    const tooLong = await get(admin, url("2026-11-05", Array(501).fill("x|1").join("\n")));
+    check("the preview explains an oversized batch without partial results",
+      tooLong.status === 200 && /Enter up to 500 lines/.test(tooLong.html) && !/data-section="consumption-result"/.test(tooLong.html));
+
     const queue = await submitForm(http, admin, "/en/catalog/consumption", r.html, "queue-names", {});
     check("sending the unmapped names to the review queue works", where(queue.headers.get("location")).includes("notice=catalog_names_queued"), where(queue.headers.get("location")));
     const queued = await get(admin, "/en/catalog/review?kind=unmapped_name");
@@ -367,8 +371,15 @@ async function main() {
       page = await get(admin, recipe(product));
       return where(r.headers.get("location"));
     };
-    check("lines are added: 250 g of flour, 1 box, a carton of boxes is refused without a unit",
-      (await addLine(flour, "250", "g")).includes("notice=catalog_line_saved") && (await addLine(box, "1", "pc")).includes("notice=catalog_line_saved") && (await addLine(box, "1/3", "")).includes("notice=catalog_line_saved"));
+    const exact = "9007199254740993.000000000000001";
+    const exactSave = await addLine(flour, exact, "g");
+    const exactLine = slice(v1Section(), /<tr[^>]*data-line="1"/, "</tr>");
+    check("a quantity beyond JavaScript's safe number range stays exact in the edit form",
+      exactSave.includes("notice=catalog_line_saved") && new Map(readForm(exactLine, "edit-line") ?? []).get("quantity") === exact);
+    const standardFlour = await submitForm(http, admin, recipe(product), exactLine, "edit-line", { component: flour, quantity: "250", unit: "g" });
+    page = await get(admin, recipe(product));
+    check("lines are added: 250 g of flour, 1 box, and a boxed quantity with its unit still missing",
+      where(standardFlour.headers.get("location")).includes("notice=catalog_line_saved") && (await addLine(box, "1", "pc")).includes("notice=catalog_line_saved") && (await addLine(box, "1/3", "")).includes("notice=catalog_line_saved"));
     const noUnit = await submitForm(http, admin, recipe(product), v1Section(), "approve", { from: "2026-10-01", to: "" });
     check("approving with a line that has no unit is refused", where(noUnit.headers.get("location")).includes("error=catalog_incomplete"), where(noUnit.headers.get("location")));
     const badQty = await addLine(flour, "abc", "kg");

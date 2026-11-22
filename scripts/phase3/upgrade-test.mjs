@@ -27,7 +27,7 @@ function step(name, fn) {
 
 function supabase(args) {
   const run = spawnSync(process.platform === "win32" ? "npx.cmd" : "npx", ["supabase", ...args], {
-    cwd: root,
+    cwd: process.env.SUPABASE_TEST_WORKDIR ?? root,
     encoding: "utf8",
     shell: process.platform === "win32",
   });

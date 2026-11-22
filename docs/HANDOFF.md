@@ -2,7 +2,7 @@
 
 Read this first in every session, then compare it with the actual repository state (`git status`, `git log -3`, `git fetch` and the PR list) before continuing. Update it after each meaningful task and before ending a session.
 
-_Last updated: 22 November 2026. Phases 1 through 5 are complete for local development, pending one answer from Abdo (the November recipe start date). Phase 6 is the next implementation milestone. Production provisioning of his account is pending._
+_Last updated: 22 November 2026. Phases 1 through 5 are complete for local development. Phase 6 is next. The November recipe start date and other unresolved catalog records still require business approval before their consumption can post. Production provisioning of his account is pending._
 
 The bilingual workspace uses the [B.Laban interface refresh](BRAND_DESIGN.md). Phase 4 implements the [confirmed daily close and Yawmeya workflow](phase4/OPERATING_CLOSE.md) on the signed-in person's Supabase session.
 
@@ -12,7 +12,7 @@ The bilingual workspace uses the [B.Laban interface refresh](BRAND_DESIGN.md). P
 |---|---|
 | Repository | https://github.com/MohammedHssan11/blabn (private) |
 | Phase 3 branch | `codex/phase-3-accounts-permissions`, based on `main` at the Phase 2 merge (`2d21e31`). |
-| Development baseline | Fetch `origin/main` before starting Phase 6. Phase 5 is on branch `codex/phase-5-catalog` (based on `main` at the Phase 4 merge, PR #7). |
+| Development baseline | Fetch `origin/main` before starting Phase 6. Read the Phase 5 handover and its documented posting prerequisites. |
 | Phase 2 pull request | [PR #2](https://github.com/MohammedHssan11/blabn/pull/2), merged. |
 | Local-only material | `C:\Users\mh978\Downloads\abdo\abdo temp\`, `...\outputs\`, `...\archive\`, `...\screenshot\` — outside Git; keep them out of commits. |
 
@@ -48,18 +48,18 @@ Catalog, Foodics mappings, units and effective-dated recipes are implemented and
 
 | Command | Result |
 |---|---|
-| `npm run typecheck`, `npm test`, `npm run build` | clean; 188/188 tests in 12 files; build passes (the catalog adds 7 dynamic pages) |
+| `npm run typecheck`, `npm test`, `npm run build` | clean; 190/190 tests in 12 files; build passes (the catalog adds 7 dynamic pages) |
 | `npm run db:check`, `db:check:phase3`, `db:check:phase4`, `db:check:phase5` | all pass on a fresh database |
 | `npm run db:upgrade-test` | pass (paths A to E, including the new Phase 4 to 5 upgrade) |
 | `npm run test:concurrency` | pass |
 | `npm run test:phase3` (HTTP), `npm run test:browser` | 372 checks, 0 failed; 105 browser checks, 0 failed |
 | `npm run test:smoke` | 69/69 |
-| `npm run test:phase5` (HTTP) | 145/145 |
+| `npm run test:phase5` (HTTP) | 147/147, including exact quantity editing and oversized preview checks |
 | `npm run test:phase5:browser` (Edge) | 71/71, no console errors |
 | `npm run test:phase4` (Phase 4 browser regression) | 30/30, run on the Phase 5 production build against an isolated local Supabase project (stopped and removed afterwards) |
 | `seed:check`, `seed:catalog:check`, `catalog:extract -- --check` | up to date |
 
-Mutation checks on `phase5_checks.sql`: dropping the line-immutability trigger, opening the catalog read policy, counting a draft as approved, skipping the date gate, resolving a pending mapping, converting an incompatible unit, and ignoring recipe ranges each made the file fail. `db:upgrade-test` was last run before the final documentation edits only; no migration changed afterwards.
+Mutation checks on `phase5_checks.sql`: dropping the line-immutability trigger, opening the catalog read policy, counting a draft as approved, skipping the date gate, resolving a pending mapping, converting an incompatible unit, and ignoring recipe ranges each made the file fail.
 
 ### Self-audit: found and fixed
 
@@ -70,6 +70,13 @@ Mutation checks on `phase5_checks.sql`: dropping the line-immutability trigger, 
 5. **Test assertions** that matched hidden option text or raced two redirects were corrected; the application was not at fault.
 6. **Seed on older resets.** A reset to an older migration failed on the catalog seed; the seed now does nothing when the tables do not exist.
 7. **Duplicate background run.** An accidental second regression run collided on the database and was discarded; every result above is from one clean run.
+
+### Independent review before merge
+
+- Copied catalog drafts preserve the source references and the effective-date gate. An unapproved November copy remains blocked.
+- Recipe approval serializes against date decisions and component unit or conversion edits. Copying and approving a recipe acquire the product lock before locking versions. Approved lines cannot be moved to a different recipe version.
+- PostgREST returns fraction parts as text. A recipe quantity beyond JavaScript's safe integer range round-tripped through the HTTP edit form exactly. The database rounds the display once using integer arithmetic.
+- An invalid explicit product ID blocks its own row. Other rows in the same consumption request still resolve. The preview explains requests that exceed its size limit.
 
 ### Pending decisions and open items
 

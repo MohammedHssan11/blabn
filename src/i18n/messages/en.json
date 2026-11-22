@@ -924,6 +924,7 @@
       "queue": "Add the unmapped names to the review queue",
       "unreadable": "Row {rows} could not be read as «name | quantity». It is shown as blocked.",
       "recipeVersion": "version {n} · {label}",
+      "tooManyLines": "Enter up to 500 lines and 20,000 characters per check.",
       "dateInvalid": "Enter a valid business date.",
       "noLines": "Enter at least one line.",
       "reason": {

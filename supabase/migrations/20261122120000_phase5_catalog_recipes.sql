@@ -730,14 +730,14 @@ declare
   src public.recipe_versions%rowtype;
   v public.recipe_versions%rowtype;
 begin
+  select * into p from public.catalog_items where id = p_product and organization_id = org and kind = 'sold' for update;
+  if not found or length(btrim(coalesce(p_label, ''))) = 0 then
+    raise exception 'A recipe needs a sold item and a label' using errcode = '22023';
+  end if;
   if p_copy_from is not null then
     select * into src from public.recipe_versions
     where id = p_copy_from and product_id = p_product and organization_id = org for share;
     if not found then raise exception 'Source recipe is not for this item' using errcode = '22023'; end if;
-  end if;
-  select * into p from public.catalog_items where id = p_product and organization_id = org and kind = 'sold' for update;
-  if not found or length(btrim(coalesce(p_label, ''))) = 0 then
-    raise exception 'A recipe needs a sold item and a label' using errcode = '22023';
   end if;
   insert into public.recipe_versions (organization_id, product_id, version_no, label, note, created_by,
     yield_num, yield_den, yield_basis, date_decision_id, decision_role, sources)
@@ -863,15 +863,16 @@ declare
   prev record;
   line_count integer := 0;
 begin
+  -- Use the same product-before-version lock order as creation and copying.
+  select i.* into p from public.recipe_versions r join public.catalog_items i on i.id = r.product_id
+    where r.id = p_version and r.organization_id = org for update of i;
   select * into v from public.recipe_versions where id = p_version and organization_id = org for update;
-  if not found or v.status <> 'draft' then
+  if p.id is null or not found or v.status <> 'draft' then
     raise exception 'Only a draft recipe can be approved' using errcode = '22023';
   end if;
   if v.version <> coalesce(p_expected_version, -1) then
     raise exception 'The recipe was changed by someone else' using errcode = '40001';
   end if;
-  -- Serialize every approval for this product; the exclusion constraint is the final guard.
-  select * into p from public.catalog_items where id = v.product_id for update;
   if p_from is null or not isfinite(p_from) or (p_to is not null and (not isfinite(p_to) or p_to < p_from)) then
     raise exception 'A recipe needs a valid effective date range' using errcode = '22023';
   end if;

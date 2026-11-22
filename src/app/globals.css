@@ -448,4 +448,3 @@ td.numeric, th.numeric { text-align: end; }
 .result-blocked { background: var(--bad-soft); }
 .pager { display: flex; gap: 12px; align-items: center; margin: 12px 0; }
 select.wide { max-width: 100%; min-width: 0; width: 100%; }
-
