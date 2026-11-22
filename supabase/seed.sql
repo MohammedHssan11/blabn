@@ -8,7 +8,7 @@ insert into public.organizations (id, name) values
   ('00000000-0000-4000-8000-000000000001', 'Synthetic Test Organization');
 
 insert into public.branches (id, organization_id, code, name_en, name_ar, timezone, business_day_rollover, operates_in_app) values
-  ('00000000-0000-4000-8000-000000000011', '00000000-0000-4000-8000-000000000001', 'maarif', 'Maarif', 'المعاريف', 'Africa/Casablanca', '00:00', true),
+  ('00000000-0000-4000-8000-000000000011', '00000000-0000-4000-8000-000000000001', 'maarif', 'Maarif', 'المعاريف', 'Africa/Casablanca', '02:00', true),
   ('00000000-0000-4000-8000-000000000012', '00000000-0000-4000-8000-000000000001', 'alquds', 'Al Quds', 'القدس', 'Africa/Casablanca', '00:00', false),
   ('00000000-0000-4000-8000-000000000013', '00000000-0000-4000-8000-000000000001', 'bourgogne', 'Bourgogne', 'بورغوندي', 'Africa/Casablanca', '00:00', false);
 

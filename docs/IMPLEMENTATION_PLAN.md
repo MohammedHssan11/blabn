@@ -199,6 +199,8 @@ Use [Abdo's Phase 4 decisions](phase4/ABDO_DECISIONS.md) for the confirmed Maari
 - Enter the 2 November reference in the private test environment and reproduce +3 MAD across the daily statement and Yawmeya. Record the later 36,945 MAD remittance once and verify that the count variance stays +3 MAD. Both timing scenarios also pass with known synthetic inputs.
 - Revisit the 318 deferred protected-sheet operations only if validating the daily close requires those legacy worksheets. Use the reviewed cash and ledger rules and the available reference evidence for the app.
 
+Phase 4 local acceptance is recorded in the [handover](HANDOFF.md#phase-4-status). Use the [operating workflow](phase4/OPERATING_CLOSE.md) to run the daily close and verification checks.
+
 ## Phase 5 — Products, units, and recipes
 
 ### Goal

@@ -409,3 +409,24 @@ pre.changes { white-space: pre-wrap; word-break: break-word; margin: 6px 0 0; fo
   .header-inner { gap: 8px 12px; }
   .account { flex-wrap: wrap; max-width: 100%; order: 2; width: 100%; }
 }
+
+.ops-form { display: grid; gap: 0.75rem; }
+.ops-form > button { justify-self: start; }
+.ops-form label { display: grid; gap: 0.35rem; min-width: 0; }
+.ops-form :is(input,select,textarea) { width: 100%; min-width: 0; }
+.ops-form fieldset { min-width: 0; border: 1px solid var(--border); border-radius: 0.65rem; }
+.ops-fields, .ops-reports { display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); }
+.ops-denominations { grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr)); }
+.ops-day-heading, .ops-buttons { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
+.ops-buttons { margin-block: 0.75rem; }
+.ops-panel { margin-block: 0.75rem; }
+.ops-panel > summary { cursor: pointer; font-weight: 650; }
+.ops-panel[open] > summary { margin-block-end: 0.75rem; }
+.ops-values { margin-block: 0.5rem; }
+.ops-values div { display: flex; justify-content: space-between; align-items: baseline; gap: 0.75rem; padding-block: 0.4rem; border-bottom: 1px solid var(--border); }
+.ops-values dd { margin: 0; text-align: end; font-variant-numeric: tabular-nums; }
+.ops-history { padding-inline-start: 1.5rem; }
+.ops-history li { padding-block: 0.35rem; overflow-wrap: anywhere; }
+[data-reversed="true"] { opacity: 0.7; }
+.ops-form .ops-check { display: flex; align-items: center; }
+.ops-form .ops-check input { width: auto; }

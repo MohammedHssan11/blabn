@@ -5,6 +5,8 @@ import { isLocale } from "@/i18n/config";
 import { createTranslator } from "@/i18n/dictionary";
 import { formatMonth } from "@/i18n/format";
 import { first, type SearchParams } from "@/lib/search-params";
+import { OperationWorkspace } from "@/modules/closing/operation-workspace";
+import { usesDemoFixtures } from "@/modules/closing/operations";
 import { requireAccess } from "@/modules/access/guard";
 import { OPERATING_BRANCH_CODE } from "@/modules/access/catalog";
 import { getDailyCloseView, type DailyRowView } from "@/modules/closing/service";
@@ -29,9 +31,10 @@ export default async function DailyClosePage({
   const sp = await searchParams;
   // The branch is part of every request: a person needs the permission for THAT branch.
   const branchCode = first(sp.branch) ?? OPERATING_BRANCH_CODE;
-  await requireAccess({ locale, path: `/${locale}/daily-close`, require: { permission: "daily_close.view", branch: branchCode } });
+  const access = await requireAccess({ locale, path: `/${locale}/daily-close`, require: { permission: "daily_close.view", branch: branchCode } });
   // Only the operating branch has daily-close data.
   if (branchCode !== OPERATING_BRANCH_CODE) notFound();
+  if (!usesDemoFixtures()) return <OperationWorkspace locale={locale} screen="daily-close" access={access} branch={branchCode} search={sp} />;
   const t = createTranslator(locale);
   const view = await getDailyCloseView(first(sp.month), first(sp.date));
   const { totals, selected, branch } = view;

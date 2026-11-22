@@ -43,7 +43,7 @@ if (!noReset) {
 }
 
 const env = loadEnv();
-const server = startServer(PORT, { SITE_URL: BASE });
+const server = startServer(PORT, { SITE_URL: BASE, BALABAN_DEMO_FIXTURES: "1" });
 const http = makeHttp(BASE);
 const service = serviceClient(env);
 const passwords = [];
@@ -467,8 +467,7 @@ async function main() {
     const db = clientFromJar(env, jar);
     const day = await service.from("business_days").select("id").eq("business_date", "2026-11-08").eq("status", "open");
     const opened = await db.from("business_days").update({ net_sales: 5, status: "closed", closed_at: new Date().toISOString() }).eq("id", day.data[0].id).select("id");
-    check("database: a manager may close an open day", !opened.error && opened.data.length === 1, JSON.stringify(opened.error));
-    await service.from("business_days").update({ status: "open", closed_at: null, net_sales: null }).eq("id", day.data[0].id);
+    check("legacy daily close tables reject direct financial updates", opened.error?.code === "42501", JSON.stringify(opened.error));
   }
   {
     const jar = jars.editor;

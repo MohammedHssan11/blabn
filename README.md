@@ -8,6 +8,8 @@ Phase 1 closed on 21 November 2026 after the source audit, six recorded answers 
 
 Phase 3 local acceptance is complete. It adds sign-in, password recovery, staff accounts, permission groups, branch isolation and an append-only audit history. See [accounts and permissions](docs/phase3/ACCOUNTS_AND_PERMISSIONS.md) and the [handover record](docs/HANDOFF.md) for verification and production setup.
 
+Phase 4 acceptance is complete locally. It adds the [daily close, cash reconciliation and Yawmeya workflow](docs/phase4/OPERATING_CLOSE.md) with two ledgers, role-based approvals and reproducible report revisions. Phase 5 is next.
+
 The bilingual interface uses B.Laban’s blue and white palette across sign-in, the workspace, and operational screens. See the [brand references](docs/BRAND_DESIGN.md).
 
 ## Product scope
@@ -44,6 +46,7 @@ The bilingual interface uses B.Laban’s blue and white palette across sign-in, 
 - [Phase 1 source review and Abdo's review page](docs/phase1/README.md)
 - [Handover record](docs/HANDOFF.md)
 - [Phase 4 decisions from Abdo](docs/phase4/ABDO_DECISIONS.md)
+- [Phase 4 operating workflow](docs/phase4/OPERATING_CLOSE.md)
 
 ## Repository rules
 
