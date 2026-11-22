@@ -8,6 +8,7 @@
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+import { readFileSync } from "node:fs";
 import { container, runSqlFile } from "./db-check.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
@@ -171,6 +172,47 @@ step("its schema, table privileges and function privileges equal the fresh build
     const at = a.findIndex((line, i) => line !== b[i]);
     throw new Error(`first difference at line ${at + 1}:\n  upgraded: ${a[at]}\n  fresh:    ${b[at]}`);
   }
+});
+console.log("\nE. Upgrade of a Phase 4 database to Phase 5 (catalog, units and recipes)");
+const PHASE4_HEAD = "20261122001556";
+step(`reset to migration ${PHASE4_HEAD} (Phase 4 head, with the base seed)`, () => {
+  supabase(["db", "reset", "--version", PHASE4_HEAD]);
+  if (psql("select to_regclass('public.catalog_items') is not null") !== "f") throw new Error("Phase 5 tables exist at the Phase 4 head");
+  return runSqlFile("phase4_checks.sql");
+});
+step("the Phase 4 reference data exists before the upgrade", () => {
+  const accounts = psql("select count(*) from public.operating_accounts");
+  if (accounts !== "43") throw new Error(`expected 43 reviewed ledger accounts, found ${accounts}`);
+  return `${accounts} ledger accounts, Maarif cutoff ${psql("select business_day_rollover from public.branches where code = 'maarif'")}`;
+});
+step("apply the Phase 5 migration (supabase migration up)", () => {
+  supabase(["migration", "up"]);
+  return psql("select max(version) from supabase_migrations.schema_migrations");
+});
+step("the catalog seed loads on the upgraded database", () => {
+  const sql = readFileSync(path.join(root, "supabase", "seed_catalog.sql"), "utf8");
+  const load = spawnSync("docker", ["exec", "-i", container, "psql", "-v", "ON_ERROR_STOP=1", "-U", "postgres", "-d", "postgres", "-X", "-q", "-t", "-A"], { input: sql, encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
+  if (load.status !== 0) throw new Error(load.stderr);
+  return `${psql("select count(*) from public.catalog_items")} items, ${psql("select count(*) from public.recipe_lines")} recipe lines`;
+});
+step("the Phase 4 data survived", () => {
+  if (psql("select count(*) from public.operating_accounts") !== "43" || psql("select business_day_rollover from public.branches where code = 'maarif'") !== "02:00:00") throw new Error("Phase 4 reference data changed");
+  return "ledger accounts and the 02:00 cutoff are intact";
+});
+step("Phase 2, 3, 4 and 5 checks after the Phase 4 upgrade", () =>
+  [runSqlFile("phase2_checks.sql"), runSqlFile("phase3_checks.sql"), runSqlFile("phase4_checks.sql"), runSqlFile("phase5_checks.sql")].join("; "));
+step("its schema, table privileges and function privileges equal the fresh build", () => {
+  const again = schemaDump();
+  if (again !== fresh) {
+    const a = again.split("\n");
+    const b = fresh.split("\n");
+    const at = a.findIndex((line, i) => line !== b[i]);
+    throw new Error(`first difference at line ${at + 1}:\n  upgraded: ${a[at]}\n  fresh:    ${b[at]}`);
+  }
+});
+step("a fresh build passes the Phase 4 and Phase 5 checks too", () => {
+  supabase(["db", "reset"]);
+  return [runSqlFile("phase4_checks.sql"), runSqlFile("phase5_checks.sql")].join("; ");
 });
 step("leave a fresh database (db reset)", () => {
   supabase(["db", "reset"]);

@@ -2,7 +2,7 @@
 
 Status: **closed on 21 November 2026**. All six answers are recorded and the workbook checks pass. The owner deferred the protected ledger review to Phase 4 if needed, the legacy order-sheet date to Phase 8, and Abdo's separate confirmation to the Phase 10 walkthrough. See the [closure checklist](CLOSURE.md) and [handover](../HANDOFF.md).
 
-The [Phase 4 decision record](../phase4/ABDO_DECISIONS.md) now answers P1-19. The Phase 1 report map describes the prototype baseline.
+The [Phase 4 decision record](../phase4/ABDO_DECISIONS.md) answers P1-19. The [22 November decisions](../ABDO_WORKFLOW_DECISIONS.md) resolve P1-24 and P1-35 and narrow the open Phase 5 questions. The Phase 1 report map describes the prototype baseline.
 
 ## Workbook audit baseline
 
@@ -30,7 +30,7 @@ Abdo's 20 November 2026 review export and WhatsApp voice note describe the workf
 | طلبية فرع المعاريف | Orders are prepared at night for receipt two days later, with deliveries occurring daily. His written example projects 10 on hand plus 190 due in, giving 200 available, then 50 after 150 expected consumption based on the previous matching weekday. | Phase 8 shows on-hand stock, confirmed incoming stock and forecast consumption separately. Actual stock increases when a receipt is recorded. Record the operational order date separately from the actual timestamp for after-midnight entry. |
 | تايم شيت and شيت القاعات | Abdo referred to the agreed attendance check-in for the time sheet and asked to set aside the little-used halls sheet. | Keep the time sheet as a reference for the later attendance phases. Leave the halls sheet outside the current app scope. |
 
-**Deferred by the project owner.** Confirm the meaning of the date in the old order template (SRC-01 `Sheet1!C6`, 4 November) with Abdo in Phase 8 before mapping historical order dates. Live orders use explicit creation, expected receipt and actual receipt dates. See the [deferral record](decisions/owner-deferrals.json).
+**Confirmed after Phase 1.** Abdo identified the date in the old order template (SRC-01 `Sheet1!C6`, 4 November) as the expected receipt date. Phase 8 uses that interpretation for the legacy field and keeps creation, expected receipt and actual receipt dates separate. See the [voice-note decision](../ABDO_WORKFLOW_DECISIONS.md#phase-8--legacy-order-date).
 
 ## What is here
 

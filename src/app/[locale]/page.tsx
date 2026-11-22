@@ -40,6 +40,9 @@ export default async function HomePage({
     ...(holds(access, "inventory.adjust", OPERATING_BRANCH_CODE)
       ? [{ href: `/${locale}/inventory/adjustments`, title: t("nav.inventoryAdjustments"), body: t("home.shortcuts.inventory") }]
       : []),
+    ...(holds(access, "recipes.manage")
+      ? [{ href: `/${locale}/catalog`, title: t("nav.catalog"), body: t("home.shortcuts.catalog") }]
+      : []),
     ...(holds(access, "admin.users.manage")
       ? [{ href: `/${locale}/admin/staff`, title: t("nav.staff"), body: t("home.shortcuts.staff") }]
       : []),

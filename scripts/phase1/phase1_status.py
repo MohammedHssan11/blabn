@@ -105,7 +105,9 @@ L = ["# Phase 1 closure checklist", "",
      f"**Phase 1: {'can close' if can_close else 'OPEN'}.**", "",
      "| Condition | Met | Detail |", "|---|---|---|"]
 L += [f"| {n} | {'yes' if ok else '**no**'} | {d} |" for n, ok, d in items]
-L += ["", "## Questions for later phases (do not block Phase 1)", "", "| Finding | Needed before | Answered |", "|---|---|---|"]
+L += ["", "## Questions for later phases (do not block Phase 1)", "",
+      "See [the 22 November decisions](../ABDO_WORKFLOW_DECISIONS.md) for partial answers and remaining follow-ups.", "",
+      "| Finding | Needed before | Fully answered |", "|---|---|---|"]
 L += [f"| {f['id']} | {f['abdo_by']} | {'yes' if answered(DEC.get(f['id'])) or f['id'] in AGREED else 'no'} |" for f in later]
 L.append("")
 open(os.path.join(D, "CLOSURE.md"), "w", encoding="utf-8").write("\n".join(L))

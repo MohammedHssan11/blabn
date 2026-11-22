@@ -2,7 +2,7 @@
 
 Read this first in every session, then compare it with the actual repository state (`git status`, `git log -3`, `git fetch` and the PR list) before continuing. Update it after each meaningful task and before ending a session.
 
-_Last updated: 22 November 2026. Phases 1 through 4 are complete for local development. Phase 5 is the next implementation milestone. Production provisioning of Abdo's account is pending._
+_Last updated: 22 November 2026. Phases 1 through 5 are complete for local development, pending one answer from Abdo (the November recipe start date). Phase 6 is the next implementation milestone. Production provisioning of his account is pending._
 
 The bilingual workspace uses the [B.Laban interface refresh](BRAND_DESIGN.md). Phase 4 implements the [confirmed daily close and Yawmeya workflow](phase4/OPERATING_CLOSE.md) on the signed-in person's Supabase session.
 
@@ -12,7 +12,7 @@ The bilingual workspace uses the [B.Laban interface refresh](BRAND_DESIGN.md). P
 |---|---|
 | Repository | https://github.com/MohammedHssan11/blabn (private) |
 | Phase 3 branch | `codex/phase-3-accounts-permissions`, based on `main` at the Phase 2 merge (`2d21e31`). |
-| Development baseline | Fetch `origin/main` before starting Phase 5. |
+| Development baseline | Fetch `origin/main` before starting Phase 6. Phase 5 is on branch `codex/phase-5-catalog` (based on `main` at the Phase 4 merge, PR #7). |
 | Phase 2 pull request | [PR #2](https://github.com/MohammedHssan11/blabn/pull/2), merged. |
 | Local-only material | `C:\Users\mh978\Downloads\abdo\abdo temp\`, `...\outputs\`, `...\archive\`, `...\screenshot\` — outside Git; keep them out of commits. |
 
@@ -26,6 +26,60 @@ The bilingual workspace uses the [B.Laban interface refresh](BRAND_DESIGN.md). P
 - Earlier-phase regressions passed with 162 unit tests, a clean type check and production build, 69 smoke checks, 27 permission-concurrency checks, 372 HTTP checks and 105 browser checks.
 - The additional private 2 November reference passed 25/25. The daily statement and Yawmeya showed +3 MAD before and after the one recorded remittance. The reference inputs stayed in the isolated local test stack and outside Git.
 - The reviewed account codes came from the workbook's accessible reference sheet. Validation used the already available 2 November evidence, so the deferred protected-sheet operations were unnecessary. Hosted Supabase deployment and production opening balances are scheduled separately.
+
+## Phase 5 status
+
+Catalog, Foodics mappings, units and effective-dated recipes are implemented and locally accepted, with one input still owed by Abdo (below). Design, rules, loaded data and commands: [phase5/CATALOG_AND_RECIPES.md](phase5/CATALOG_AND_RECIPES.md). Phase 5 stops at eligibility: nothing posts stock (Phase 6).
+
+### Acceptance checks
+
+| Check | Result | Evidence |
+|---|---|---|
+| A known product and recipe give an independently verified consumption result, packaging included | **Pass** | `phase5_checks.sql` §4: 7 test cakes worked by hand (flour 21/10 kg, butter 7/10, jelly 7/30, 7 boxes, 14 spoons) and the real large Bazabizo Mango (3 pieces: 9/25 kg gel, 9/5 kg mango, 18 spoons). `test:phase5` §6 compares 24 loaded recipes with a BigInt calculation taken from the workbook fixture, ingredient and packaging lines, all exact. |
+| A later recipe version leaves earlier days untouched | **Pass** | SQL §5 and HTTP §7: the recipe basis (version and quantities) of 31 October and 4 November is identical before and after version 2 (and 3) is approved; 5 November uses version 2; 30 September has no recipe. Approved versions and their lines cannot be updated or deleted, even by the table owner. |
+| Effective-date boundary and overlap | **Pass** | The last day of version 1 and the first day of version 2 resolve to different versions; overlapping approvals are refused (SQL and HTTP); two simultaneous approvals leave exactly one (HTTP §7b). |
+| Missing or ambiguous mapping, missing or incompatible conversion, unapproved recipe each block only the affected line, with a reason | **Pass** | SQL §4 and §6, HTTP §5: unmapped, pending, rejected, no recipe, draft recipe, no recipe for the date, invalid quantity, missing and incompatible unit, missing base unit; valid lines in the same request stay eligible; reasons name the component and recipe line. |
+| Loaded data matches Abdo's decisions | **Pass** | Cake alias, ten mixed-nut rows as kilograms, six spoons in the November version only (cited to SRC-07 sheet `2` D1015:G1015), separate October and November versions, nothing approved by the load except the cake alias. |
+| Fresh install and Phase 4 upgrade | **Pass** | `npm run db:upgrade-test` section E: Phase 4 head, seed, upgrade, catalog seed, Phase 2 to 5 SQL checks, schema and grants equal to a fresh build. |
+| Permissions | **Pass** | Cashier and Storekeeper get 403 on every catalog page in both languages; the Storekeeper reads items and may run the eligibility check but sees no mappings, queue or date question; no API role writes a table; removing the group blocks the next request of an open session. |
+| Arabic and English workflows | **Pass** | Edge, desktop and 375 px, both languages: direction, no horizontal scroll, and the real date-answer, approval, queue and mapping workflows. |
+
+### Results (22 November 2026, after the final code change)
+
+| Command | Result |
+|---|---|
+| `npm run typecheck`, `npm test`, `npm run build` | clean; 188/188 tests in 12 files; build passes (the catalog adds 7 dynamic pages) |
+| `npm run db:check`, `db:check:phase3`, `db:check:phase4`, `db:check:phase5` | all pass on a fresh database |
+| `npm run db:upgrade-test` | pass (paths A to E, including the new Phase 4 to 5 upgrade) |
+| `npm run test:concurrency` | pass |
+| `npm run test:phase3` (HTTP), `npm run test:browser` | 372 checks, 0 failed; 105 browser checks, 0 failed |
+| `npm run test:smoke` | 69/69 |
+| `npm run test:phase5` (HTTP) | 145/145 |
+| `npm run test:phase5:browser` (Edge) | 71/71, no console errors |
+| `npm run test:phase4` (Phase 4 browser regression) | 30/30, run on the Phase 5 production build against an isolated local Supabase project (stopped and removed afterwards) |
+| `seed:check`, `seed:catalog:check`, `catalog:extract -- --check` | up to date |
+
+Mutation checks on `phase5_checks.sql`: dropping the line-immutability trigger, opening the catalog read policy, counting a draft as approved, skipping the date gate, resolving a pending mapping, converting an incompatible unit, and ignoring recipe ranges each made the file fail. `db:upgrade-test` was last run before the final documentation edits only; no migration changed afterwards.
+
+### Self-audit: found and fixed
+
+1. **Recipe quantities are not decimals.** The workbooks contain `=0.1/3` and an eleven-digit formula; a decimal column would have rounded them. Quantities and conversions are exact numerator/denominator pairs.
+2. **A Foodics name cannot be ambiguous by construction.** The approved-label uniqueness index applies to Foodics only; the workbooks repeat product names in different sections, so identity labels do not compete.
+3. **A hamza spelling split one ingredient into two** («أيس كريم» in the inventory list, «ايس كريم» in 55 recipe lines). The shared name fold merges them and keeps both spellings, so those recipes deduct from the stocked item (P1-30).
+4. **Mobile overflow** found by the browser check on the review and recipe pages (375 px); fixed in CSS and rechecked in both languages.
+5. **Test assertions** that matched hidden option text or raced two redirects were corrected; the application was not at fault.
+6. **Seed on older resets.** A reset to an older migration failed on the catalog seed; the seed now does nothing when the tables do not exist.
+7. **Duplicate background run.** An accidental second regression run collided on the database and was discarded; every result above is from one clean run.
+
+### Pending decisions and open items
+
+- **Abdo: «نسخة وصفات نوفمبر بدأ العمل بيها من يوم كام؟»** Until he answers, the 11 affected versions stay drafts (the database refuses their approval). Record the answer on `/catalog/review`. The 5 November date used in tests exists only inside rolled-back or throwaway databases.
+- **Other Foodics names:** six lines from the 7 November report are proposals (same-name matches checked in Phase 1); the Kinder cake is separate and needs its own answer (P1-29; the workbook quantity 12 is unchanged). Approve each in the review queue.
+- **Unit conflicts (18 components) and missing quantities or units** are listed with exact rows. Examples: «ملاعق بلاستيك للارز» written «كيلو» in four lines; «موز فريش» with no unit (row 954 of both workbooks); «صوص نوتيلا مجهز» and «شيكولاتة بنى اقراص(شيبس)» mixing kilograms and pieces. No recipe containing one can be approved.
+- **61 recipes read an empty Product Mix row, 9 link to none, 69 components are missing from the inventory list.** They need the Foodics name or an inventory row from Abdo.
+- **Every recipe is a draft.** Abdo approves them, with dates, before Phase 6 consumes anything; none was approved on his behalf. English names exist for four items only.
+- **Phase 6 hooks:** store the recipe version, line ids and exact quantities with each posting; make closing an open recipe range refuse dates that already have posted consumption.
+- Not run: hosted Supabase, a physical phone or Safari. The Arabic wording has not been read by a native reviewer other than the project owner.
 
 ## Current phase and status
 
@@ -42,7 +96,7 @@ The bilingual workspace uses the [B.Laban interface refresh](BRAND_DESIGN.md). P
 | Review page for Abdo | All six exported answers received. The delivered questions and their location checks are retained with the [review material](phase1/README.md). |
 | Abdo's decisions | 6 of 6 imported, 0 marked «not sure». See the [decision summary](phase1/decisions/DECISIONS_SUMMARY.md) and the [November workflow notes](phase1/README.md#abdos-november-workflow). |
 
-The owner moved the final confirmation of the six recorded answers to the Phase 10 walkthrough with Abdo. The meaning of the historical order-sheet date stays with Phase 8.
+The owner moved the final confirmation of the six recorded answers to the Phase 10 walkthrough with Abdo. He has since confirmed the old order date means expected receipt. See the [Phase 8 decision](ABDO_WORKFLOW_DECISIONS.md#phase-8--legacy-order-date).
 
 ## Phase 2 status (21 November 2026)
 
@@ -162,7 +216,12 @@ The six review answers are in the [decision summary](phase1/decisions/DECISIONS_
 
 **Phase 4 answers are recorded.** Abdo counts the drawer as branch manager. The normal business-day cutoff is 02:00 local time. An overnight sale at 01:00 and a late close of that business day belong to the prior operating date. Abdo closes, corrects and approves his own corrections, and the branch takes cash and card. See the [implemented workflow](phase4/OPERATING_CLOSE.md).
 
-Still open for later: P1-28 chocolate Dubai cake size and other name differences, P1-31 units, and P1-32 recipe effective date and the 6-spoon line (Phase 5); P1-24 count cadence (Phase 6); P1-35 meaning of the old order template's date (Phase 8); P1-33 opening balances (Phase 11).
+The [22 November voice-note decisions](ABDO_WORKFLOW_DECISIONS.md) record the approved Dubai cake alias, mixed nuts in kilograms, the source for six spoons in the November large Bazabizo Mango recipe, daily and monthly inventory counts, and the historical order date as expected receipt.
+
+- **Phase 5 (implemented):** the November recipe start date is still open and gates the affected versions. See "Pending decisions and open items" under [Phase 5 status](#phase-5-status).
+- **Phase 7:** confirm the live source and entry owner for Al Quds and Bourgogne.
+- **Phase 10:** run the walkthrough with Abdo and record his acceptance.
+- **Phase 11:** Abdo can supply the current sheets at handover. Confirm the first live date and approved opening data then.
 
 ## Work completed
 
@@ -210,7 +269,7 @@ Session 8 (21 Nov, applying Abdo's answers):
 3. **P1-03 average order value** (Abdo accepted net sales ÷ orders): Daily Sales Oct/Nov copies `D3:D33` = `IF(N(C)=0,"",ROUND(B/C,2))`, replacing the typed values (October's were ÷ 1.1). Examples: 1 Oct 72.10 → 79.31; 2 Nov 76 → 76.21; 31 Oct now 86.72. The original workbooks keep the typed values.
 4. **P1-13 cash count before remittance**: recorded as an application rule (expected cash = movements before the count; the 2 Nov reference gives +3 MAD, which the statement copy already shows). No copy change. The prepared ledger message rewrite (`O14` on every day sheet, 62 protected-sheet operations under P1-12) compared the count with the balance after the remittance, which this answer rules out, so it was **withdrawn** from the plan. The protected-sheet set is now 318 operations, not 380; `owner-deferrals.json` keeps a dated note of the change and its status is still `pending`.
 5. **P1-29 Kinder quantity kept at 12** (Abdo's answer). The Foodics figure 2 stays as evidence in the corrected transcription; the 7 Nov workbook total stays 2,192 against Foodics 2,182. Size mapping remains Phase 5 catalog work (P1-28).
-6. **P1-35** stays deferred to Phase 8 by the project owner; not reopened with Abdo. His workflow (night orders, delivery two days later, daily deliveries) is recorded as the application rule.
+6. **P1-35** was deferred during the original review. Abdo subsequently confirmed the legacy expected receipt date in the [22 November voice-note decisions](ABDO_WORKFLOW_DECISIONS.md#phase-8--legacy-order-date). His workflow (night orders, delivery two days later, daily deliveries) is recorded as the application rule.
 7. **Records**: `set_status.py` (findings `2026-11-21.1`: P1-03, P1-08, P1-10, P1-29 verified; P1-12, P1-13 rules; P1-35 deferred), `gen_fixes.py`, `fix-plan.json`, `CORRECTIONS.md` and `corrections-log.csv` (4,400 operations: 4,082 applied, 318 pending), `FINDINGS.md`, `field-map.json`/`FIELD_MAP.md`, `DECISIONS_SUMMARY.md` (retired P1-02 now labelled "retired" instead of "undefined"), `CLOSURE.md`, `docs/DECISIONS.md`, `docs/phase1/README.md`.
 8. **Checks**: `verify_fixes.py` gained a third basis, *decision*, for values that follow Abdo's recorded answers (and stops with an error if those answers change). `boundary_tests.ps1` gained four average-order tests (blank orders, zero orders, 1,000 ÷ 3 = 333.33, zero sales with orders = 0).
 9. **Final confirmation**: [ABDO_FINAL_CONFIRMATION_AR.md](phase1/ABDO_FINAL_CONFIRMATION_AR.md) holds a short Egyptian Arabic summary of the six points for Abdo, with the command to record his reply. Not sent; nothing recorded.
@@ -329,6 +388,6 @@ Environment: the checks ran on this project's own local Supabase instance (`bala
 
 ## Next steps (in order)
 
-1. Start Phase 5 from updated `origin/main`. Implement the catalog, Foodics mapping, units, and effective-dated recipes. Use the [Phase 5 acceptance checks](IMPLEMENTATION_PLAN.md#phase-5--products-units-and-recipes). Resolve P1-28, P1-31 and P1-32 with Abdo or the catalog owner before approving affected configuration.
+1. Start Phase 6 from updated `origin/main` after the Phase 5 pull request merges. Post theoretical consumption through the approved recipe version using the [Phase 5 handover notes](phase5/CATALOG_AND_RECIPES.md#handover-to-phase-6). Ask Abdo for the November recipe start date first.
 2. Before production rollout, provision an authorized hosted Supabase project, set the Auth options and `SITE_URL`, configure SMTP, and bootstrap Abdo. See the [accounts and permissions runbook](phase3/ACCOUNTS_AND_PERMISSIONS.md).
-3. Carry forward the weekly total-ratio rule (Phase 7), the historical order-sheet date (Phase 8), and Abdo's final confirmation (Phase 10).
+3. Carry forward the weekly total-ratio rule and live comparison source and entry owner (Phase 7), the confirmed expected receipt mapping (Phase 8), Abdo's walkthrough (Phase 10) and reviewed opening data (Phase 11).

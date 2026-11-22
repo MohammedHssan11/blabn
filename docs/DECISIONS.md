@@ -2,6 +2,8 @@
 
 ## Confirmed decisions
 
+The [22 November voice-note decisions](ABDO_WORKFLOW_DECISIONS.md) cover the catalog, count schedule, historical order date and handover.
+
 | Decision | Rationale |
 |---|---|
 | Start as a web application/PWA | One build works on Abdo's laptop, tablets, and phones. |

@@ -10,7 +10,7 @@ The first release is a web application in Arabic and English. It covers daily cl
 
 The web application is built with Next.js, React, and TypeScript and can be installed as a PWA. Supabase provides PostgreSQL, authentication, authorization, storage, and migrations. Foodics figures are entered manually in the first release. The web and desktop applications use the same accounts, data, and server-side calculations.
 
-Phase 1 closed on 21 November 2026. Development uses Abdo's six recorded answers and the verified source copies. The project owner scheduled the protected legacy ledger review for Phase 4 if needed, the historical order date for Phase 8, and the final confirmation for the Phase 10 walkthrough. Phase 2 begins with the [report contracts](phase2/REPORT_CONTRACTS.md). See the [closure checklist](phase1/CLOSURE.md).
+Phase 1 closed on 21 November 2026. Development uses Abdo's six recorded answers and the verified source copies. The project owner scheduled the protected legacy ledger review for Phase 4 if needed and the final confirmation for the Phase 10 walkthrough. Abdo has since confirmed the expected receipt meaning of the historical order date for Phase 8. Phase 2 begins with the [report contracts](phase2/REPORT_CONTRACTS.md). See the [closure checklist](phase1/CLOSURE.md).
 
 ## Delivery sequence
 
@@ -207,6 +207,8 @@ Phase 4 local acceptance is recorded in the [handover](HANDOFF.md#phase-4-status
 
 Each sold product can be converted into the ingredient and packaging quantities it consumes.
 
+Use [Abdo's 22 November catalog decisions](ABDO_WORKFLOW_DECISIONS.md#phase-5--products-units-and-recipes) for the Dubai chocolate cake aliases and mixed-nut unit. The November source shows six spoons in the large Bazabizo Mango recipe. Use separate recipe versions and confirm the effective date before approving affected versions. Keep other ambiguous aliases and units in the review queue.
+
 ### Work
 
 - Create product, ingredient, packaging, and sold-item records with source labels and available codes.
@@ -217,6 +219,8 @@ Each sold product can be converted into the ingredient and packaging quantities 
 - Capture yields and other confirmed recipe parameters where they exist.
 - Preserve discontinued items and old recipe versions referenced by history.
 - Require an approved product mapping, conversion, and recipe before affected consumption can post.
+
+Local implementation status and evidence: [Phase 5 catalog and recipes](phase5/CATALOG_AND_RECIPES.md) and the [handover](HANDOFF.md#phase-5-status). The November recipe start date is still Abdo's to answer; the affected November versions stay drafts until then.
 
 ### Acceptance checks
 
@@ -239,7 +243,7 @@ The Storekeeper can see what arrived, what was consumed, expected stock, physica
 - Record opening stock, receipts, purchases, transfers, returns, waste, hospitality, deductions, adjustments, and notes as typed stock movements.
 - Record «الوارد» on the actual receipt day, as Abdo does in the inventory sheet. Keep shortages traceable to the stock count and any separately approved adjustment.
 - Link each purchase receipt to its purchase-order line and create one stock movement.
-- Enter a physical count with count time and compare it to expected stock at the same point.
+- Enter a physical count with count time and compare it to expected stock at the same point. For Maarif, count products, oil, sauces and the other inventory categories above Packaging daily, and Packaging monthly. See [Abdo's count schedule](ABDO_WORKFLOW_DECISIONS.md#phase-6--inventory-count-schedule).
 - Preserve physical-count observations and create a separate approved adjustment where necessary.
 - Show source, unit, actor, and revision history for each stock figure.
 
@@ -298,7 +302,7 @@ Abdo can understand a replenishment suggestion, its dates and assumptions, appro
 - Floor a recommendation at zero. Apply pack size, supplier minimum, shelf-life, and cut-off rules after the branch confirms them.
 - Create purchase orders with suggested quantity, final quantity, override reason, creator, and approver.
 - Default expected receipt to the order business date plus two calendar days. Abdo schedules orders at night and receives deliveries daily. Keep the actual creation timestamp and operational business date separately. Confirm the business-day cutoff before automating the after-midnight assignment.
-- Before mapping historical order dates, confirm whether the date in SRC-01 `Sheet1!C6` means creation or receipt. Keep the original source value for reference until that Phase 8 check.
+- Map SRC-01 `Sheet1!C6` to the expected receipt date, as [confirmed by Abdo](ABDO_WORKFLOW_DECISIONS.md#phase-8--legacy-order-date). Keep the original source value and record actual receipt only from receiving evidence.
 - Require a reason for an expected-date override and preserve both dates.
 - Support partial receipts, outstanding quantities, and cancellation of unreceived quantities.
 - Create stock only from saved receipt records tied to order lines.
@@ -367,7 +371,7 @@ Validate the full web workflow with Abdo in Arabic and English before the web ro
 - Reconcile every report field against approved Excel templates. Record differences with source field or cell, reason, owner, and resolution.
 - Simulate network loss during save, competing edits to one day, and report export while source data is being corrected.
 - Run the web workflows from sign-in through report download in both languages on the supported browser and device layouts. Check translations, display direction, validation messages, and language switching during normal use.
-- Observe staff and Abdo completing the intended workflow, then remove confusing labels or unnecessary steps.
+- Observe staff and Abdo completing the intended workflow with the existing sheets for reference, then remove confusing labels or unnecessary steps.
 - Run a final rehearsal with a current branch day before replacing the daily Excel workflow.
 
 ### Acceptance checks
@@ -389,7 +393,7 @@ The Maarif branch uses the bilingual web release daily. The team verifies that i
 - Configure production hosting, domain, HTTPS, production Supabase, and Abdo's production account.
 - Apply tested migrations and production security settings.
 - Let Abdo choose the first live business date at handover, including a future date if the branch will start later. Show it when he signs in and use it as the earliest date for live daily records. Before the first live day opens, Abdo can change the date, and the change is recorded in the audit history.
-- Record the branch's reviewed opening cash, purchasing-custody balances, stock, and outstanding purchase orders as of that date. Keep the example days in the test environment and use the original workbooks as report references.
+- Obtain Abdo's current sheets at handover and review the opening data against the first live business date. Record opening cash, purchasing-custody balances, stock and outstanding purchase orders as of that date. Keep the example days in the test environment and use the original workbooks as report references.
 - Load reviewed catalog and recipe data into production.
 - Install the PWA on branch devices and test save confirmation, reconnect behavior, and sign-out.
 - Keep the first release online-first. When connectivity drops, show clear state so users can verify the last successful save before retrying.
@@ -565,13 +569,13 @@ Every phase produces a reviewable usable result. Any change affecting balances o
 
 ## Confirmations needed during delivery
 
-Phase 1 can begin with the material already available once the [decisions needed before Phase 1](#decisions-needed-before-phase-1) are made. Source issues and questions go into the Phase 1 findings register and Abdo's review page. The table records when the corresponding production rules will be needed. The confirmed cutoff, close, correction, and payment rules are in [Abdo's Phase 4 decisions](phase4/ABDO_DECISIONS.md).
+Phase 1 can begin with the material already available once the [decisions needed before Phase 1](#decisions-needed-before-phase-1) are made. Source issues and questions go into the Phase 1 findings register and Abdo's review page. The table records when the corresponding production rules will be needed. The confirmed cutoff, close, correction, and payment rules are in [Abdo's Phase 4 decisions](phase4/ABDO_DECISIONS.md). For the later phases, use [Abdo's 22 November answers](ABDO_WORKFLOW_DECISIONS.md).
 
 | Confirmation | Owner | Needed by | Work that can proceed first |
 |---|---|---|---|
-| Is the date in the old order sheet SRC-01 `Sheet1!C6` the order date or the delivery date? | Abdo | Phase 8, before mapping historical order dates | New orders use separate business, expected receipt and actual receipt dates |
+| Confirmed legacy order date (SRC-01 `Sheet1!C6`) | Abdo | Phase 8 | Map to expected receipt and keep creation and actual receipt separate |
 | What is the approved live source for Al Quds and Bourgogne values, and who enters them? | Abdo | Before live branch comparison | Comparison screen and source tracking |
-| Which product mappings, units, conversions, and recipes are approved? | Abdo or catalog owner | Before live inventory consumption | Catalog and review queue |
+| Which remaining product mappings, units, conversions and recipe effective dates are approved? | Abdo or catalog owner | Before approving affected configuration | Implement the confirmed cases and the review queue |
 | What safety stock, coverage period, pack size, supplier minimum, cut-off, and calendar exceptions apply? | Abdo or purchasing owner | Before live replenishment recommendations | Transparent calculation and editable draft orders |
 | Which report fields and layouts should be retained? | Abdo | Phase 1 decision, verified in Phases 9–10 | Inventory and map the supplied templates |
 | What hosting budget, domain, recovery targets, and production owner apply? | Project owner | Before Phase 11 | Development and test environments |

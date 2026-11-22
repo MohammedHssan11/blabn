@@ -26,6 +26,7 @@ Read these Markdown files:
 7. docs/ARCHITECTURE.md
 8. docs/HANDOFF.md and docs/IMPLEMENTATION_PLAN.md
 9. docs/phase4/ABDO_DECISIONS.md and docs/phase4/OPERATING_CLOSE.md for the confirmed and implemented daily-close workflow
+10. docs/ABDO_WORKFLOW_DECISIONS.md for the latest catalog, stock-count, order and rollout decisions and the remaining follow-ups
 
 Use the documents to understand why the branch wants to enter each business day once, what the future application should cover, what is planned for later, and what is already present in the repository. Use the source inventory only to understand what reference material is available.
 
