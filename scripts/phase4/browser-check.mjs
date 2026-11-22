@@ -31,9 +31,13 @@ function psql(sql) {
 }
 assert.equal(psql("select count(*) from public.operating_days;"), "0", "Start with an empty operating ledger.");
 
+function makeTestPassphrase() {
+  return [randomBytes(16).toString("base64url"), "Aa1"].join("-");
+}
+
 async function staff(role) {
   const email = `${role}-${randomBytes(5).toString("hex")}@example.test`;
-  const password = `Aa1-${randomBytes(12).toString("base64url")}`;
+  const password = makeTestPassphrase();
   const created = await service.auth.admin.createUser({ email, password, email_confirm: true });
   if (created.error) throw new Error(`Could not create local ${role}`);
   const { id } = created.data.user;
