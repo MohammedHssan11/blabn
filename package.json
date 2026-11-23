@@ -16,6 +16,7 @@
     "seed:build": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/phase2/build-seed.mjs",
     "seed:check": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/phase2/build-seed.mjs --check",
     "db:check": "node scripts/phase2/db-check.mjs",
+    "fieldmap:check": "python -I -X utf8 scripts/phase1/build_field_map.py --check",
     "check": "npm run typecheck && npm run test && npm run build",
     "db:check:phase3": "node scripts/phase3/db-check.mjs phase3_checks.sql",
     "db:upgrade-test": "node scripts/phase3/upgrade-test.mjs",
@@ -45,6 +46,7 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "playwright-core": "^1.65.1",
+    "supabase": "2.122.1",
     "typescript": "^7.0.2",
     "vitest": "^5.1.1"
   }

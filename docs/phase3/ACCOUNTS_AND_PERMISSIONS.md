@@ -80,8 +80,11 @@ Auth settings to apply on the hosted project (they are in `supabase/config.toml`
 
 Use a disposable local Supabase project with synthetic accounts. The upgrade, HTTP and browser checks reset its database, and the concurrency check adds sample organizations.
 
+`npm ci` installs the Supabase CLI pinned in `package.json` (2.122.1), so `npx supabase` resolves to that version rather than a global install. An older global CLI (for example 2.102) refuses `supabase/config.toml` (`local_smtp`, `auth.email.enabled`). Storage, Realtime, Studio and the analytics services are not used by the application or the checks; `-x` skips them and saves several gigabytes of images.
+
 ```powershell
-npx supabase start
+npm ci
+npx supabase start -x realtime,storage-api,imgproxy,edge-runtime,logflare,vector,supavisor,studio,postgres-meta
 node scripts/phase3/write-local-env.mjs      # writes the git-ignored .env.local for the local instance
 npm run check                                # typecheck, unit tests, production build
 npm run db:upgrade-test                      # Phase 2 baseline -> upgrade -> fresh build -> equal schemas;
