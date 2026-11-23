@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { getCashCountView, getDailyCloseView } from "@/modules/closing/service";
-import { getComparisonView } from "@/modules/comparisons/service";
+import { getComparison, parseComparisonQuery, type WeeklyView } from "@/modules/comparisons/service";
+
+// The Phase 2 demonstration mode reads the synthetic fixtures (the live mode reads the database).
+process.env.BALABAN_DEMO_FIXTURES = "1";
+const getComparisonView = async (current?: string) =>
+  (await getComparison(parseComparisonQuery(current === undefined ? {} : { current }, "2026-11-23"))).view as WeeklyView;
 import { loadFixtures } from "@/lib/fixtures";
 import { collectTraces } from "@/modules/reports/trace";
 import { PROTOTYPE_FIELDS, PENDING_IN_PROTOTYPES, CONTRACT_EXAMPLES } from "@/modules/reports/contracts";
@@ -118,26 +123,42 @@ describe("synthetic daily close", () => {
 });
 
 describe("synthetic branch comparison", () => {
-  it("shows 120 % for 120 vs 100 (Maarif) and marks Bourgogne missing", async () => {
+  it("shows 120 % for 120 vs 100 (Maarif), the branches in SRC-12 order, and marks Bourgogne missing", async () => {
     const view = await getComparisonView();
     expect(view.currentDate.value).toBe("2026-11-10");
     expect(view.priorDate.value).toBe("2026-11-03");
+    expect(view.rows.map((r) => r.branch.code)).toEqual(["alquds", "maarif", "bourgogne"]);
     const maarif = view.rows.find((r) => r.branch.code === "maarif")!;
-    expect(maarif.current.value).toBe(12000);
-    expect(maarif.prior.value).toBe(10000);
+    expect(maarif.current.sales.value).toBe(12000);
+    expect(maarif.prior.sales.value).toBe(10000);
+    expect(maarif.salesDiff.value).toBe(2000);
     expect(maarif.ratio.value).toBe(12000);
     const bourgogne = view.rows.find((r) => r.branch.code === "bourgogne")!;
-    expect(bourgogne.currentSource).toBe("missing");
-    expect(bourgogne.current.value).toBeNull();
+    expect(bourgogne.current.status).toBe("missing");
+    expect(bourgogne.current.sales.value).toBeNull();
     expect(view.total.incomplete).toBe(true);
     expect(view.total.currentCoverage).toEqual({ present: 2, total: 3 });
     expect(view.total.priorCoverage).toEqual({ present: 3, total: 3 });
   });
 
   it("falls back to the default date for an invalid date", async () => {
+    const query = parseComparisonQuery({ current: "nonsense" }, "2026-11-23");
+    expect(query.invalid).toBe(true);
+    expect(query.currentDate).toBe("2026-11-10");
     const view = await getComparisonView("nonsense");
-    expect(view.requestedDateValid).toBe(false);
     expect(view.currentDate.value).toBe("2026-11-10");
+  });
+
+  it("parses the mode, the prior date, the month and the branch selection", () => {
+    const q = parseComparisonQuery({ mode: "monthly", month: "2026-11", branches: "bourgogne,alquds" }, "2026-11-23");
+    expect(q.mode).toBe("monthly");
+    expect(q.month).toBe("2026-11");
+    expect(q.branches).toEqual(["alquds", "bourgogne"]);
+    expect(q.invalid).toBe(false);
+    expect(parseComparisonQuery({ branches: ["maarif", "nowhere"] }, "2026-11-23").invalid).toBe(true);
+    expect(parseComparisonQuery({ current: "2026-11-10", prior: "2026-11-04" }, "2026-11-23").invalid).toBe(true);
+    expect(parseComparisonQuery({ current: "2026-11-10", prior: "2026-10-27" }, "2026-11-23").priorDate).toBe("2026-10-27");
+    expect(parseComparisonQuery({ mode: "yearly" }, "2026-11-23").invalid).toBe(true);
   });
 });
 

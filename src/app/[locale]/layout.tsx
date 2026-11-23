@@ -8,7 +8,7 @@ import { createTranslator } from "@/i18n/dictionary";
 import { LanguageSwitch } from "@/components/LanguageSwitch";
 import { MainNav } from "@/components/MainNav";
 import { getAccessContext, holds } from "@/modules/access/session";
-import { ALL_BRANCH_CODES, OPERATING_BRANCH_CODE } from "@/modules/access/catalog";
+import { ALL_BRANCH_CODES, COMPARISON_BRANCH_CODES, OPERATING_BRANCH_CODE } from "@/modules/access/catalog";
 import { signOutAction } from "@/modules/access/auth-actions";
 
 export const dynamicParams = false;
@@ -55,8 +55,14 @@ export default async function LocaleLayout({
                 { href: `/${locale}/cash-count`, label: t("nav.cashCount") },
               ]
             : []),
+          // The comparison opens for every branch the person may view (all three by default).
           ...(ALL_BRANCH_CODES.every((code) => holds(access, "comparison.view", code))
             ? [{ href: `/${locale}/comparison`, label: t("nav.comparison") }]
+            : ALL_BRANCH_CODES.some((code) => holds(access, "comparison.view", code))
+              ? [{ href: `/${locale}/comparison?branches=${ALL_BRANCH_CODES.filter((code) => holds(access, "comparison.view", code)).join(",")}`, label: t("nav.comparison") }]
+              : []),
+          ...(COMPARISON_BRANCH_CODES.some((code) => holds(access, "comparison.enter", code))
+            ? [{ href: `/${locale}/comparison/entry`, label: t("nav.comparisonEntry") }]
             : []),
           ...(holds(access, "reports.view", OPERATING_BRANCH_CODE) ? [{ href: `/${locale}/reports`, label: t("nav.reportMap") }] : []),
           ...(holds(access, "inventory.view", OPERATING_BRANCH_CODE) ? [{ href: `/${locale}/inventory`, label: t("nav.stock") }] : []),

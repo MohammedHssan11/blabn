@@ -2,7 +2,7 @@
 
 Read this first in every session, then compare it with the actual repository state (`git status`, `git log -3`, `git fetch` and the PR list) before continuing. Update it after each meaningful task and before ending a session.
 
-_Last updated: 23 November 2026. The [audit of Phases 1–5](#independent-audit-of-phases-15-23-november-2026) (PR #9) and [Phase 6](#phase-6-status) (PR #10) are merged into `main` at `5994747`. Migration `20261123120000_phase6_stock.sql` is applied to the shared hosted Supabase project; see [Hosted deployment](#hosted-deployment). Phase 7 is next. The November recipe start date and other unresolved catalog records still require business approval before their consumption can post. Production provisioning of his account is pending. **The GitHub repository is public although these documents require it to stay private — see the first open item of the audit.**_
+_Last updated: 23 November 2026. [Phase 7](#phase-7-status) (cross-branch comparison) is implemented and locally accepted on branch `phase-7/comparison`, pull request open, not merged, not applied to the hosted project. The audit of Phases 1–5 (PR #9) and Phase 6 (PR #10) are merged into `main`; migration `20261123120000_phase6_stock.sql` is applied to the shared hosted Supabase project (see [Hosted deployment](#hosted-deployment)). Waiting on Abdo: the live source and entry owner for Al Quds and Bourgogne, the November recipe start date and other catalog records. Production provisioning of his account is pending. **The GitHub repository is public although these documents require it to stay private — see the first open item of the audit.**_
 
 The bilingual workspace uses the [B.Laban interface refresh](BRAND_DESIGN.md). Phase 4 implements the [confirmed daily close and Yawmeya workflow](phase4/OPERATING_CLOSE.md) on the signed-in person's Supabase session.
 
@@ -13,11 +13,75 @@ The bilingual workspace uses the [B.Laban interface refresh](BRAND_DESIGN.md). P
 | Repository | https://github.com/MohammedHssan11/blabn. **GitHub reports it as public (checked 23 November 2026).** [SOURCE_MATERIAL.md](SOURCE_MATERIAL.md), [DATA_AND_REPORTS.md](DATA_AND_REPORTS.md) and [DECISIONS.md](DECISIONS.md) require a private repository. The owner must resolve this; see the audit's open items. |
 | Phase 3 branch | `codex/phase-3-accounts-permissions`, based on `main` at the Phase 2 merge (`2d21e31`). |
 | Audit and Phase 6 | [PR #9](https://github.com/MohammedHssan11/blabn/pull/9) (`audit/phases-1-5`) merged as `b2fdc42`; [PR #10](https://github.com/MohammedHssan11/blabn/pull/10) (`phase-6/stock`) merged as `5994747`. |
-| Development baseline | `origin/main` at `5994747` or later. Start Phase 7 from there. |
+| Phase 7 branch | `phase-7/comparison`, from `main` at `9adaa91`; pull request to `main`, not merged. |
+| Development baseline | `origin/main` at `9adaa91` or later. |
 | Hosted Supabase | Shared project `xitryskkqgtkpdawddqe`. Hosted migration history matches `main` through `20261123120000` (23 November 2026). Deploy with `npx supabase db push --linked --dry-run` first; never use `--include-seed`, because the seed files are local test data. |
 | Local tooling | `npm ci` installs the pinned Supabase CLI 2.122.1. Use `npx supabase …`; an older global CLI cannot read `supabase/config.toml`. |
 | Phase 2 pull request | [PR #2](https://github.com/MohammedHssan11/blabn/pull/2), merged. |
 | Local-only material | `C:\Users\mh978\Downloads\abdo\abdo temp\`, `...\outputs\`, `...\archive\`, `...\screenshot\` — outside Git; keep them out of commits. |
+
+## Phase 7 status
+
+Cross-branch sales comparison is implemented and locally accepted on branch `phase-7/comparison` (from `main` at `9adaa91`). It is not merged and not applied to the hosted project. Design, rules and commands: [phase7/COMPARISON.md](phase7/COMPARISON.md). All test data is synthetic. The real Bourgogne reference day was not entered anywhere.
+
+What was built:
+- Migration `20261124090000_phase7_comparison.sql`:
+  - `comparison_entries`: per-metric revisions with source, business date, person, reason and request identifier;
+  - the one-active-value index `comparison_entries_one_active`;
+  - append-only triggers;
+  - `comparison_sources` and `comparison_branch_settings`;
+  - `comparison_figures` as a Phase 2 compatibility view;
+  - `branch_daily_figures` reading the live Phase 4 closes;
+  - the checked functions `app_comparison_save`, `app_comparison_report` (view or export), the entry context, and settings.
+- Screens: `/comparison` (weekly and monthly, branch selection, coverage first), `/comparison/entry`, `/comparison/history`, `/comparison/settings`, and the export `/api/exports/comparison`. All in Arabic and English.
+- Permissions: the three Phase 3 permissions and group grants are unchanged. Each one is now enforced on the new objects separately.
+
+| Acceptance check | Result | Evidence |
+|---|---|---|
+| Al Quds, Maarif, Bourgogne, then Total | **Pass** | `comparisons.test.ts`; `phase7_checks.sql` §3; `test:phase7` §4 (en, ar); browser in both languages |
+| 120 vs 100: difference 20, weekly ratio 120 %, monthly growth 20 % | **Pass** | unit tests; `test:phase7` §4 (Maarif from closed days: +20.00, 120 %) and §5 (17 Nov vs 17 Oct +20 %, period 20 %, CSV `20.00`); browser |
+| Missing days and zero prior: "unavailable" with a reason, never NaN, ∞ or 0 % | **Pass** | unit tests; `test:phase7` §4–5 (`current_unavailable`, `prior_zero`, `different_branches`, future, no such day, before live; no NaN or ∞); browser reads the reason in both languages |
+| Maarif entered once in the daily close appears in closing, reports and comparison | **Pass** | `phase7_checks.sql` §4; `test:phase7` §1 (daily close page, Daily Sales CSV) and §4 (`closed_day`); no Maarif comparison entry exists |
+| No comparison access → no Al Quds or Bourgogne figure (database, HTTP, browser) | **Pass** | `phase7_checks.sql` §3 (table, both views, report function; editor, exporter, cashier, manager, outsider, anonymous, other organization); `test:phase7` §3; browser cashier section |
+| Second active value refused; retrying a save creates one revision | **Pass** | `phase7_checks.sql` §2 (command, compatibility view, table owner against the index); `test:phase7` §2 (form duplicate, replay, 2 rows per request) |
+| Entering, viewing and exporting enforced separately | **Pass** | `phase7_checks.sql` §3; `test:phase7` §3 |
+| Total over a partial selection marked incomplete with coverage | **Pass** | unit tests; `test:phase7` §4 (2 of 3 and 3 of 3, no total ratio; complete when the selection is complete); browser |
+
+Baseline before any change (fresh database): `npm run check` (204/204 tests), `seed:check`, `seed:catalog:check`, `fieldmap:check`, and `db:check` through `db:check:phase6` all passed.
+
+| Command (final code, 23 November 2026) | Result |
+|---|---|
+| `npm run check` | `tsc` clean; 226/226 tests in 14 files; build passes (3 new dynamic pages) |
+| `seed:check`, `seed:catalog:check`, `fieldmap:check` | up to date (54 fields, 6 pending) |
+| `npm run db:check`, `db:check:phase3` … `db:check:phase7` | all pass on a fresh database |
+| `npm run db:upgrade-test` | pass, paths A–G. G = Phase 6 → 7: figures read back identically as revision 1, settings undecided, Phase 2–7 checks pass, schema and grants equal a fresh build |
+| `npm run test:phase7`, `test:phase7:browser` | 130/130 HTTP; 71/71 browser (Edge, English desktop and Arabic at 375 px), no console errors |
+| Earlier phases | smoke 69/69; concurrency pass; `test:phase3` 372/372; `test:browser` 105/105; `test:phase5` 147/147; `test:phase5:browser` 71/71; `test:phase6` 70/70; `test:phase6:browser` 21/21 |
+| `test:phase4` | The script refuses the main local stack, so it ran on a second, disposable local stack (ports 59320–59329, removed afterwards). With PostgREST v16.5 (the image of the main stack): **30/30**. With PostgREST v14.18 (the version the CLI pins after linking the hosted project): 29/30 in three runs. The concurrent-save check failed because the losing request got a gateway timeout instead of `40001`; exactly one revision was still written. The same result appears with the database at the Phase 6 head, without the Phase 7 migration, so it is not caused by Phase 7. See the open item. |
+
+Mutation checks: each change made `phase7_checks.sql` fail on a fresh database.
+- Dropping `comparison_entries_one_active`: first at the structural assertion. With that assertion removed, at the table owner's second active insert.
+- Dropping the `comparison_entries_read` policy: "the earlier revision stays readable".
+- Opening that policy to everyone: "entries hidden from …".
+
+Test changes, with reasons:
+- `tests/comparisons.test.ts` and `tests/services.test.ts` were rewritten for the new calculation API. The Phase 2 cases are kept: 120 %, missing branch, zero prior, the incomplete total.
+- `tests/access-architecture.test.ts` now pins "every *selected* branch" for the page guard (all three by default) and covers the three new pages and the export.
+- `phase2_checks.sql` and `phase3_checks.sql` are unchanged. The compatibility view keeps their assertions true, including `update comparison_figures` → `42501`.
+
+Found and fixed while building:
+- A viewer with comparison access but no daily-close access saw a reporting-only Maarif figure instead of the closed day. The closed-day lookup now always knows which days are closed and suppresses entries for them.
+- A historical figure was hidden behind a live-purpose figure on a pre-live date.
+- A correction without a new reference dropped the earlier source reference.
+- At 375 px the branch notes pushed the figures out of view. They moved to a list above the table.
+- I had typed the real reference figure into a draft unit test. It was replaced with synthetic values before any commit.
+
+Open items:
+- **Abdo:** the approved live source and the entry owner for Al Quds and Bourgogne, and from which day their figures count. Question, in plain Arabic: «يا عبده، عشان مقارنة الفروع: أرقام فرع القدس وفرع بورجون هناخدها منين كل يوم (من سيستم الكاشير/فودكس ولا من رسالة من مدير الفرع ولا من شيت معيّن)؟ ومين الشخص اللي هيدخّلها في البرنامج لكل فرع؟ ومن أنهي يوم نبدأ نعتبر أرقامهم رسمية؟» **Next action (administrator):** record his answer on `/comparison/settings`: add the source, choose it, choose the owner and the first live date.
+- **Project owner:** deploy the migration to the hosted project after review. Use `npx supabase db push --linked --dry-run` first, then without `--include-seed`.
+- **Team, private environment only:** check the SRC-12 reference day (Bourgogne 10 Nov, 28,975 MAD and 374 orders, against 3 Nov) by hand. See COMPARISON.md, "Reference case".
+- **Phase 9:** decide whether historical Maarif figures before its first live date are needed for a report, and who may enter them. `comparison.enter` stays limited to comparison branches.
+- **Developer (Phase 4, before hosted use):** on PostgREST v14.18, which `supabase/.temp/rest-version` records for the linked hosted project, the second of two simultaneous daily-close saves ends in a gateway timeout ("The upstream server is timing out") instead of `40001`. The data stays correct (one revision). **Next action:** reproduce against v14.18, find why the waiting request is not answered, and check the hosted behaviour before Abdo uses concurrent saves.
 
 ## Phase 6 status
 
@@ -334,7 +398,7 @@ The follow-up audit reran the suite on a disposable local Supabase project with 
 - **Production**: no hosted Supabase project, SMTP provider or real Abdo account was used or created. Provisioning, the Auth settings in `supabase/config.toml` (sign-ups off, 10-character minimum, redirect URLs) and `SITE_URL` must be set on the hosted project; recovery emails were checked only through the local mail catcher.
 - **403 pages**: the status is a real 403, but Next.js sends its error shell and the browser renders the "access denied" content from the response payload (the root layout is the dynamic `[locale]` segment). The HTTP checks assert the status and the message text in the payload; the browser checks assert what is shown. Requires `experimental.authInterrupts` in `next.config.ts`.
 - **Verified in Edge only**; layout checked at 375 px in the browser pane engine, not on a physical phone or Safari. Arabic wording of the new screens has not been read by a native reviewer other than the project owner.
-- **Comparison data**: entry is insert-only (an update would need the row to be readable, which the editor must not be able to do); corrections and revision history arrive with Phase 7. The comparison page and export need `comparison.view` / `comparison.export` for every branch; per-branch columns are Phase 7.
+- **Comparison data**: superseded by Phase 7. Corrections are revisions through `app_comparison_save`, and the page and export check every *selected* branch. See [Phase 7 status](#phase-7-status).
 - **Audit scope**: rows are written by the administrator commands, the bootstrap command and the operating-table triggers for signed-in people. Direct service-role writes are not audited by the triggers; a database owner can still disable triggers.
 - **Real exports, daily-close writes, stock movements**: the CSV downloads and the adjustment screen are minimal guarded skeletons on synthetic data; the real workflows are Phases 4, 6 and 9. `inventory_adjustments` is a skeleton table that Phase 6 extends.
 - **Disabling removes Auth sessions** with a privileged delete that is skipped quietly if the database owner may not touch the `auth` schema on a hosted project; the live checks refuse every request regardless, and the Auth user is banned by the server.
@@ -349,7 +413,7 @@ The six review answers are in the [decision summary](phase1/decisions/DECISIONS_
 The [22 November voice-note decisions](ABDO_WORKFLOW_DECISIONS.md) record the approved Dubai cake alias, mixed nuts in kilograms, the source for six spoons in the November large Bazabizo Mango recipe, daily and monthly inventory counts, and the historical order date as expected receipt.
 
 - **Phase 5 (implemented):** the November recipe start date is still open and gates the affected versions. See "Pending decisions and open items" under [Phase 5 status](#phase-5-status).
-- **Phase 7:** confirm the live source and entry owner for Al Quds and Bourgogne.
+- **Phase 7 (implemented):** confirm the live source and entry owner for Al Quds and Bourgogne, and from which day their figures count. The question in plain Arabic is under [Phase 7 status](#phase-7-status); record the answer on `/comparison/settings`.
 - **Phase 10:** run the walkthrough with Abdo and record his acceptance.
 - **Phase 11:** Abdo can supply the current sheets at handover. Confirm the first live date and approved opening data then.
 
@@ -519,6 +583,9 @@ Environment: the checks ran on this project's own local Supabase instance (`bala
 ## Next steps (in order)
 
 0. Project owner: resolve the repository visibility (audit open item 1).
-1. Start Phase 7 (cross-branch comparison) from `origin/main` at `5994747` or later. Real consumption needs Abdo's November recipe start date and the review-queue approvals first (see "Phase 6 status").
-2. Before production rollout, confirm whether the shared project `xitryskkqgtkpdawddqe` is the production project or a separate one is needed. Then set the Auth options and `SITE_URL`, configure SMTP, and bootstrap Abdo. See the [accounts and permissions runbook](phase3/ACCOUNTS_AND_PERMISSIONS.md).
-3. Carry forward the weekly total-ratio rule and live comparison source and entry owner (Phase 7), the confirmed expected receipt mapping (Phase 8), Abdo's walkthrough (Phase 10) and reviewed opening data (Phase 11).
+1. Review and merge the Phase 7 pull request (`phase-7/comparison`). Then deploy `20261124090000_phase7_comparison.sql` to the hosted project: `npx supabase db push --linked --dry-run` first, never `--include-seed`.
+2. Ask Abdo the Phase 7 question (live source, entry owner and start day for Al Quds and Bourgogne) and record it on `/comparison/settings`.
+3. Developer: investigate the Phase 4 concurrent-save gateway timeout on PostgREST v14.18 (Phase 7 open items) before concurrent use on the hosted project.
+4. Start Phase 8 (three-month planning, purchase orders and receiving) from `main` after the merge. Real consumption still needs Abdo's November recipe start date and the review-queue approvals (see "Phase 6 status").
+5. Before production rollout, confirm whether the shared project `xitryskkqgtkpdawddqe` is the production project or a separate one is needed. Then set the Auth options and `SITE_URL`, configure SMTP, and bootstrap Abdo. See the [accounts and permissions runbook](phase3/ACCOUNTS_AND_PERMISSIONS.md).
+6. Carry forward the confirmed expected receipt mapping (Phase 8), Abdo's walkthrough (Phase 10) and reviewed opening data (Phase 11).

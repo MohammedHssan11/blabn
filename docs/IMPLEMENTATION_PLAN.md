@@ -286,6 +286,8 @@ Abdo can compare Al Quds, Maarif, Bourgogne, and the total across current and pr
 - Maarif data entered once appears in closing, reports, and comparison without re-entry.
 - A user without comparison access cannot read Al Quds or Bourgogne figures.
 
+Local implementation status and evidence: [Phase 7 cross-branch comparison](phase7/COMPARISON.md) and the [handover](HANDOFF.md#phase-7-status). The approved live source and entry owner for Al Quds and Bourgogne still wait for Abdo; both are configurable and start undecided.
+
 ## Phase 8 — Three-month planning, purchase orders, and receiving
 
 ### Goal

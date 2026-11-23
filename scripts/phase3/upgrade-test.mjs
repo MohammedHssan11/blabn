@@ -4,6 +4,7 @@
 //                  the Phase 2 and Phase 3 checks;
 //   B. fresh     - rebuild from scratch (all migrations + seed) and run the same checks;
 //   C. equality  - the upgraded and the freshly built schemas are identical.
+//   D-G. later upgrade paths (migration 08 with a flagged account; Phase 4 -> 5; 5 -> 6; 6 -> 7).
 // Usage: npm run db:upgrade-test   (Docker running, `npx supabase start` done)
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
@@ -251,6 +252,56 @@ step("its schema, table privileges and function privileges equal the fresh build
 step("a fresh build passes the Phase 6 checks too", () => {
   supabase(["db", "reset"]);
   return runSqlFile("phase6_checks.sql");
+});
+
+console.log("\nG. Upgrade of a Phase 6 database to Phase 7 (comparison revisions, settings and permissions)");
+const PHASE6_HEAD = "20261123120000";
+const FIGURES = "select coalesce(json_agg(json_build_array(branch_id, business_date, net_sales, order_count, source) order by branch_id, business_date)::text, '[]') from public.comparison_figures";
+let figuresBefore = "";
+step(`reset to migration ${PHASE6_HEAD} (Phase 6 head, with the base and catalog seeds)`, () => {
+  supabase(["db", "reset", "--version", PHASE6_HEAD]);
+  if (psql("select to_regclass('public.comparison_entries') is not null") !== "f") throw new Error("Phase 7 tables exist at the Phase 6 head");
+  if (psql("select relkind from pg_class where oid = 'public.comparison_figures'::regclass") !== "r") throw new Error("comparison_figures is not a table at the Phase 6 head");
+  return runSqlFile("phase6_checks.sql");
+});
+step("a Phase 6 figure with both sales and orders exists before the upgrade", () => {
+  psql("insert into public.comparison_figures (id, branch_id, business_date, net_sales, order_count, source) values ('00000000-0000-4000-8000-000000000499', '00000000-0000-4000-8000-000000000013', '2026-11-17', 88.50, 12, 'reporting_only')");
+  figuresBefore = psql(FIGURES);
+  const count = psql("select count(*) from public.comparison_figures");
+  if (count !== "4") throw new Error(`expected 4 figures, found ${count}`);
+  return `${count} figures`;
+});
+step("apply the Phase 7 migration (supabase migration up)", () => {
+  supabase(["migration", "up"]);
+  return psql("select max(version) from supabase_migrations.schema_migrations");
+});
+step("every Phase 6 figure became revision 1 and reads back unchanged", () => {
+  const after = psql(FIGURES);
+  if (after !== figuresBefore) throw new Error(`figures changed:\n  before: ${figuresBefore}\n  after:  ${after}`);
+  const entries = psql("select count(*)||'/'||count(*) filter (where revision = 1 and active) from public.comparison_entries");
+  if (entries !== "5/5") throw new Error(`expected 5 active revision-1 values (4 sales, 1 order count), found ${entries}`);
+  const settings = psql("select count(*) from public.comparison_branch_settings");
+  if (settings !== "0") throw new Error("settings must start undecided");
+  // The history is append-only, so the extra test figure is removed with triggers bypassed (test only):
+  // the Phase 2 checks expect exactly the three seeded figures.
+  psql("set session_replication_role = replica; delete from public.comparison_entries where request_id = '00000000-0000-4000-8000-000000000499'; set session_replication_role = origin;");
+  if (psql("select count(*) from public.comparison_figures") !== "3") throw new Error("the extra test figure was not removed");
+  return `entries ${entries}; settings undecided; figures identical`;
+});
+step("Phase 2 to 7 checks after the Phase 6 upgrade", () =>
+  ["phase2_checks.sql", "phase3_checks.sql", "phase4_checks.sql", "phase5_checks.sql", "phase6_checks.sql", "phase7_checks.sql"].map(runSqlFile).join("; "));
+step("its schema, table privileges and function privileges equal the fresh build", () => {
+  const again = schemaDump();
+  if (again !== fresh) {
+    const a = again.split("\n");
+    const b = fresh.split("\n");
+    const at = a.findIndex((line, i) => line !== b[i]);
+    throw new Error(`first difference at line ${at + 1}:\n  upgraded: ${a[at]}\n  fresh:    ${b[at]}`);
+  }
+});
+step("a fresh build passes the Phase 7 checks too", () => {
+  supabase(["db", "reset"]);
+  return runSqlFile("phase7_checks.sql");
 });
 step("leave a fresh database (db reset)", () => {
   supabase(["db", "reset"]);
