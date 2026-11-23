@@ -2,7 +2,7 @@
 
 Read this first in every session, then compare it with the actual repository state (`git status`, `git log -3`, `git fetch` and the PR list) before continuing. Update it after each meaningful task and before ending a session.
 
-_Last updated: 23 November 2026. [Phase 7](#phase-7-status) (cross-branch comparison) is implemented and locally accepted on branch `phase-7/comparison`, pull request open, not merged, not applied to the hosted project. The audit of Phases 1–5 (PR #9) and Phase 6 (PR #10) are merged into `main`; migration `20261123120000_phase6_stock.sql` is applied to the shared hosted Supabase project (see [Hosted deployment](#hosted-deployment)). Waiting on Abdo: the live source and entry owner for Al Quds and Bourgogne, the November recipe start date and other catalog records. Production provisioning of his account is pending. **The GitHub repository is public although these documents require it to stay private — see the first open item of the audit.**_
+_Last updated: 23 November 2026. [Phase 7](#phase-7-status) (cross-branch comparison) is merged into `main` through PR #12 (`a265524`), and migration `20261124090000_phase7_comparison.sql` is applied to the shared hosted Supabase project (see [Hosted deployment](#hosted-deployment)). The audit of Phases 1–5 (PR #9) and Phase 6 (PR #10) were merged earlier. Phase 8 is next. Waiting on Abdo: the live source and entry owner for Al Quds and Bourgogne, the November recipe start date and other catalog records. Production provisioning of his account is pending. **The GitHub repository is public although these documents require it to stay private — see the first open item of the audit.**_
 
 The bilingual workspace uses the [B.Laban interface refresh](BRAND_DESIGN.md). Phase 4 implements the [confirmed daily close and Yawmeya workflow](phase4/OPERATING_CLOSE.md) on the signed-in person's Supabase session.
 
@@ -13,16 +13,16 @@ The bilingual workspace uses the [B.Laban interface refresh](BRAND_DESIGN.md). P
 | Repository | https://github.com/MohammedHssan11/blabn. **GitHub reports it as public (checked 23 November 2026).** [SOURCE_MATERIAL.md](SOURCE_MATERIAL.md), [DATA_AND_REPORTS.md](DATA_AND_REPORTS.md) and [DECISIONS.md](DECISIONS.md) require a private repository. The owner must resolve this; see the audit's open items. |
 | Phase 3 branch | `codex/phase-3-accounts-permissions`, based on `main` at the Phase 2 merge (`2d21e31`). |
 | Audit and Phase 6 | [PR #9](https://github.com/MohammedHssan11/blabn/pull/9) (`audit/phases-1-5`) merged as `b2fdc42`; [PR #10](https://github.com/MohammedHssan11/blabn/pull/10) (`phase-6/stock`) merged as `5994747`. |
-| Phase 7 branch | `phase-7/comparison`, from `main` at `9adaa91`; pull request to `main`, not merged. |
-| Development baseline | `origin/main` at `9adaa91` or later. |
-| Hosted Supabase | Shared project `xitryskkqgtkpdawddqe`. Hosted migration history matches `main` through `20261123120000` (23 November 2026). Deploy with `npx supabase db push --linked --dry-run` first; never use `--include-seed`, because the seed files are local test data. |
+| Phase 7 | [PR #12](https://github.com/MohammedHssan11/blabn/pull/12) (`phase-7/comparison`) merged as `a265524`. |
+| Development baseline | `origin/main` at `a265524` or later. Start Phase 8 from there. |
+| Hosted Supabase | Shared project `xitryskkqgtkpdawddqe`. Hosted migration history matches `main` through `20261124090000` (23 November 2026). Deploy with `npx supabase db push --linked --dry-run` first; never use `--include-seed`, because the seed files are local test data. |
 | Local tooling | `npm ci` installs the pinned Supabase CLI 2.122.1. Use `npx supabase …`; an older global CLI cannot read `supabase/config.toml`. |
 | Phase 2 pull request | [PR #2](https://github.com/MohammedHssan11/blabn/pull/2), merged. |
 | Local-only material | `C:\Users\mh978\Downloads\abdo\abdo temp\`, `...\outputs\`, `...\archive\`, `...\screenshot\` — outside Git; keep them out of commits. |
 
 ## Phase 7 status
 
-Cross-branch sales comparison is implemented and locally accepted on branch `phase-7/comparison` (from `main` at `9adaa91`). It is not merged and not applied to the hosted project. Design, rules and commands: [phase7/COMPARISON.md](phase7/COMPARISON.md). All test data is synthetic. The real Bourgogne reference day was not entered anywhere.
+Cross-branch sales comparison is implemented and locally accepted. It was merged into `main` through PR #12 (`a265524`) after an independent light audit, and the migration is applied to the hosted project (see [Hosted deployment](#hosted-deployment)). Design, rules and commands: [phase7/COMPARISON.md](phase7/COMPARISON.md). All test data is synthetic. The real Bourgogne reference day was not entered anywhere.
 
 What was built:
 - Migration `20261124090000_phase7_comparison.sql`:
@@ -78,7 +78,6 @@ Found and fixed while building:
 
 Open items:
 - **Abdo:** the approved live source and the entry owner for Al Quds and Bourgogne, and from which day their figures count. Question, in plain Arabic: «يا عبده، عشان مقارنة الفروع: أرقام فرع القدس وفرع بورجون هناخدها منين كل يوم (من سيستم الكاشير/فودكس ولا من رسالة من مدير الفرع ولا من شيت معيّن)؟ ومين الشخص اللي هيدخّلها في البرنامج لكل فرع؟ ومن أنهي يوم نبدأ نعتبر أرقامهم رسمية؟» **Next action (administrator):** record his answer on `/comparison/settings`: add the source, choose it, choose the owner and the first live date.
-- **Project owner:** deploy the migration to the hosted project after review. Use `npx supabase db push --linked --dry-run` first, then without `--include-seed`.
 - **Team, private environment only:** check the SRC-12 reference day (Bourgogne 10 Nov, 28,975 MAD and 374 orders, against 3 Nov) by hand. See COMPARISON.md, "Reference case".
 - **Phase 9:** decide whether historical Maarif figures before its first live date are needed for a report, and who may enter them. `comparison.enter` stays limited to comparison branches.
 - **Developer (Phase 4, before hosted use):** on PostgREST v14.18, which `supabase/.temp/rest-version` records for the linked hosted project, the second of two simultaneous daily-close saves ends in a gateway timeout ("The upstream server is timing out") instead of `40001`. The data stays correct (one revision). **Next action:** reproduce against v14.18, find why the waiting request is not answered, and check the hosted behaviour before Abdo uses concurrent saves.
@@ -128,7 +127,19 @@ Open items:
 
 ## Hosted deployment
 
-**23 November 2026: migration `20261123120000_phase6_stock.sql` was applied to the shared Supabase project `xitryskkqgtkpdawddqe` from `main` at `5994747`.**
+**23 November 2026: migration `20261124090000_phase7_comparison.sql` was applied to the shared Supabase project `xitryskkqgtkpdawddqe` from `main` at `a265524`.**
+
+| Step | Result |
+|---|---|
+| Before | The hosted migration history matched `main` through `20261123120000` (Phase 6). Only `20261124090000` was missing. |
+| Dry run (`npx supabase db push --linked --dry-run`) | Would push only `20261124090000_phase7_comparison.sql`; seeds `[]`, roles `[]`. |
+| Push (`npx supabase db push --linked`, no `--include-seed`) | Applied `20261124090000_phase7_comparison.sql`; seeds `[]`. |
+| Migration history after | `20261124090000` is listed both locally and remotely. A second dry run reports "Remote database is up to date". |
+| Read-only checks on the hosted database (`npx supabase db query --linked`) | `comparison_entries`, `comparison_sources` and `comparison_branch_settings` exist with row-level security enabled; `comparison_figures` and `branch_daily_figures` are views. The `comparison_entries_one_active` index and both append-only triggers exist. Permissions: `comparison.enter` → comparison_editor, system_admin; `comparison.view` → manager, system_admin; `comparison.export` → system_admin (the same as a fresh local build). 0 comparison entries and 0 branch settings, so no local test data was sent and the live source for Al Quds and Bourgogne is still undecided; 1 source designation (`reporting_only`, from the migration). |
+
+The Supabase CLI login had expired again (`Invalid access token`); the project owner signed in with `npx supabase login` before the dry run. No credentials are stored in the repository. As for Phase 6, the SQL acceptance files and the HTTP and browser checks were not run against the hosted project.
+
+**Earlier, 23 November 2026: migration `20261123120000_phase6_stock.sql` was applied to the shared Supabase project `xitryskkqgtkpdawddqe` from `main` at `5994747`.**
 
 | Step | Result |
 |---|---|
@@ -583,9 +594,8 @@ Environment: the checks ran on this project's own local Supabase instance (`bala
 ## Next steps (in order)
 
 0. Project owner: resolve the repository visibility (audit open item 1).
-1. Review and merge the Phase 7 pull request (`phase-7/comparison`). Then deploy `20261124090000_phase7_comparison.sql` to the hosted project: `npx supabase db push --linked --dry-run` first, never `--include-seed`.
-2. Ask Abdo the Phase 7 question (live source, entry owner and start day for Al Quds and Bourgogne) and record it on `/comparison/settings`.
-3. Developer: investigate the Phase 4 concurrent-save gateway timeout on PostgREST v14.18 (Phase 7 open items) before concurrent use on the hosted project.
-4. Start Phase 8 (three-month planning, purchase orders and receiving) from `main` after the merge. Real consumption still needs Abdo's November recipe start date and the review-queue approvals (see "Phase 6 status").
-5. Before production rollout, confirm whether the shared project `xitryskkqgtkpdawddqe` is the production project or a separate one is needed. Then set the Auth options and `SITE_URL`, configure SMTP, and bootstrap Abdo. See the [accounts and permissions runbook](phase3/ACCOUNTS_AND_PERMISSIONS.md).
-6. Carry forward the confirmed expected receipt mapping (Phase 8), Abdo's walkthrough (Phase 10) and reviewed opening data (Phase 11).
+1. Ask Abdo the Phase 7 question (live source, entry owner and start day for Al Quds and Bourgogne) and record it on `/comparison/settings`.
+2. Developer: investigate the Phase 4 concurrent-save gateway timeout on PostgREST v14.18 (Phase 7 open items) before concurrent use on the hosted project.
+3. Start Phase 8 (three-month planning, purchase orders and receiving) from `main` at `a265524` or later. Real consumption still needs Abdo's November recipe start date and the review-queue approvals (see "Phase 6 status").
+4. Before production rollout, confirm whether the shared project `xitryskkqgtkpdawddqe` is the production project or a separate one is needed. Then set the Auth options and `SITE_URL`, configure SMTP, and bootstrap Abdo. See the [accounts and permissions runbook](phase3/ACCOUNTS_AND_PERMISSIONS.md).
+5. Carry forward the confirmed expected receipt mapping (Phase 8), Abdo's walkthrough (Phase 10) and reviewed opening data (Phase 11).
