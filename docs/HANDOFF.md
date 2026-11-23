@@ -2,7 +2,7 @@
 
 Read this first in every session, then compare it with the actual repository state (`git status`, `git log -3`, `git fetch` and the PR list) before continuing. Update it after each meaningful task and before ending a session.
 
-_Last updated: 23 November 2026, after the [independent audit of Phases 1–5](#independent-audit-of-phases-15-23-november-2026) at `3145a38`. Phases 1 through 5 are complete for local development; the audit fixed two clean-checkout defects and one stale generated record, and found no defect in the application or database. Phase 6 starts after the audit pull request is merged. The November recipe start date and other unresolved catalog records still require business approval before their consumption can post. Production provisioning of his account is pending. **The GitHub repository is public although these documents require it to stay private — see the first open item of the audit.**_
+_Last updated: 23 November 2026. The [audit of Phases 1–5](#independent-audit-of-phases-15-23-november-2026) (PR #9) and [Phase 6](#phase-6-status) (PR #10) are merged into `main` at `5994747`. Migration `20261123120000_phase6_stock.sql` is applied to the shared hosted Supabase project; see [Hosted deployment](#hosted-deployment). Phase 7 is next. The November recipe start date and other unresolved catalog records still require business approval before their consumption can post. Production provisioning of his account is pending. **The GitHub repository is public although these documents require it to stay private — see the first open item of the audit.**_
 
 The bilingual workspace uses the [B.Laban interface refresh](BRAND_DESIGN.md). Phase 4 implements the [confirmed daily close and Yawmeya workflow](phase4/OPERATING_CLOSE.md) on the signed-in person's Supabase session.
 
@@ -12,15 +12,16 @@ The bilingual workspace uses the [B.Laban interface refresh](BRAND_DESIGN.md). P
 |---|---|
 | Repository | https://github.com/MohammedHssan11/blabn. **GitHub reports it as public (checked 23 November 2026).** [SOURCE_MATERIAL.md](SOURCE_MATERIAL.md), [DATA_AND_REPORTS.md](DATA_AND_REPORTS.md) and [DECISIONS.md](DECISIONS.md) require a private repository. The owner must resolve this; see the audit's open items. |
 | Phase 3 branch | `codex/phase-3-accounts-permissions`, based on `main` at the Phase 2 merge (`2d21e31`). |
-| Audit branch | `audit/phases-1-5`, from `origin/main` at `3145a38` (Phase 5 merge, PR #8). |
-| Development baseline | Fetch `origin/main` after the audit pull request merges, then start Phase 6. Read the Phase 5 handover and its documented posting prerequisites. |
+| Audit and Phase 6 | [PR #9](https://github.com/MohammedHssan11/blabn/pull/9) (`audit/phases-1-5`) merged as `b2fdc42`; [PR #10](https://github.com/MohammedHssan11/blabn/pull/10) (`phase-6/stock`) merged as `5994747`. |
+| Development baseline | `origin/main` at `5994747` or later. Start Phase 7 from there. |
+| Hosted Supabase | Shared project `xitryskkqgtkpdawddqe`. Hosted migration history matches `main` through `20261123120000` (23 November 2026). Deploy with `npx supabase db push --linked --dry-run` first; never use `--include-seed`, because the seed files are local test data. |
 | Local tooling | `npm ci` installs the pinned Supabase CLI 2.122.1. Use `npx supabase …`; an older global CLI cannot read `supabase/config.toml`. |
 | Phase 2 pull request | [PR #2](https://github.com/MohammedHssan11/blabn/pull/2), merged. |
 | Local-only material | `C:\Users\mh978\Downloads\abdo\abdo temp\`, `...\outputs\`, `...\archive\`, `...\screenshot\` — outside Git; keep them out of commits. |
 
 ## Phase 6 status
 
-Product Mix, typed stock movements, recipe consumption, physical counts and variance are implemented and locally accepted on branch `phase-6/stock`. The branch is stacked on the audit branch because PR #9 was still open when Phase 6 started. Design, rules and commands: [phase6/STOCK_AND_VARIANCE.md](phase6/STOCK_AND_VARIANCE.md). All test data is synthetic. **Real consumption cannot post yet:** every loaded recipe is a draft, and the November versions also wait for Abdo's start date, so each real Product Mix line stays blocked (`recipe_not_approved`).
+Product Mix, typed stock movements, recipe consumption, physical counts and variance are implemented and locally accepted. They were merged into `main` through PR #10 (`5994747`) after the audit PR #9, and the migration is applied to the hosted project (see [Hosted deployment](#hosted-deployment)). Design, rules and commands: [phase6/STOCK_AND_VARIANCE.md](phase6/STOCK_AND_VARIANCE.md). All test data is synthetic. **Real consumption cannot post yet:** every loaded recipe is a draft, and the November versions also wait for Abdo's start date, so each real Product Mix line stays blocked (`recipe_not_approved`).
 
 | Acceptance check (plan) | Result | Evidence |
 |---|---|---|
@@ -60,6 +61,22 @@ Open items:
 - **Phase 8:** link receipts to purchase-order lines (one movement per receipt line).
 - **Phase 11:** opening stock for the first live date.
 - **Developer:** retire the Phase 3 reason-only `/inventory/adjustments` once nobody uses it.
+
+## Hosted deployment
+
+**23 November 2026: migration `20261123120000_phase6_stock.sql` was applied to the shared Supabase project `xitryskkqgtkpdawddqe` from `main` at `5994747`.**
+
+| Step | Result |
+|---|---|
+| Before | The hosted migration history already held `20261121000001` through `20261122120000`, which matched `main` through Phase 5. Only `20261123120000` was missing. |
+| Dry run (`npx supabase db push --linked --dry-run`) | Would push only `20261123120000_phase6_stock.sql`; seeds `[]`, roles `[]`. |
+| Push (`npx supabase db push --linked`, no `--include-seed`) | Applied `20261123120000_phase6_stock.sql`; seeds `[]`. |
+| Migration history after | `20261123120000` is listed both locally and remotely. A second dry run reports "Remote database is up to date". |
+| Read-only checks on the hosted database | All 10 Phase 6 tables exist with row-level security enabled. `inventory.consume` is granted to manager, storekeeper and system_admin. The `recipe_versions_keep_postings` trigger exists. The new tables hold 0 rows, so no local test data was sent. 0 approved recipe versions, so real consumption remains blocked. |
+
+Earlier attempts in the same session failed. The Supabase CLI's stored login returned `Invalid access token` until the project owner signed in again (`npx supabase login`) and linked the project. The project owner entered the credentials; none are stored in the repository.
+
+Not done on the hosted project: the Phase 2–6 SQL acceptance files. They create synthetic staff and roll back, but they are meant for disposable databases and were not run against the shared project. The HTTP or browser checks were not run against a hosted deployment either. The Auth settings, `SITE_URL`, SMTP and Abdo's account remain part of production provisioning (Next steps, item 2).
 
 ## Independent audit of Phases 1–5 (23 November 2026)
 
@@ -501,7 +518,7 @@ Environment: the checks ran on this project's own local Supabase instance (`bala
 
 ## Next steps (in order)
 
-0. Project owner: resolve the repository visibility (audit open item 1), then review and merge the audit pull request, then the Phase 6 pull request stacked on it.
-1. Phase 6 is implemented (see "Phase 6 status"). Phase 7 starts from `origin/main` after both merge. Post theoretical consumption through the approved recipe version using the [Phase 5 handover notes](phase5/CATALOG_AND_RECIPES.md#handover-to-phase-6). Ask Abdo for the November recipe start date first.
-2. Before production rollout, provision an authorized hosted Supabase project, set the Auth options and `SITE_URL`, configure SMTP, and bootstrap Abdo. See the [accounts and permissions runbook](phase3/ACCOUNTS_AND_PERMISSIONS.md).
+0. Project owner: resolve the repository visibility (audit open item 1).
+1. Start Phase 7 (cross-branch comparison) from `origin/main` at `5994747` or later. Real consumption needs Abdo's November recipe start date and the review-queue approvals first (see "Phase 6 status").
+2. Before production rollout, confirm whether the shared project `xitryskkqgtkpdawddqe` is the production project or a separate one is needed. Then set the Auth options and `SITE_URL`, configure SMTP, and bootstrap Abdo. See the [accounts and permissions runbook](phase3/ACCOUNTS_AND_PERMISSIONS.md).
 3. Carry forward the weekly total-ratio rule and live comparison source and entry owner (Phase 7), the confirmed expected receipt mapping (Phase 8), Abdo's walkthrough (Phase 10) and reviewed opening data (Phase 11).
