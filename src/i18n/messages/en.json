@@ -21,7 +21,8 @@
     "audit": "Audit history",
     "inventoryAdjustments": "Inventory adjustments",
     "account": "Account",
-    "catalog": "Catalog and recipes"
+    "catalog": "Catalog and recipes",
+    "stock": "Stock"
   },
   "common": {
     "blank": "Blank",
@@ -312,7 +313,14 @@
     "catalog_overlap": "Those dates overlap another approved recipe version of the same product.",
     "catalog_date_unconfirmed": "The effective date of this recipe set is not confirmed yet, or the dates do not follow it.",
     "catalog_incomplete": "A recipe line is incomplete: every line needs an ingredient, a quantity and a unit.",
-    "catalog_unit": "A recipe line uses a unit that does not convert to its ingredient's base unit. Fix the unit or add the approved conversion."
+    "catalog_unit": "A recipe line uses a unit that does not convert to its ingredient's base unit. Fix the unit or add the approved conversion.",
+    "stock_stale": "Someone else changed this report. Reload the page and try again.",
+    "stock_duplicate": "That was already recorded: the same name in this section, the same request, or a posting that is already reversed.",
+    "stock_unit": "That unit does not convert to the item's base unit. Choose its base unit or add the approved conversion.",
+    "stock_not_reconciled": "The Product Mix does not reconcile, so it cannot be locked.",
+    "stock_nothing_eligible": "No line is eligible yet. Each blocked line says what it needs.",
+    "stock_recipe_posted": "Consumption is already posted through that recipe on a later date.",
+    "catalog_recipe_posted": "Consumption is already posted through the current recipe on those dates. Start the new version after the last posted day."
   },
   "notices": {
     "created": "The account was created. Give the temporary password to the person privately.",
@@ -334,7 +342,9 @@
     "catalog_recipe_saved": "The recipe details were saved.",
     "catalog_recipe_approved": "The recipe version was approved.",
     "catalog_recipe_withdrawn": "The draft was withdrawn.",
-    "catalog_names_queued": "The names were added to the review queue."
+    "catalog_names_queued": "The names were added to the review queue.",
+    "stock_saved": "Saved.",
+    "stock_replayed": "This was already saved; nothing was added twice."
   },
   "warnings": {
     "auth_not_updated": "The change was saved, but the sign-in service did not confirm it. Every request from this person is already refused; try the same action again to finish."
@@ -400,7 +410,8 @@
       "comparison_enter": "Enter comparison figures",
       "comparison_view": "View comparison figures",
       "comparison_export": "Download comparison figures",
-      "attendance_event_create": "Create attendance events"
+      "attendance_event_create": "Create attendance events",
+      "inventory_consume": "Enter the Product Mix and post recipe consumption"
     }
   },
   "staff": {
@@ -491,7 +502,21 @@
       "catalog_recipe_approved": "Recipe version approved",
       "catalog_recipe_range_closed": "Earlier recipe version ended",
       "catalog_recipe_withdrawn": "Draft recipe withdrawn",
-      "catalog_date_decision_answered": "Recipe start date recorded"
+      "catalog_date_decision_answered": "Recipe start date recorded",
+      "stock_movement": "Stock movement recorded",
+      "stock_opening": "Opening stock recorded",
+      "stock_count": "Physical count recorded",
+      "stock_void_count": "Physical count withdrawn",
+      "stock_propose_adjustment": "Stock adjustment proposed",
+      "stock_decide_adjustment": "Stock adjustment decided",
+      "stock_mix_save": "Product Mix saved",
+      "stock_mix_section": "Product Mix section saved",
+      "stock_mix_line": "Product Mix line added",
+      "stock_mix_remove": "Product Mix line removed",
+      "stock_mix_lock": "Product Mix locked",
+      "stock_mix_unlock": "Product Mix unlocked",
+      "stock_post_consumption": "Recipe consumption posted",
+      "stock_reverse": "Stock posting reversed"
     }
   },
   "forbidden": {
@@ -946,6 +971,162 @@
       "warning": {
         "discontinued_before_date": "This product was discontinued on {date}; the sale is still consumed."
       }
+    }
+  },
+  "stock": {
+    "title": "Stock",
+    "intro": "Expected stock, physical counts and variance for the business day. A dash means not counted; 0 is a counted zero.",
+    "tabs": {
+      "day": "Stock of the day",
+      "mix": "Product Mix"
+    },
+    "summary": "{date}: {counted} counted, {missing} daily items not counted yet.",
+    "legend": "Expected at count uses the movements recorded up to the count time. Variance = count − expected at count.",
+    "col": {
+      "item": "Item",
+      "unit": "Unit",
+      "opening": "Opening",
+      "in": "In",
+      "consumed": "Consumed",
+      "other": "Other",
+      "expected": "Expected",
+      "count": "Count",
+      "atCount": "Expected at count",
+      "variance": "Variance",
+      "status": "Status"
+    },
+    "schedule": {
+      "daily": "Counted daily",
+      "monthly": "Counted monthly (packaging)"
+    },
+    "status": {
+      "counted": "Counted",
+      "missing": "Not counted",
+      "not_due": "Not due today"
+    },
+    "kind": {
+      "opening": "Opening stock",
+      "receipt": "Receipt",
+      "purchase": "Purchase",
+      "transfer_in": "Transfer in",
+      "return": "Return",
+      "consumption": "Recipe consumption",
+      "waste": "Waste",
+      "hospitality": "Hospitality",
+      "deduction": "Deduction",
+      "transfer_out": "Transfer out",
+      "adjustment": "Approved adjustment"
+    },
+    "source": {
+      "manual": "Entered",
+      "product_mix": "Product Mix × recipe",
+      "adjustment": "Approved adjustment",
+      "opening": "Opening stock",
+      "reversal": "Reversal"
+    },
+    "adjustments": {
+      "title": "Adjustments of the day",
+      "proposed": "Waiting for approval",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "approve": "Approve",
+      "reject": "Reject"
+    },
+    "form": {
+      "item": "Item",
+      "chooseItem": "Choose an item",
+      "unit": "Unit",
+      "baseUnit": "Base unit of the item",
+      "quantity": "Quantity",
+      "counted": "Counted quantity",
+      "time": "Time",
+      "note": "Note",
+      "reference": "Delivery note or reference",
+      "reason": "Reason",
+      "kind": "Type",
+      "direction": "Direction",
+      "decrease": "Decrease",
+      "increase": "Increase",
+      "countTitle": "Record a physical count",
+      "countHint": "Enter 0 when the item was counted and none is left. Leave an item out when it was not counted.",
+      "saveCount": "Save count",
+      "movementTitle": "Record a stock movement",
+      "movementHint": "Receipts are recorded on the day they actually arrive.",
+      "saveMovement": "Save movement",
+      "adjustTitle": "Propose an adjustment",
+      "adjustHint": "An adjustment changes the book only after approval. The count stays as observed.",
+      "proposeAdjustment": "Propose adjustment",
+      "openingTitle": "Opening stock",
+      "openingHint": "Once per item, before any other movement of it.",
+      "saveOpening": "Save opening stock"
+    },
+    "mix": {
+      "title": "Product Mix",
+      "intro": "Enter the Foodics Product Mix: each section with its printed total, then its lines. Section totals are checks and are never counted as sales. Lock the report when it reconciles, then post consumption through the approved recipes.",
+      "header": "Report",
+      "netSales": "Net sales on the report (MAD)",
+      "reportTime": "Time printed on the report",
+      "saveHeader": "Save report",
+      "none": "No Product Mix has been entered for this day.",
+      "headerSummary": "Net sales {sales} · {state}",
+      "state": {
+        "draft": "Draft",
+        "locked": "Locked"
+      },
+      "reconciled": "The report reconciles.",
+      "notReconciled": "The report does not reconcile yet.",
+      "totals": "Sections {sections} · lines {lines} · net sales {sales}",
+      "problem": {
+        "section_total_mismatch": "Section «{section}»: lines add up to {lines}, the printed total is {total}.",
+        "section_without_lines": "Section «{section}» has no lines.",
+        "net_sales_mismatch": "Section totals add up to {sections}, net sales are {sales}.",
+        "no_lines": "The report has no lines yet.",
+        "close_sales_mismatch": "Net sales {sales} differ from the daily close ({close})."
+      },
+      "sectionTotal": "Printed section total (MAD)",
+      "col": {
+        "no": "#",
+        "name": "Name as printed",
+        "quantity": "Quantity",
+        "amount": "Amount (MAD)",
+        "status": "Consumption"
+      },
+      "posted": "Posted · recipe version {n}",
+      "ready": "Ready to post",
+      "blocked": "Blocked",
+      "untracked": "not stock-tracked",
+      "remove": "Remove",
+      "addSection": "Add or correct a section",
+      "sectionHint": "Entering an existing section name again corrects its total.",
+      "sectionName": "Section name as printed",
+      "saveSection": "Save section",
+      "addLine": "Add a line",
+      "lineHint": "A name can appear once per section, so an overlapping photo portion cannot be entered twice.",
+      "section": "Section",
+      "saveLine": "Save line",
+      "lock": "Lock report",
+      "unlock": "Unlock report",
+      "post": "Post consumption ({n} lines ready)",
+      "reverseReason": "Reason",
+      "reverse": "Reverse posting ({n} lines)"
+    },
+    "history": {
+      "title": "Stock history",
+      "intro": "Every movement and count from {from} to {to}, in {unit}, with who recorded it and when.",
+      "movements": "Movements",
+      "counts": "Physical counts",
+      "none": "No movements in this period.",
+      "noCounts": "No counts in this period.",
+      "entered": "As entered",
+      "source": "Source",
+      "actor": "Recorded by",
+      "recipeLine": "Recipe line",
+      "reversal": "reversal",
+      "reversed": "reversed",
+      "reverse": "Reverse",
+      "replaces": "Replaces an earlier count",
+      "voided": "Withdrawn",
+      "void": "Withdraw count"
     }
   }
 }

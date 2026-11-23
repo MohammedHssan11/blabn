@@ -18,6 +18,49 @@ The bilingual workspace uses the [B.Laban interface refresh](BRAND_DESIGN.md). P
 | Phase 2 pull request | [PR #2](https://github.com/MohammedHssan11/blabn/pull/2), merged. |
 | Local-only material | `C:\Users\mh978\Downloads\abdo\abdo temp\`, `...\outputs\`, `...\archive\`, `...\screenshot\` — outside Git; keep them out of commits. |
 
+## Phase 6 status
+
+Product Mix, typed stock movements, recipe consumption, physical counts and variance are implemented and locally accepted on branch `phase-6/stock`. The branch is stacked on the audit branch because PR #9 was still open when Phase 6 started. Design, rules and commands: [phase6/STOCK_AND_VARIANCE.md](phase6/STOCK_AND_VARIANCE.md). All test data is synthetic. **Real consumption cannot post yet:** every loaded recipe is a draft, and the November versions also wait for Abdo's start date, so each real Product Mix line stays blocked (`recipe_not_approved`).
+
+| Acceptance check (plan) | Result | Evidence |
+|---|---|---|
+| 10 opening + 5 received − 4 consumed = 11 expected; a count of 10 gives −1 | **Pass** | `phase6_checks.sql` §3 (consumption posted from a Product Mix through an approved recipe), `test:phase6` §5 through the real forms, `test:phase6:browser` in both languages |
+| Retrying the same consumption post or receipt creates one movement | **Pass** | Same request identifier → first result returned, nothing written; a new request for an already-posted Product Mix is refused (`CT006`). SQL §3; HTTP §3–4 send the same rendered form twice |
+| Products, add-ons and packaging consume the right components without duplicate usage | **Pass** | SQL §3: cake → 4 X + 2 boxes, add-on → 1/10 kg Y, one movement each; a name appears once per section |
+| A blank count is incomplete; an explicit zero participates | **Pass** | SQL §3 and HTTP §5: blank refused and shown as not counted with no variance; 0 gives −9/10 (SQL) and −1 (HTTP); browser: an explicit zero for packaging is a count |
+| Product Mix section totals reconcile without inflating the day | **Pass** | Section totals are check figures; locking needs lines = section totals = net sales (and = the daily close when it exists); SQL §3, §5b, HTTP §4 |
+| Inventory follows Abdo's decisions (P1-24 schedule, P1-31 units, P1-32 dates) | **Pass** | Packaging counted monthly (not due mid-month); units convert exactly (1000 g → 1 kg); the gated November versions and draft recipes keep real lines blocked |
+| Each consumption posting keeps its approved recipe version and exact quantities | **Pass** | Movements store the version, recipe line, recipe quantity and unit, and the exact quantity. A later version leaves the posted day identical. Closing a range over a posted day is refused (`CT004`, new trigger, the Phase 5 hook) |
+
+| Command (23 November 2026, final code) | Result |
+|---|---|
+| `npm run check` | `tsc` clean; 204/204 tests in 13 files; build passes (3 new dynamic pages) |
+| `npm run db:check`, `db:check:phase3` … `db:check:phase6` | all pass on a fresh database |
+| `npm run db:upgrade-test` | pass, paths A–F; F = Phase 5 → 6 with the catalog intact, `inventory.consume` granted, schema and grants equal to a fresh build |
+| `npm run test:phase6`, `test:phase6:browser` | 70/70 HTTP; 21/21 browser checks (Edge, English desktop and Arabic at 375 px), no console errors |
+| Earlier phases | smoke 69/69, concurrency 27/27, `test:phase3` 372/372, `test:browser` 105/105, `test:phase5` 147/147, `test:phase5:browser` 71/71; `seed:check`, `seed:catalog:check` and `fieldmap:check` current |
+
+Mutation checks: each of these made `phase6_checks.sql` fail:
+- dropping the recipe-range trigger;
+- dropping the movement immutability trigger;
+- dropping the Product Mix lock trigger.
+
+Dropping the one-reversal index, or the unique name-per-section constraint, is still caught by a second guard: the unique `reverses_id` on movements, and the command's own duplicate check.
+
+Found and fixed while building:
+- A PL/pgSQL variable shadowed a column.
+- A JSON `null` was asserted as SQL NULL.
+- A Product Mix section caption was clipped at 375 px. Its total is now a wrapping heading.
+
+One `test:phase3` run failed its password-recovery step (the local Auth email limit is 50 per hour, and this session had sent many). Rerun alone it passed 372/372. Phase 6 does not touch authentication.
+
+Open items:
+- **Abdo:** the November recipe start date, and the review-queue approvals (Phase 5 list) before real consumption.
+- **Abdo:** which day Packaging is counted. The application treats the last day of the month as due.
+- **Phase 8:** link receipts to purchase-order lines (one movement per receipt line).
+- **Phase 11:** opening stock for the first live date.
+- **Developer:** retire the Phase 3 reason-only `/inventory/adjustments` once nobody uses it.
+
 ## Independent audit of Phases 1–5 (23 November 2026)
 
 **Audited commit:** `3145a38` (`origin/main`, Phase 5 merged in PR #8), checked out fresh as branch `audit/phases-1-5`. The previous checkout was still at `1502722`. Its one untracked file (an older `docs/ARCHITECTURE_REVIEW.md`) was kept in a local Git stash and not committed. Every check below was rerun on this commit in a Windows 11 checkout with Git's default `core.autocrlf=true`, Node 24.15, Python 3.10 with openpyxl 3.1.5, desktop Excel 2019 (16.0), and Docker Desktop. The two disposable local Supabase stacks used Supabase CLI 2.122.1 and PostgreSQL image 17.11.0.006. Nothing ran against a hosted project. No real reference day was entered. All accounts and data were synthetic.
@@ -458,7 +501,7 @@ Environment: the checks ran on this project's own local Supabase instance (`bala
 
 ## Next steps (in order)
 
-0. Project owner: resolve the repository visibility (audit open item 1), then review and merge the audit pull request.
-1. Start Phase 6 from updated `origin/main` after the audit pull request merges. Post theoretical consumption through the approved recipe version using the [Phase 5 handover notes](phase5/CATALOG_AND_RECIPES.md#handover-to-phase-6). Ask Abdo for the November recipe start date first.
+0. Project owner: resolve the repository visibility (audit open item 1), then review and merge the audit pull request, then the Phase 6 pull request stacked on it.
+1. Phase 6 is implemented (see "Phase 6 status"). Phase 7 starts from `origin/main` after both merge. Post theoretical consumption through the approved recipe version using the [Phase 5 handover notes](phase5/CATALOG_AND_RECIPES.md#handover-to-phase-6). Ask Abdo for the November recipe start date first.
 2. Before production rollout, provision an authorized hosted Supabase project, set the Auth options and `SITE_URL`, configure SMTP, and bootstrap Abdo. See the [accounts and permissions runbook](phase3/ACCOUNTS_AND_PERMISSIONS.md).
 3. Carry forward the weekly total-ratio rule and live comparison source and entry owner (Phase 7), the confirmed expected receipt mapping (Phase 8), Abdo's walkthrough (Phase 10) and reviewed opening data (Phase 11).

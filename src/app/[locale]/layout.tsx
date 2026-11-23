@@ -59,6 +59,7 @@ export default async function LocaleLayout({
             ? [{ href: `/${locale}/comparison`, label: t("nav.comparison") }]
             : []),
           ...(holds(access, "reports.view", OPERATING_BRANCH_CODE) ? [{ href: `/${locale}/reports`, label: t("nav.reportMap") }] : []),
+          ...(holds(access, "inventory.view", OPERATING_BRANCH_CODE) ? [{ href: `/${locale}/inventory`, label: t("nav.stock") }] : []),
           ...(holds(access, "inventory.adjust", OPERATING_BRANCH_CODE)
             ? [{ href: `/${locale}/inventory/adjustments`, label: t("nav.inventoryAdjustments") }]
             : []),
