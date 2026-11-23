@@ -2,7 +2,7 @@
 
 Read this first in every session, then compare it with the actual repository state (`git status`, `git log -3`, `git fetch` and the PR list) before continuing. Update it after each meaningful task and before ending a session.
 
-_Last updated: 23 November 2026. [Phase 7](#phase-7-status) (cross-branch comparison) is merged into `main` through PR #12 (`a265524`), and migration `20261124090000_phase7_comparison.sql` is applied to the shared hosted Supabase project (see [Hosted deployment](#hosted-deployment)). The audit of Phases 1–5 (PR #9) and Phase 6 (PR #10) were merged earlier. Phase 8 is next. Waiting on Abdo: the live source and entry owner for Al Quds and Bourgogne, the November recipe start date and other catalog records. Production provisioning of his account is pending. **The GitHub repository is public although these documents require it to stay private — see the first open item of the audit.**_
+_Last updated: 23 November 2026. [Phase 8](#phase-8-status) (three-month planning, purchase orders and receiving) is implemented and locally accepted on branch `phase-8/replenishment`; its pull request is open, not merged and not deployed. [Phase 7](#phase-7-status) (cross-branch comparison) is merged into `main` through PR #12 (`a265524`), and migration `20261124090000_phase7_comparison.sql` is applied to the shared hosted Supabase project (see [Hosted deployment](#hosted-deployment)). Waiting on Abdo: the Phase 8 replenishment decisions (minimum observations, safety stock, constraints, two-day exceptions, after-midnight orders), the live source and entry owner for Al Quds and Bourgogne, the November recipe start date and other catalog records. Production provisioning of his account is pending. **The GitHub repository is public although these documents require it to stay private — see the first open item of the audit.**_
 
 The bilingual workspace uses the [B.Laban interface refresh](BRAND_DESIGN.md). Phase 4 implements the [confirmed daily close and Yawmeya workflow](phase4/OPERATING_CLOSE.md) on the signed-in person's Supabase session.
 
@@ -14,11 +14,73 @@ The bilingual workspace uses the [B.Laban interface refresh](BRAND_DESIGN.md). P
 | Phase 3 branch | `codex/phase-3-accounts-permissions`, based on `main` at the Phase 2 merge (`2d21e31`). |
 | Audit and Phase 6 | [PR #9](https://github.com/MohammedHssan11/blabn/pull/9) (`audit/phases-1-5`) merged as `b2fdc42`; [PR #10](https://github.com/MohammedHssan11/blabn/pull/10) (`phase-6/stock`) merged as `5994747`. |
 | Phase 7 | [PR #12](https://github.com/MohammedHssan11/blabn/pull/12) (`phase-7/comparison`) merged as `a265524`. |
-| Development baseline | `origin/main` at `a265524` or later. Start Phase 8 from there. |
+| Phase 8 | Branch `phase-8/replenishment` from `main` at `7856098`; pull request open (not merged, not deployed). |
+| Development baseline | `origin/main` at `7856098` or later; Phase 9 starts after the Phase 8 pull request is merged. |
 | Hosted Supabase | Shared project `xitryskkqgtkpdawddqe`. Hosted migration history matches `main` through `20261124090000` (23 November 2026). Deploy with `npx supabase db push --linked --dry-run` first; never use `--include-seed`, because the seed files are local test data. |
 | Local tooling | `npm ci` installs the pinned Supabase CLI 2.122.1. Use `npx supabase …`; an older global CLI cannot read `supabase/config.toml`. |
 | Phase 2 pull request | [PR #2](https://github.com/MohammedHssan11/blabn/pull/2), merged. |
 | Local-only material | `C:\Users\mh978\Downloads\abdo\abdo temp\`, `...\outputs\`, `...\archive\`, `...\screenshot\` — outside Git; keep them out of commits. |
+
+## Phase 8 status
+
+Three-month planning, purchase orders and receiving are implemented and locally accepted on branch `phase-8/replenishment` (from `main` at `7856098`). A pull request to `main` is open; it is **not merged and not deployed**: migration `20261125090000_phase8_replenishment.sql` is not on the hosted project. Design, rules, worked example, commands and the full acceptance table: [phase8/REPLENISHMENT.md](phase8/REPLENISHMENT.md). All test data is synthetic; no workbook figure, supplier detail or real order was committed.
+
+What was built:
+- Migration `20261125090000_phase8_replenishment.sql`:
+  - `purchase_orders`, `purchase_order_lines`, `purchase_order_expected_dates` (revision 1 = original date), `purchase_order_receipts`, `purchase_order_receipt_lines`, `purchase_order_cancellations`, `purchase_order_events`, all append-only (an order's single approve/reject decision is the one allowed change);
+  - one Phase 6 `receipt` movement per receipt line (`purchase_order_receipt_lines_one_movement`, `movement_id not null`, a matching-movement trigger, and a deferred check that every `purchase_order` movement has its receipt line); the over-receipt trigger (`CT801` unless a reason is given);
+  - the planning functions (complete observations = locked and fully posted Product Mix days; 13-week same-weekday average; day-by-day usable stock; incoming buckets; constraints after the forecast) and `app_purchase_order_command` (create, approve, reject, set_expected, receive, cancel_rest, import_legacy), which takes the database clock;
+  - settings that start empty: `replenishment_settings`, `replenishment_item_settings`, `replenishment_source_settings`;
+  - the new permission `purchase_order.receive` (Storekeeper, System Admin). `purchase_order.propose` (create) and `purchase_order.approve` are the Phase 3 permissions, now enforced.
+- Screens: `/replenishment` (plan, what-if receipt date), `/replenishment/items/<id>`, `/replenishment/orders`, `/replenishment/orders/new`, `/replenishment/orders/<id>`, `/replenishment/settings`. Arabic and English, B.Laban styling, 375 px.
+- `src/modules/replenishment/planning.ts`: the same arithmetic in TypeScript; the pages recompute every item and flag a difference (none in the checks).
+- P1-35: `import_legacy` maps SRC-01 `Sheet1!C6` to the historical expected receipt date and keeps the original text; tested with invented values only. No real sheet was imported.
+
+| Acceptance check | Result | Evidence |
+|---|---|---|
+| Wednesday-evening order → Friday; after midnight under the 02:00 rule | **Pass** | `phase8_checks.sql` §3 (20:00 and 01:30 → Friday, 02:00 → Saturday); unit tests; `test:phase8` §4; browser |
+| 10 on hand + 190 incoming = 200; forecast 150 leaves 50; stock only from movements | **Pass** | §7; unit test |
+| 20 + 5 − 7 − 3 = 15; negative floors at 0 | **Pass** | §8; unit tests; `test:phase8` §4 (en, ar); browser |
+| Incoming outside the window excluded; never counted twice | **Pass** | §8 (four buckets → 3); §7 |
+| Changed expected date keeps the original and reason; effect on the plan | **Pass** | §9 (15 → 18); `test:phase8` §5; browser |
+| Receiving 4 then 6 = 10 as two movements; retry adds nothing; over-receipt refused or audited | **Pass** | §10; `test:phase8` §7; browser |
+| Cancelling the rest closes the line, no stock, history kept | **Pass** | §10; `test:phase8` §8 |
+| Insufficient history → review; manual order available | **Pass** | §2, §6; `test:phase8` §3, §9 |
+| Missing days excluded, not zero | **Pass** | §6 (average 4, not 12/7); `test:phase8` §4 (20, not 15) |
+| Create, approve, receive enforced separately (database, HTTP, browser) | **Pass** | §5 (test-only single-permission groups, other roles, other organization); `test:phase8` §2, §4, §7; browser |
+
+Baseline before any change (fresh database): `npm run check` (226/226 tests), `seed:check`, `seed:catalog:check`, `fieldmap:check`, `db:check` and `db:check:phase3` … `db:check:phase7` all passed.
+
+| Command (final code, 23 November 2026) | Result |
+|---|---|
+| `npm run check` | `tsc` clean; 260/260 tests in 15 files; build passes (6 new dynamic pages) |
+| `seed:check`, `seed:catalog:check`, `fieldmap:check` | up to date (54 fields, 6 pending) |
+| `npm run db:check`, `db:check:phase3` … `db:check:phase8` | all pass on a fresh database |
+| `npm run db:upgrade-test` | pass, paths A–H. H = Phase 7 → 8: committed stock movements identical in every column; `purchase_order.receive` granted; settings and orders empty; Phase 2–8 checks pass; schema and grants equal a fresh build |
+| `npm run test:phase8`, `test:phase8:browser` | 109/109 HTTP; 112/112 browser (Edge, English desktop and Arabic at 375 px), no console errors |
+| Earlier phases | smoke 69/69; concurrency pass; `test:phase3` 372/372; `test:browser` 105/105; `test:phase5` 147/147; `test:phase5:browser` 71/71; `test:phase6` 70/70; `test:phase6:browser` 21/21; `test:phase7` 130/130; `test:phase7:browser` 71/71 |
+| `test:phase4` | 30/30 on a second, disposable local stack (`balaban-p8p4`, ports 59320–59329, PostgREST v16.5; removed afterwards). The v14.18 timeout (Phase 7 open item) was not re-run |
+
+Mutation checks (`node scripts/phase8/mutation-check.mjs`, each guard removed inside the check's own transaction): removing the one-movement constraint, the over-receipt trigger (or only its over-receipt test), the append-only triggers of `purchase_order_lines` and `purchase_order_receipt_lines`, the `purchase_orders_read` policy (or opening it to everyone), and the deferred receipt-line trigger each made `phase8_checks.sql` fail; the unmodified file passes. Details: [REPLENISHMENT.md](phase8/REPLENISHMENT.md#acceptance).
+
+Earlier files changed, with reasons: `scripts/phase3/upgrade-test.mjs` (path H), `tests/access-architecture.test.ts` (new action file and page guards), `src/modules/access/catalog.ts` (new permission). No earlier SQL check file changed.
+
+Found and fixed while building: a receipt in the same minute as the order's creation was refused (now compared to the minute); order-page event times used Node's Casablanca offset (+01:00) next to PostgreSQL's (+00:00), so PostgreSQL now formats them; a composite `select … into` in plpgsql.
+
+Open items:
+- **Abdo: the open replenishment decisions.** Each is a setting on `/replenishment/settings` that starts empty. Until the minimum is set, every item stays in review and only manual orders are possible. Questions, in plain Arabic (also shown on that page):
+  1. Minimum observations: «يا عبده، عشان البرنامج يقترح كمية لصنف: محتاج كام يوم كامل من نفس يوم الأسبوع (مثلاً كام سبت فات البيع والجرد بتوعهم متسجلين كاملين) قبل ما نثق في المتوسط؟ 3 ولا 4 ولا أكتر؟»
+  2. Safety stock: «لكل صنف، عايز نسيب كام زيادة احتياطي فوق الاستهلاك المتوقع (مخزون الأمان)؟ ولو صنف مش محتاج احتياطي نكتبله صفر.»
+  3. Pack size, supplier minimum, shelf life, cut-off: «فيه أصناف بتتطلب بالكرتونة أو بعدد ثابت (حجم العبوة)؟ فيه أقل كمية لازم تتطلب من المصنع أو المخزن؟ الصنف بيفضل صالح كام يوم؟ وآخر ساعة ينفع تبعت فيها الطلبية لكل جهة كام؟»
+  4. Exceptions to the two-day rule: «قاعدة إن الطلبية بتوصل بعد يومين من يوم الطلب: فيه استثناءات؟ مثلاً جهة بتوصل في يوم واحد، أو يوم إجازة أو يوم في الأسبوع مفيش فيه توريد؟»
+  5. Orders after midnight: «لو الطلبية اتعملت بعد نص الليل (مثلاً الساعة 1 أو 2 الفجر)، نحسبها على أنهي يوم؟ البرنامج دلوقتي بيحسب أي حاجة قبل الساعة 2 الفجر على اليوم اللي فات. ده صح ولا نغيّر الساعة؟»
+
+  **Next action (administrator):** enter answers 1–4 on `/replenishment/settings`. For 5, a developer changes the rule only after his answer; no new after-midnight rule was automated.
+- **Abdo / administrator: the first live business date.** Planning history starts there (`/comparison/settings`, the Phase 7 per-branch date). Until it is set, every item is in review. **Next action:** set it at handover (Phase 11).
+- **Project owner: review and merge** the Phase 8 pull request, then deploy `20261125090000` with `npx supabase db push --linked --dry-run` first (no `--include-seed`).
+- **Developer (later phase): correcting a saved purchase-order receipt.** A Phase 6 reversal refuses it on purpose; today the fixes are an over-receipt with a reason or a Phase 6 adjustment. **Next action:** design a receipt-correction command that keeps the one-movement rule.
+- **Developer (Phase 11): legacy order history.** `import_legacy` exists without a screen. **Next action:** import real SRC-01 history only in a private environment, if the owner wants it.
+- Planning needs real complete days: a day counts only when its Product Mix is locked and fully posted, which still waits for Abdo's recipe approvals (Phase 6 open items).
 
 ## Phase 7 status
 
@@ -594,8 +656,9 @@ Environment: the checks ran on this project's own local Supabase instance (`bala
 ## Next steps (in order)
 
 0. Project owner: resolve the repository visibility (audit open item 1).
-1. Ask Abdo the Phase 7 question (live source, entry owner and start day for Al Quds and Bourgogne) and record it on `/comparison/settings`.
-2. Developer: investigate the Phase 4 concurrent-save gateway timeout on PostgREST v14.18 (Phase 7 open items) before concurrent use on the hosted project.
-3. Start Phase 8 (three-month planning, purchase orders and receiving) from `main` at `a265524` or later. Real consumption still needs Abdo's November recipe start date and the review-queue approvals (see "Phase 6 status").
-4. Before production rollout, confirm whether the shared project `xitryskkqgtkpdawddqe` is the production project or a separate one is needed. Then set the Auth options and `SITE_URL`, configure SMTP, and bootstrap Abdo. See the [accounts and permissions runbook](phase3/ACCOUNTS_AND_PERMISSIONS.md).
-5. Carry forward the confirmed expected receipt mapping (Phase 8), Abdo's walkthrough (Phase 10) and reviewed opening data (Phase 11).
+1. Project owner: review and merge the Phase 8 pull request (`phase-8/replenishment`), then deploy `20261125090000_phase8_replenishment.sql` to the hosted project (dry run first, no `--include-seed`).
+2. Ask Abdo the five Phase 8 questions (see "Phase 8 status") and the Phase 7 question (live source, entry owner and start day for Al Quds and Bourgogne); record the answers on `/replenishment/settings` and `/comparison/settings`.
+3. Developer: investigate the Phase 4 concurrent-save gateway timeout on PostgREST v14.18 (Phase 7 open items) before concurrent use on the hosted project.
+4. Start Phase 9 (the five Excel report families) from `main` after the Phase 8 merge. Real consumption, and so real planning history, still needs Abdo's November recipe start date and the review-queue approvals (see "Phase 6 status").
+5. Before production rollout, confirm whether the shared project `xitryskkqgtkpdawddqe` is the production project or a separate one is needed. Then set the Auth options and `SITE_URL`, configure SMTP, and bootstrap Abdo. See the [accounts and permissions runbook](phase3/ACCOUNTS_AND_PERMISSIONS.md).
+6. Carry forward Abdo's walkthrough (Phase 10) and the reviewed opening data, first live business date and outstanding orders (Phase 11).

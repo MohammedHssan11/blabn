@@ -31,12 +31,15 @@
     "db:check:phase5": "node scripts/phase3/db-check.mjs phase5_checks.sql",
     "db:check:phase6": "node scripts/phase3/db-check.mjs phase6_checks.sql",
     "db:check:phase7": "node scripts/phase3/db-check.mjs phase7_checks.sql",
+    "db:check:phase8": "node scripts/phase3/db-check.mjs phase8_checks.sql",
     "test:phase5": "node scripts/phase5/e2e.mjs",
     "test:phase5:browser": "node scripts/phase5/browser-check.mjs",
     "test:phase6": "node scripts/phase6/e2e.mjs",
     "test:phase6:browser": "node scripts/phase6/browser-check.mjs",
     "test:phase7": "node scripts/phase7/e2e.mjs",
-    "test:phase7:browser": "node scripts/phase7/browser-check.mjs"
+    "test:phase7:browser": "node scripts/phase7/browser-check.mjs",
+    "test:phase8": "node scripts/phase8/e2e.mjs",
+    "test:phase8:browser": "node scripts/phase8/browser-check.mjs"
   },
   "dependencies": {
     "@fontsource-variable/noto-sans-arabic": "^5.3.0",

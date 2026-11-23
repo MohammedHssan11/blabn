@@ -321,6 +321,8 @@ Abdo can understand a replenishment suggestion, its dates and assumptions, appro
 - Receiving 4 and then 6 units from a 10-unit order adds 10 total units to stock with no duplicate receipt.
 - Insufficient history produces a review state while a manual purchase order remains available.
 
+Implementation status and evidence (branch `phase-8/replenishment`, pull request open, not merged or deployed): [Phase 8 planning, purchase orders and receiving](phase8/REPLENISHMENT.md) and the [handover](HANDOFF.md#phase-8-status). The minimum number of observations, safety stock, pack sizes, supplier minimums, shelf life, cut-off times, exceptions to the two-day rule and the after-midnight business day still wait for Abdo; each is a setting that starts empty.
+
 ## Phase 9 — The five Excel report families
 
 ### Goal

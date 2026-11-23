@@ -23,7 +23,8 @@
     "account": "Account",
     "catalog": "Catalog and recipes",
     "stock": "Stock",
-    "comparisonEntry": "Comparison entry"
+    "comparisonEntry": "Comparison entry",
+    "replenishment": "Replenishment"
   },
   "common": {
     "blank": "Blank",
@@ -469,7 +470,14 @@
     "comparison_future": "That business day has not started yet.",
     "comparison_live_date": "This date is before the first live business date. Enter it as a historical figure with its source, or choose a later date.",
     "comparison_nothing": "Nothing to save: no figure was entered or changed.",
-    "comparison_owner_invalid": "The entry owner must be an active person who may enter this branch's figures."
+    "comparison_owner_invalid": "The entry owner must be an active person who may enter this branch's figures.",
+    "po_over_receipt": "That is more than the outstanding quantity. Enter an over-receipt reason to accept it.",
+    "po_plan_changed": "The suggestion changed since the page was shown. Review it again.",
+    "po_state": "This order cannot do that in its current state (not approved, already decided, closed or historical).",
+    "po_override_reason": "The final quantity differs from the suggestion: give a reason.",
+    "po_request_reused": "This form was already used for a different request. Reload the page.",
+    "po_stale": "The settings were changed by someone else. Reload and try again.",
+    "po_expected_invalid": "Choose an expected receipt date from the order business date on (within 60 days)."
   },
   "notices": {
     "created": "The account was created. Give the temporary password to the person privately.",
@@ -497,7 +505,15 @@
     "comparison_saved": "Figures saved.",
     "comparison_replayed": "This save was already recorded; nothing was added.",
     "comparison_settings_saved": "Comparison settings saved.",
-    "comparison_source_added": "Source designation added."
+    "comparison_source_added": "Source designation added.",
+    "po_create": "Purchase order created.",
+    "po_approve": "Purchase order approved.",
+    "po_reject": "Purchase order rejected.",
+    "po_set_expected": "Expected receipt date changed. The original date is kept.",
+    "po_receive": "Receipt saved and added to stock.",
+    "po_cancel_rest": "The rest of the line is cancelled.",
+    "po_replayed": "This form was already sent. Nothing new was saved.",
+    "po_settings_saved": "Settings saved."
   },
   "warnings": {
     "auth_not_updated": "The change was saved, but the sign-in service did not confirm it. Every request from this person is already refused; try the same action again to finish."
@@ -564,7 +580,8 @@
       "comparison_view": "View comparison figures",
       "comparison_export": "Download comparison figures",
       "attendance_event_create": "Create attendance events",
-      "inventory_consume": "Enter the Product Mix and post recipe consumption"
+      "inventory_consume": "Enter the Product Mix and post recipe consumption",
+      "purchase_order_receive": "Receive purchase orders into stock"
     }
   },
   "staff": {
@@ -673,7 +690,17 @@
       "comparison_entered": "Comparison figure entered",
       "comparison_corrected": "Comparison figure corrected",
       "comparison_settings_changed": "Comparison settings changed",
-      "comparison_source_added": "Comparison source added"
+      "comparison_source_added": "Comparison source added",
+      "purchase_order_create": "Purchase order created",
+      "purchase_order_approve": "Purchase order approved",
+      "purchase_order_reject": "Purchase order rejected",
+      "purchase_order_set_expected": "Expected receipt date changed",
+      "purchase_order_receive": "Purchase order received",
+      "purchase_order_cancel_rest": "Purchase-order rest cancelled",
+      "purchase_order_import_legacy": "Legacy purchase order imported",
+      "replenishment_settings_changed": "Replenishment settings changed",
+      "replenishment_item_settings_changed": "Item replenishment settings changed",
+      "replenishment_source_settings_changed": "Source replenishment settings changed"
     }
   },
   "forbidden": {
@@ -1284,6 +1311,248 @@
       "replaces": "Replaces an earlier count",
       "voided": "Withdrawn",
       "void": "Withdraw count"
+    }
+  },
+  "replenishment": {
+    "title": "Replenishment planning",
+    "intro": "Three-month same-weekday history per item, the forecast, and every input of the suggested order quantity. Missing days are left out, never counted as 0.",
+    "tabs": {
+      "plan": "Planning",
+      "orders": "Purchase orders",
+      "settings": "Settings"
+    },
+    "status": {
+      "proposed": "Waiting for approval",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "historical": "Historical (old sheet)",
+      "closed": "Closed"
+    },
+    "source": {
+      "factory": "Factory",
+      "store": "Store"
+    },
+    "settings": {
+      "notSet": "Not set",
+      "title": "Replenishment settings",
+      "intro": "Open decisions. Everything starts empty and changes nothing until the branch confirms it.",
+      "questions": "Questions for Abdo",
+      "branch": "Branch",
+      "minimum": "Minimum complete same-weekday observations",
+      "blankUndecided": "blank = not decided",
+      "coverage": "Days one delivery covers",
+      "liveFromWhere": "Set the first live date in the comparison settings",
+      "leadDays": "Days to delivery (exception to the two-day rule)",
+      "blankTwoDay": "blank = the two-day rule",
+      "cutoff": "Order cut-off time",
+      "items": "Item settings",
+      "baseUnitNote": "Quantities are in the item's base unit. Blank = not confirmed (no effect). Safety stock may be 0.",
+      "pack": "Pack size",
+      "minOrder": "Supplier minimum",
+      "shelfLife": "Shelf life (days)",
+      "viewPlan": "View the plan of this item",
+      "noneSet": "No item has a setting yet."
+    },
+    "dates": {
+      "title": "Dates",
+      "orderDate": "Order business date",
+      "now": "Now (branch time)",
+      "cutoff": "Business day starts at",
+      "defaultExpected": "Default expected receipt",
+      "planExpected": "Receipt date used in this plan",
+      "coverage": "Coverage",
+      "days": "{n} day(s)",
+      "liveFrom": "First live business date",
+      "window": "History window",
+      "completeDays": "Complete observation days",
+      "minimum": "Minimum observations",
+      "ruleNote": "Expected receipt = order business date + 2 calendar days. An order created before 02:00 belongs to the previous business day.",
+      "originalExpected": "Original expected receipt",
+      "currentExpected": "Current expected receipt",
+      "overridden": "changed",
+      "businessDate": "Business date",
+      "created": "Created (branch time)",
+      "actualReceipts": "Actual receipts"
+    },
+    "formula": {
+      "title": "How the suggestion is calculated",
+      "text": "Suggested = forecast demand + safety stock − usable stock at the expected receipt − eligible confirmed incoming, never below 0. Pack size and supplier minimum apply afterwards, once confirmed.",
+      "usable": "Usable stock: today's book stock, plus confirmed deliveries before the receipt date, minus the forecast of each day until then (when history allows).",
+      "incoming": "Eligible incoming: approved, not yet received quantities expected inside the coverage window. Each is counted once.",
+      "history": "Forecast: the average of complete same-weekday days in the last 13 weeks, from the first live date. A day whose Product Mix is not fully posted is missing and left out."
+    },
+    "whatIf": {
+      "label": "Expected receipt date",
+      "reset": "Back to the default date"
+    },
+    "summary": "{recommend} item(s) with a suggestion, {review} in review.",
+    "mismatch": "{n} item(s): the page check disagrees with the database. Do not order from these figures; report it.",
+    "col": {
+      "select": "Select",
+      "item": "Item",
+      "status": "Status",
+      "history": "Same-weekday history",
+      "forecast": "Forecast demand",
+      "safety": "Safety stock",
+      "onHand": "Book stock today",
+      "usable": "Usable at receipt",
+      "incoming": "Eligible incoming",
+      "raw": "Result before the floor",
+      "recommended": "Recommended",
+      "suggested": "Suggested order",
+      "source": "Source",
+      "outstanding": "Outstanding"
+    },
+    "planStatus": {
+      "recommend": "Suggestion",
+      "review": "Review"
+    },
+    "reason": {
+      "first_live_date_unset": "No first live date yet.",
+      "minimum_unset": "The minimum number of observations is not decided.",
+      "insufficient_history": "Not enough complete same-weekday days yet. Order manually."
+    },
+    "warning": {
+      "bridge_unavailable": "{date}: not enough history to subtract that day's consumption.",
+      "coverage_exceeds_shelf_life": "The coverage is longer than the shelf life ({days} days).",
+      "after_cutoff": "After the {cutoff} order cut-off."
+    },
+    "historyCount": "{complete} complete, {missing} missing",
+    "createSelected": "Order the selected items",
+    "manualOrder": "New manual order",
+    "orderThis": "Order this item",
+    "item": {
+      "title": "Item plan",
+      "intro": "Quantities in {unit}. Every figure comes from recorded stock movements, Product Mix postings and approved orders.",
+      "checked": "Recalculated on the page: same result as the database.",
+      "defaultPlan": "Default receipt date",
+      "changedPlan": "Changed receipt date",
+      "effect": "Effect of moving the receipt from {from} to {to}:",
+      "settings": "Constraints and safety stock",
+      "receipt": "Receipt:",
+      "review": "Review: no suggestion."
+    },
+    "bridge": {
+      "title": "Stock until the receipt",
+      "intro": "Day by day from today's book stock. Stock never goes below 0.",
+      "opening": "Stock after deliveries",
+      "incoming": "Confirmed deliveries",
+      "consumption": "Expected consumption",
+      "closing": "End of day",
+      "book": "Book stock today",
+      "usable": "Usable on {date}"
+    },
+    "basis": {
+      "posted": "Posted (Product Mix complete)",
+      "forecast": "Same-weekday forecast",
+      "forecast_remaining": "Forecast minus what is already posted",
+      "unavailable": "Not enough history: not subtracted"
+    },
+    "incoming": {
+      "title": "Confirmed incoming",
+      "none": "No approved order is outstanding for this item.",
+      "counted": "How it counts"
+    },
+    "order": {
+      "number": "Order",
+      "title": "Purchase order",
+      "intro": "Every date is kept separately. Stock changes only through saved receipts.",
+      "legacy": "From the old sheet ({cell})",
+      "noCreation": "Not in the source",
+      "createdBy": "Created by",
+      "decidedBy": "Approved or rejected by",
+      "noReceipt": "Nothing received yet",
+      "legacyRule": "Old order sheet value «{value}» ({cell}) read as the expected receipt date.",
+      "defaultRule": "Default: business date + {days} calendar days.",
+      "expectedHistory": "Expected receipt date history",
+      "changeExpected": "Change the expected date",
+      "newExpected": "New expected date",
+      "reason": "Reason",
+      "lines": "Lines",
+      "overrideReason": "Reason for a different quantity",
+      "received": "Received",
+      "cancelled": "Cancelled",
+      "manual": "Manual",
+      "planSnapshot": "The arithmetic behind each suggestion",
+      "decide": "Approval",
+      "approve": "Approve",
+      "reject": "Reject",
+      "receive": "Receive",
+      "receiveHint": "Enter what arrived. Each line creates one stock receipt on the day it arrived. More than the outstanding quantity needs an over-receipt reason.",
+      "receivedAt": "Arrived at (branch time)",
+      "receivedQty": "Quantity received",
+      "overReceipt": "Over-receipt reason",
+      "saveReceipt": "Save the receipt",
+      "cancelRest": "Cancel the rest",
+      "cancelHint": "Closes the line for the quantity not received. No stock is created; the history stays.",
+      "receipts": "Receipts",
+      "events": "History"
+    },
+    "bucket": {
+      "overdue": "Overdue: not counted (change its date)",
+      "before_receipt": "Before the receipt: in usable stock",
+      "window": "In the coverage window: eligible",
+      "after_window": "After the window: not counted"
+    },
+    "history": {
+      "title": "Three-month history by weekday",
+      "intro": "Complete days count, including a real 0. Missing days are shown and left out.",
+      "weekday": "Weekday",
+      "complete": "Observations",
+      "average": "Average",
+      "dates": "Dates",
+      "notEnough": "below the minimum"
+    },
+    "obs": {
+      "missing": "missing",
+      "before_live": "before live",
+      "complete": "complete"
+    },
+    "constraint": {
+      "supplier_minimum": "Raised to the supplier minimum",
+      "pack_size": "Rounded up to whole packs"
+    },
+    "orders": {
+      "title": "Purchase orders",
+      "intro": "Business date, creation time, original and current expected receipt, and actual receipts, side by side.",
+      "none": "No purchase order yet.",
+      "openLines": "Open lines"
+    },
+    "new": {
+      "title": "New purchase order",
+      "intro": "One branch per order. Each line: item, unit, numeric quantity and source (factory or store).",
+      "dates": "Business date and default expected receipt:",
+      "fromPlan": "From the plan",
+      "reviewLine": "In review: no suggestion. Enter the quantity yourself.",
+      "unit": "Unit ordered",
+      "final": "Final quantity",
+      "reason": "Reason",
+      "reasonHint": "required when the final quantity differs from the suggestion",
+      "manual": "Other lines",
+      "manualHint": "Leave a row empty to skip it.",
+      "line": "Line {n}",
+      "submit": "Create the order"
+    },
+    "dateKind": {
+      "default": "default (two-day rule)",
+      "override": "changed",
+      "legacy": "old order sheet"
+    },
+    "command": {
+      "create": "Created",
+      "approve": "Approved",
+      "reject": "Rejected",
+      "set_expected": "Expected date changed",
+      "receive": "Received",
+      "cancel_rest": "Rest cancelled",
+      "import_legacy": "Imported from the old sheet"
+    },
+    "questions": {
+      "minimum": "How many complete same-weekday days does an item need before we trust the average?",
+      "safety": "How much extra stock should each item keep above the expected consumption (safety stock)?",
+      "constraints": "Pack sizes, supplier minimums, shelf life and order cut-off times per supplier?",
+      "twoDay": "Exceptions to the two-day rule: a supplier, a weekend or a holiday?",
+      "cutoff": "Which business day does an order created after midnight belong to?"
     }
   }
 }
