@@ -257,6 +257,9 @@ tfoot td, tfoot th { font-weight: 700; background: var(--surface-2); border-top:
 }
 .trace a { color: inherit; }
 .trace-inline { display: inline-block; margin-inline-start: 6px; }
+/* A short readable note under a value (source, coverage, reason); wraps inside narrow cells. */
+.cell-note { display: block; font-size: 0.78rem; font-weight: 400; color: var(--muted); line-height: 1.35; white-space: normal; max-width: 16rem; }
+td.num .cell-note { margin-inline-start: auto; }
 
 .kv-list { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
 .kv-row {

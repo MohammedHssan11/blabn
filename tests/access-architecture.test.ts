@@ -48,7 +48,12 @@ describe("every page checks access", () => {
     for (const page of ["daily-close", "cash-count"]) {
       expect(read(`src/app/[locale]/${page}/page.tsx`)).toMatch(/permission: "daily_close\.view", branch: branchCode/);
     }
-    expect(read("src/app/[locale]/comparison/page.tsx")).toMatch(/ALL_BRANCH_CODES\.map/);
+    // Phase 7: the comparison authorizes every SELECTED branch (all three by default).
+    expect(read("src/app/[locale]/comparison/page.tsx")).toMatch(/query\.branches\.map\(\(branch\) => \(\{ permission: "comparison\.view" as const, branch \}\)\)/);
+    expect(read("src/app/[locale]/comparison/history/page.tsx")).toMatch(/permission: "comparison\.view", branch/);
+    expect(read("src/app/[locale]/comparison/entry/page.tsx")).toMatch(/holds\(access, "comparison\.enter", branch\)/);
+    expect(read("src/app/[locale]/comparison/settings/page.tsx")).toMatch(/permission: "admin\.config\.manage"/);
+    expect(read("src/app/api/exports/[kind]/route.ts")).toMatch(/query\.branches\.map\(\(branch\) => \(\{ permission: "comparison\.export", branch \}\)\)/);
     expect(read("src/app/[locale]/inventory/adjustments/page.tsx")).toMatch(/permission: "inventory\.adjust", branch/);
   });
 });

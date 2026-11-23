@@ -12,7 +12,7 @@ export const PROTOTYPE_FIELDS: Readonly<Record<PrototypeId, readonly string[]>> 
     "ST-02", "ST-03",
   ],
   cashCount: ["ST-02", "ST-03", "ST-04", "ST-05", "ST-06", "ST-07", "ST-08", "LG-06"],
-  comparison: ["CMP-05", "CMP-06", "CMP-07", "CMP-08"],
+  comparison: ["CMP-01", "CMP-02", "CMP-03", "CMP-04", "CMP-05", "CMP-06", "CMP-07", "CMP-08"],
 };
 
 /** Fields the prototypes name but deliberately do not fill in: they wait for a later-phase decision. */

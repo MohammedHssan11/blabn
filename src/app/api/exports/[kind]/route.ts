@@ -3,7 +3,10 @@ import { toDecimalString } from "@/lib/money";
 import { isBusinessDate, isMonth } from "@/lib/dates";
 import { readOperatingReport, ReportBasisNotFound, usesDemoFixtures } from "@/modules/closing/operations";
 import { getRepository } from "@/lib/repository";
-import { ALL_BRANCH_CODES, OPERATING_BRANCH_CODE } from "@/modules/access/catalog";
+import { OPERATING_BRANCH_CODE } from "@/modules/access/catalog";
+import { getComparison, parseComparisonQuery } from "@/modules/comparisons/service";
+import { comparisonCsv } from "@/modules/comparisons/export";
+import { ComparisonAccessDenied } from "@/modules/comparisons/data";
 import { authorizeRequest, type Requirement } from "@/modules/access/guard";
 
 /**
@@ -12,7 +15,7 @@ import { authorizeRequest, type Requirement } from "@/modules/access/guard";
  * by a real download. The five report families arrive in Phase 9 and will use the same guard.
  *
  *   /api/exports/daily-close-draft?branch=maarif   needs daily_close.export_draft for that branch
- *   /api/exports/comparison                        needs comparison.export for EVERY branch it covers
+ *   /api/exports/comparison?mode=…&branches=…      needs comparison.export for EVERY branch it covers (Phase 7)
  *
  * Nothing is read or built before the permission check passes.
  */
@@ -98,21 +101,41 @@ export async function GET(request: NextRequest, context: { params: Promise<{ kin
   }
 
   if (kind === "comparison") {
-    const requirements: Requirement[] = ALL_BRANCH_CODES.map((branch) => ({ permission: "comparison.export", branch }));
+    const params = request.nextUrl.searchParams;
+    const query = parseComparisonQuery({
+      mode: params.get("mode") ?? undefined,
+      current: params.get("current") ?? undefined,
+      prior: params.get("prior") ?? undefined,
+      month: params.get("month") ?? undefined,
+      branches: params.getAll("branches").length > 0 ? params.getAll("branches") : undefined,
+    });
+    // Exporting needs comparison.export for EVERY branch the file covers; viewing does not grant it.
+    const requirements: Requirement[] = query.branches.map((branch) => ({ permission: "comparison.export", branch }));
     const decision = await authorizeRequest(requirements);
     if (!decision.ok) return decision.response;
+    if (query.invalid) return NextResponse.json({ error: "invalid_input" }, { status: 400 });
 
-    const repository = getRepository();
-    const [days, figures] = await Promise.all([repository.listBusinessDays(), repository.listComparisonFigures()]);
-    const rows = [
-      ...days
-        .filter((day) => day.status === "closed" && day.netSales !== null)
-        .map((day) => [day.branchCode, day.businessDate, toDecimalString(day.netSales ?? 0), day.orderCount, "closed_day"] as Array<string | number | null>),
-      ...figures
-        .filter((figure) => figure.netSales !== null)
-        .map((figure) => [figure.branchCode, figure.businessDate, toDecimalString(figure.netSales ?? 0), figure.orderCount, figure.source] as Array<string | number | null>),
-    ].sort((a, b) => String(a[1]).localeCompare(String(b[1])) || String(a[0]).localeCompare(String(b[0])));
-    return csvResponse("comparison-figures.csv", ["branch", "business_date", "net_sales_mad", "order_count", "source"], rows);
+    if (usesDemoFixtures()) {
+      const repository = getRepository();
+      const [days, figures] = await Promise.all([repository.listBusinessDays(), repository.listComparisonFigures()]);
+      const rows = [
+        ...days
+          .filter((day) => day.status === "closed" && day.netSales !== null)
+          .map((day) => [day.branchCode, day.businessDate, toDecimalString(day.netSales ?? 0), day.orderCount, "closed_day"] as Array<string | number | null>),
+        ...figures
+          .filter((figure) => figure.netSales !== null)
+          .map((figure) => [figure.branchCode, figure.businessDate, toDecimalString(figure.netSales ?? 0), figure.orderCount, figure.source] as Array<string | number | null>),
+      ].sort((a, b) => String(a[1]).localeCompare(String(b[1])) || String(a[0]).localeCompare(String(b[0])));
+      return csvResponse("comparison-figures.csv", ["branch", "business_date", "net_sales_mad", "order_count", "source"], rows);
+    }
+
+    const model = await getComparison(query, "export").catch((error: unknown) => {
+      if (error instanceof ComparisonAccessDenied) return null;
+      throw error;
+    });
+    if (!model) return NextResponse.json({ error: "forbidden" }, { status: 403, headers: { "Cache-Control": "no-store" } });
+    const csv = comparisonCsv(model);
+    return csvResponse(csv.name, csv.header, csv.rows);
   }
 
   // Unknown download names are not a way to probe: check sign-in first so anonymous callers learn nothing.

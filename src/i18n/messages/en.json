@@ -22,7 +22,8 @@
     "inventoryAdjustments": "Inventory adjustments",
     "account": "Account",
     "catalog": "Catalog and recipes",
-    "stock": "Stock"
+    "stock": "Stock",
+    "comparisonEntry": "Comparison entry"
   },
   "common": {
     "blank": "Blank",
@@ -199,32 +200,170 @@
   },
   "comparison": {
     "title": "Branch comparison",
-    "intro": "One date pair is used for every branch. A branch with no figure is marked missing, never shown as 0.",
+    "intro": "Al Quds, Maarif and Bourgogne, then their total. Coverage is shown before any percentage. A branch without a figure is missing, never 0.",
+    "mode": "Comparison",
+    "modes": {
+      "weekly": "Same weekday (weekly)",
+      "monthly": "Month against the month before"
+    },
     "currentDate": "Current date",
-    "priorDate": "Prior date",
-    "showDates": "Show comparison",
+    "priorDate": "Prior date (same weekday)",
+    "month": "Month",
+    "priorMonth": "Prior month",
+    "branches": "Branches",
+    "show": "Show comparison",
+    "sampleDates": "Sample dates",
+    "invalidQuery": "Part of the address was not valid, so a default is shown instead.",
+    "demoData": "Phase 2 demonstration data (synthetic fixtures {version}).",
+    "coverageTitle": "Coverage",
+    "coverageWeekly": "Current date: {current} of {total} branches have figures. Prior date: {prior} of {total}.",
+    "missingOn": "Missing on {date}: {branches}.",
+    "allPresent": "Every selected branch has figures on both dates.",
     "columns": {
       "branch": "Branch",
+      "date": "Date",
+      "sales": "Sales",
+      "orders": "Orders",
       "current": "Current",
       "prior": "Prior",
-      "ratio": "Current ÷ prior"
+      "difference": "Difference",
+      "ratio": "Current ÷ prior",
+      "growth": "Growth",
+      "day": "Day",
+      "source": "Source"
     },
-    "missing": "Missing",
-    "source": {
-      "closed_day": "Closed day",
-      "reporting_only": "Reporting only",
-      "missing": "Missing"
+    "status": {
+      "available": "Available",
+      "missing": "Missing",
+      "before_live": "Unavailable: before the first live date",
+      "future": "Not started yet",
+      "no_such_day": "No such day",
+      "complete": "Complete",
+      "partial": "Partial"
     },
-    "total": "Total of branches",
-    "coverage": "{present} of {total} branches",
-    "incomplete": "Incomplete total",
-    "complete": "Complete total",
+    "unavailable": "Unavailable",
     "ratioReason": {
-      "prior_missing_or_zero": "No ratio: the prior figure is missing or zero.",
-      "different_branches": "No ratio: the two totals cover different branches."
+      "current_unavailable": "Unavailable: no current figure.",
+      "prior_unavailable": "Unavailable: no prior figure.",
+      "prior_zero": "Unavailable: the prior figure is 0.",
+      "different_branches": "Unavailable: the two totals cover different branches.",
+      "no_figures": "Unavailable: no figures."
     },
-    "examples": "Sample dates",
-    "reportingOnlyNote": "Al Quds and Bourgogne figures are entered for reporting only. Maarif comes from its closed days."
+    "growthReason": {
+      "current_unavailable": "Unavailable: no current figure.",
+      "prior_unavailable": "Unavailable: no prior figure.",
+      "prior_zero": "Unavailable: the prior figure is 0.",
+      "incomplete": "Unavailable: a selected branch is missing.",
+      "future": "Not started yet.",
+      "no_such_day": "No such day in one of the months.",
+      "before_live": "Unavailable: before the first live business date."
+    },
+    "periodReason": {
+      "no_comparable_day": "Unavailable: no day is entered in both months.",
+      "prior_zero": "Unavailable: the prior period total is 0."
+    },
+    "total": "Total of selected branches",
+    "coverage": "{present} of {total} branches",
+    "incomplete": "Incomplete total: not every selected branch has a figure on both dates.",
+    "complete": "Complete total: every selected branch has a figure on both dates.",
+    "source": {
+      "closed_day": "Closed day (daily close)",
+      "legacy_day": "Demonstration day (Phase 2)",
+      "entry": "Entered figure",
+      "daily_close": "Daily close",
+      "reporting_only": "Reporting-only entry"
+    },
+    "historical": "Historical figure selected for this report",
+    "reference": "Source: {reference}",
+    "revision": "revision {n}",
+    "history": "History",
+    "liveFrom": "First live business date: {date}",
+    "liveFromFirstClose": "First live business date: {date} (first saved business day)",
+    "liveFromUnset": "No first live business date set",
+    "liveSource": "Live source: {source}",
+    "entryOwner": "Entry owner: {name}",
+    "undecided": "Live source and entry owner: awaiting Abdo's decision",
+    "export": "Download CSV",
+    "periodTitle": "Period growth, like for like",
+    "comparableDays": "{n} day(s) entered for every selected branch in both months",
+    "inProgress": "The current month is in progress: {elapsed} of {days} days have started.",
+    "missingDays": "Missing days",
+    "beforeLiveDays": "Days before the first live business date",
+    "none": "None",
+    "perBranch": "By branch",
+    "daysCoverage": "{present} of {total} days",
+    "reportingOnlyNote": "Al Quds and Bourgogne figures are entered for reporting only. Maarif comes from its closed business days and is never entered again.",
+    "links": {
+      "entry": "Enter Al Quds or Bourgogne figures",
+      "settings": "Comparison settings"
+    },
+    "entry": {
+      "title": "Enter comparison figures",
+      "intro": "Enter the sales and order count of one branch for one business date. Each save is kept with its source, date and your name. Entering does not let you view the figures afterwards.",
+      "noBranches": "No branch is assigned to you for comparison entry.",
+      "branch": "Branch",
+      "date": "Business date",
+      "mode": "What is this?",
+      "modes": {
+        "new": "A new figure",
+        "correct": "A correction of a figure already entered"
+      },
+      "purpose": "Kind of figure",
+      "purposes": {
+        "live": "Regular figure",
+        "historical": "Historical figure for a report (before the first live date)"
+      },
+      "source": "Source designation",
+      "sales": "Sales (MAD)",
+      "orders": "Number of orders",
+      "reference": "Where the figure comes from",
+      "referenceHint": "Required for a historical figure, for example the sheet and row.",
+      "reason": "Reason for the correction",
+      "clearSales": "Withdraw the sales figure",
+      "clearOrders": "Withdraw the order count",
+      "save": "Save figures",
+      "ownerMe": "You are the entry owner for {branch}.",
+      "ownerOther": "Another person is the entry owner for {branch}; only they can enter its figures.",
+      "ownerUnset": "The entry owner for {branch} is not decided yet.",
+      "liveFrom": "First live business date of {branch}: {date}.",
+      "liveFromUnset": "{branch} has no first live business date yet.",
+      "rules": "A blank figure is not entered (it is not 0). A correction needs a reason and keeps the earlier value in the history."
+    },
+    "settings": {
+      "title": "Comparison settings",
+      "intro": "The approved live source and the entry owner for Al Quds and Bourgogne are still open questions for Abdo. Leave them undecided until he answers.",
+      "question": "Question for Abdo",
+      "liveSource": "Live source",
+      "entryOwner": "Entry owner",
+      "liveFrom": "First live business date",
+      "undecided": "Not decided",
+      "firstClose": "First saved business day: {date}",
+      "save": "Save",
+      "operatingNote": "Maarif figures come from the daily close; only its first live business date can be set here.",
+      "sources": "Source designations",
+      "addSource": "Add a source designation",
+      "key": "Key (a-z, 0-9, _)",
+      "labelEn": "English name",
+      "labelAr": "Arabic name",
+      "builtIn": "built in"
+    },
+    "historyPage": {
+      "title": "Figure history",
+      "intro": "Every saved revision of the entered figures for this branch and date. The active one is used.",
+      "metric": {
+        "net_sales": "Sales",
+        "order_count": "Orders"
+      },
+      "active": "Active",
+      "retired": "Earlier revision",
+      "withdrawn": "Withdrawn (blank)",
+      "reason": "Reason",
+      "enteredBy": "Entered by",
+      "enteredAt": "Saved at",
+      "purpose": "Kind",
+      "none": "No figure was entered for this branch and date.",
+      "back": "Back to the comparison"
+    }
   },
   "reportMap": {
     "title": "Report map",
@@ -320,7 +459,17 @@
     "stock_not_reconciled": "The Product Mix does not reconcile, so it cannot be locked.",
     "stock_nothing_eligible": "No line is eligible yet. Each blocked line says what it needs.",
     "stock_recipe_posted": "Consumption is already posted through that recipe on a later date.",
-    "catalog_recipe_posted": "Consumption is already posted through the current recipe on those dates. Start the new version after the last posted day."
+    "catalog_recipe_posted": "Consumption is already posted through the current recipe on those dates. Start the new version after the last posted day.",
+    "comparison_not_owner": "Only the configured entry owner can enter this branch's figures.",
+    "comparison_stale": "The settings changed since you opened the page. Open it again and repeat the change.",
+    "comparison_request_reused": "This form was already used for a different save. Open the page again.",
+    "comparison_source_exists": "A source designation with that key already exists.",
+    "comparison_duplicate": "A figure is already recorded for this branch, date and source. To change it, submit a correction with a reason.",
+    "comparison_reason_required": "A correction needs a reason.",
+    "comparison_future": "That business day has not started yet.",
+    "comparison_live_date": "This date is before the first live business date. Enter it as a historical figure with its source, or choose a later date.",
+    "comparison_nothing": "Nothing to save: no figure was entered or changed.",
+    "comparison_owner_invalid": "The entry owner must be an active person who may enter this branch's figures."
   },
   "notices": {
     "created": "The account was created. Give the temporary password to the person privately.",
@@ -344,7 +493,11 @@
     "catalog_recipe_withdrawn": "The draft was withdrawn.",
     "catalog_names_queued": "The names were added to the review queue.",
     "stock_saved": "Saved.",
-    "stock_replayed": "This was already saved; nothing was added twice."
+    "stock_replayed": "This was already saved; nothing was added twice.",
+    "comparison_saved": "Figures saved.",
+    "comparison_replayed": "This save was already recorded; nothing was added.",
+    "comparison_settings_saved": "Comparison settings saved.",
+    "comparison_source_added": "Source designation added."
   },
   "warnings": {
     "auth_not_updated": "The change was saved, but the sign-in service did not confirm it. Every request from this person is already refused; try the same action again to finish."
@@ -516,7 +669,11 @@
       "stock_mix_lock": "Product Mix locked",
       "stock_mix_unlock": "Product Mix unlocked",
       "stock_post_consumption": "Recipe consumption posted",
-      "stock_reverse": "Stock posting reversed"
+      "stock_reverse": "Stock posting reversed",
+      "comparison_entered": "Comparison figure entered",
+      "comparison_corrected": "Comparison figure corrected",
+      "comparison_settings_changed": "Comparison settings changed",
+      "comparison_source_added": "Comparison source added"
     }
   },
   "forbidden": {
