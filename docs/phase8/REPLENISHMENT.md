@@ -1,6 +1,6 @@
 # Phase 8: Three-month planning, purchase orders and receiving
 
-Phase 8 lets Abdo see how much history each stock item has, understand a suggested order quantity input by input, create and approve purchase orders, move an expected receipt date with a reason, and record partial receipts. It covers report fields ORD-01 (order, expected and actual receipt dates) and ORD-02 (order lines). Migration `20261125090000_phase8_replenishment.sql` holds the schema and rules. The screens are in Arabic and English:
+Phase 8 lets Abdo see how much history each stock item has, understand a suggested order quantity input by input, create and approve purchase orders, move an expected receipt date with a reason, and record partial receipts. It covers report fields ORD-01 (order, expected and actual receipt dates) and ORD-02 (order lines). Merged in PR #14 (`e1403fb`) and applied to the shared hosted Supabase project on 23 November 2026 (see the [handover](../HANDOFF.md#hosted-deployment)). Migration `20261125090000_phase8_replenishment.sql` holds the schema and rules. The screens are in Arabic and English:
 
 - `/replenishment`: the planning view of every stock item, with a what-if expected receipt date;
 - `/replenishment/items/<id>`: one item: the 13-week same-weekday history, the day-by-day projection to the receipt, the confirmed incoming lines and the arithmetic, with the default and a changed receipt date side by side;
