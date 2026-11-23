@@ -55,6 +55,14 @@ describe("every page checks access", () => {
     expect(read("src/app/[locale]/comparison/settings/page.tsx")).toMatch(/permission: "admin\.config\.manage"/);
     expect(read("src/app/api/exports/[kind]/route.ts")).toMatch(/query\.branches\.map\(\(branch\) => \(\{ permission: "comparison\.export", branch \}\)\)/);
     expect(read("src/app/[locale]/inventory/adjustments/page.tsx")).toMatch(/permission: "inventory\.adjust", branch/);
+    // Phase 8: planning and orders are read with inventory.view; creating needs purchase_order.propose;
+    // each command re-checks its own permission (create / approve / receive) in the action and the database.
+    for (const page of ["replenishment", "replenishment/items/[id]", "replenishment/orders", "replenishment/orders/[id]"]) {
+      expect(read(`src/app/[locale]/${page}/page.tsx`), page).toMatch(/permission: "inventory\.view", branch: OPERATING_BRANCH_CODE/);
+    }
+    expect(read("src/app/[locale]/replenishment/orders/new/page.tsx")).toMatch(/permission: "purchase_order\.propose", branch: OPERATING_BRANCH_CODE/);
+    expect(read("src/app/[locale]/replenishment/settings/page.tsx")).toMatch(/permission: "admin\.config\.manage"/);
+    expect(read("src/modules/replenishment/actions.ts")).toMatch(/require: \{ permission: purchaseOrderPermission\(command\), branch: OPERATING_BRANCH_CODE \}/);
   });
 });
 
@@ -91,7 +99,7 @@ describe("server actions authorize before they act", () => {
     return parts.map((part) => ({ name: part.slice(0, part.indexOf("(")), body: part }));
   }
 
-  const GUARDED_FILES = ["src/modules/access/staff-actions.ts", "src/modules/inventory/actions.ts"];
+  const GUARDED_FILES = ["src/modules/access/staff-actions.ts", "src/modules/inventory/actions.ts", "src/modules/replenishment/actions.ts"];
   for (const file of GUARDED_FILES) {
     it(`${file}: every action calls requireAccess before anything that reads or writes`, () => {
       const list = actions(file);

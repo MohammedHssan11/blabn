@@ -4,7 +4,7 @@
 //                  the Phase 2 and Phase 3 checks;
 //   B. fresh     - rebuild from scratch (all migrations + seed) and run the same checks;
 //   C. equality  - the upgraded and the freshly built schemas are identical.
-//   D-G. later upgrade paths (migration 08 with a flagged account; Phase 4 -> 5; 5 -> 6; 6 -> 7).
+//   D-H. later upgrade paths (migration 08 with a flagged account; Phase 4 -> 5; 5 -> 6; 6 -> 7; 7 -> 8).
 // Usage: npm run db:upgrade-test   (Docker running, `npx supabase start` done)
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
@@ -302,6 +302,73 @@ step("its schema, table privileges and function privileges equal the fresh build
 step("a fresh build passes the Phase 7 checks too", () => {
   supabase(["db", "reset"]);
   return runSqlFile("phase7_checks.sql");
+});
+console.log("\nH. Upgrade of a Phase 7 database to Phase 8 (purchase orders, receipts and planning)");
+const PHASE7_HEAD = "20261124090000";
+const MOVEMENTS = "select coalesce(json_agg(json_build_array(id, branch_id, business_date, posting_id, item_id, kind, direction, quantity_num, quantity_den, base_unit, entered_quantity, entered_unit, occurred_local, occurred_at, source, reference, note, reverses_id) order by id)::text, '[]') from public.stock_movements";
+let movementsBefore = "";
+step(`reset to migration ${PHASE7_HEAD} (Phase 7 head, with the base and catalog seeds)`, () => {
+  supabase(["db", "reset", "--version", PHASE7_HEAD]);
+  if (psql("select to_regclass('public.purchase_orders') is not null") !== "f") throw new Error("Phase 8 tables exist at the Phase 7 head");
+  return runSqlFile("phase7_checks.sql");
+});
+step("Phase 7 stock movements exist before the upgrade (a receipt, a waste entry and a reversal by a synthetic storekeeper)", () => {
+  // Committed, unlike the SQL check files: a storekeeper records three movements on a seeded stock item.
+  psql(`begin;
+    insert into auth.users(id, email) values ('a8a00000-0000-4000-8000-000000000001', 'upgrade.keeper@phase8.test');
+    insert into public.employees(id, organization_id, full_name) select 'a8a00000-0000-4000-8000-000000000001', organization_id, 'Upgrade keeper' from public.branches where code = 'maarif';
+    insert into public.staff_accounts(user_id, employee_id, organization_id, email) select id, id, organization_id, 'upgrade.keeper@phase8.test' from public.employees where id = 'a8a00000-0000-4000-8000-000000000001';
+    insert into public.branch_memberships(staff_id, branch_id) select 'a8a00000-0000-4000-8000-000000000001', id from public.branches where code = 'maarif';
+    insert into public.staff_group_assignments(staff_id, branch_id, group_key) select 'a8a00000-0000-4000-8000-000000000001', id, 'storekeeper' from public.branches where code = 'maarif';
+    select set_config('request.jwt.claims', '{"sub":"a8a00000-0000-4000-8000-000000000001","role":"authenticated"}', true);
+    set local role authenticated;
+    select public.app_stock_command('maarif', '2026-11-10', 'movement', 'a8a00000-0000-4000-8000-0000000000a1',
+      jsonb_build_object('kind', 'receipt', 'item', (select id from public.catalog_items where stock_tracked and kind <> 'sold' and base_unit = 'pc' order by name_ar limit 1), 'quantity', '12', 'local', '2026-11-10T09:00'));
+    select public.app_stock_command('maarif', '2026-11-10', 'movement', 'a8a00000-0000-4000-8000-0000000000a2',
+      jsonb_build_object('kind', 'waste', 'item', (select id from public.catalog_items where stock_tracked and kind <> 'sold' and base_unit = 'pc' order by name_ar limit 1), 'quantity', '2', 'local', '2026-11-10T12:00'));
+    select public.app_stock_command('maarif', '2026-11-10', 'reverse', 'a8a00000-0000-4000-8000-0000000000a3',
+      jsonb_build_object('posting', (select id from public.stock_postings where request_id = 'a8a00000-0000-4000-8000-0000000000a2'), 'reason', 'upgrade test'));
+    commit;`);
+  movementsBefore = psql(MOVEMENTS);
+  const count = psql("select count(*) from public.stock_movements");
+  if (count !== "3") throw new Error(`expected 3 movements, found ${count}`);
+  return `${count} movements`;
+});
+step("apply the Phase 8 migration (supabase migration up)", () => {
+  supabase(["migration", "up"]);
+  return psql("select max(version) from supabase_migrations.schema_migrations");
+});
+step("existing stock movements are unchanged; receive reached the groups; settings start empty", () => {
+  const after = psql(MOVEMENTS);
+  if (after !== movementsBefore) throw new Error(`movements changed:\n  before: ${movementsBefore}\n  after:  ${after}`);
+  const groups = psql("select string_agg(group_key, ',' order by group_key) from public.group_permissions where permission_key = 'purchase_order.receive'");
+  if (groups !== "storekeeper,system_admin") throw new Error(`purchase_order.receive -> ${groups}`);
+  const empty = psql("select (select count(*) from public.replenishment_settings)+(select count(*) from public.replenishment_item_settings)+(select count(*) from public.replenishment_source_settings)+(select count(*) from public.purchase_orders)");
+  if (empty !== "0") throw new Error(`expected no settings and no orders, found ${empty}`);
+  // The movements and their synthetic author are test data: remove them (triggers bypassed, test only) so the
+  // earlier check files see the database they expect.
+  psql(`set session_replication_role = replica;
+    delete from public.stock_movements; delete from public.stock_postings; delete from public.audit_log where actor_id = 'a8a00000-0000-4000-8000-000000000001';
+    delete from public.staff_group_assignments where staff_id = 'a8a00000-0000-4000-8000-000000000001'; delete from public.branch_memberships where staff_id = 'a8a00000-0000-4000-8000-000000000001';
+    delete from public.staff_accounts where user_id = 'a8a00000-0000-4000-8000-000000000001'; delete from public.employees where id = 'a8a00000-0000-4000-8000-000000000001';
+    delete from auth.users where id = 'a8a00000-0000-4000-8000-000000000001';
+    set session_replication_role = origin;`);
+  return `3 movements identical (all columns); purchase_order.receive -> ${groups}; 0 settings, 0 orders`;
+});
+step("Phase 2 to 8 checks after the Phase 7 upgrade", () =>
+  ["phase2_checks.sql", "phase3_checks.sql", "phase4_checks.sql", "phase5_checks.sql", "phase6_checks.sql", "phase7_checks.sql", "phase8_checks.sql"].map(runSqlFile).join("; "));
+step("its schema, table privileges and function privileges equal the fresh build", () => {
+  const again = schemaDump();
+  if (again !== fresh) {
+    const a = again.split("\n");
+    const b = fresh.split("\n");
+    const at = a.findIndex((line, i) => line !== b[i]);
+    throw new Error(`first difference at line ${at + 1}:\n  upgraded: ${a[at]}\n  fresh:    ${b[at]}`);
+  }
+});
+step("a fresh build passes the Phase 8 checks too", () => {
+  supabase(["db", "reset"]);
+  return runSqlFile("phase8_checks.sql");
 });
 step("leave a fresh database (db reset)", () => {
   supabase(["db", "reset"]);
