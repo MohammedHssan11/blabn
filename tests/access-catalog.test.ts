@@ -15,7 +15,9 @@ import {
 import { auditActionKey, errorMessageKey, groupDescriptionKey, groupNameKey, noticeMessageKey, permissionLabelKey, warningMessageKey } from "@/modules/access/ui";
 
 const migrationsDir = path.resolve(__dirname, "../supabase/migrations");
-const migration = (file: string) => readFileSync(path.join(migrationsDir, file), "utf8");
+// Normalize line endings: Git for Windows checks files out with CRLF by default (core.autocrlf=true),
+// and the statement-end patterns below match "\n".
+const migration = (file: string) => readFileSync(path.join(migrationsDir, file), "utf8").replaceAll("\r\n", "\n");
 const ACCOUNTS = migration("20261121000005_accounts_and_permissions.sql");
 
 describe("permission catalog (application code mirrors the database seed)", () => {

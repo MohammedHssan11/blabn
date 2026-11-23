@@ -10,7 +10,8 @@ unit, date basis, rounding, blank-value behaviour, the findings that shape it, a
 Status is recomputed from findings.json, decisions/abdo-decisions.json and
 decisions/agreed-outcomes.json every time this script runs, so rerun it after importing answers.
 Every one of the 37 findings is either linked to a field or listed with the reason it has none.
-Usage (repo root): python scripts/phase1/build_field_map.py
+Usage (repo root): python scripts/phase1/build_field_map.py [--check]
+  --check writes nothing and exits 1 when the committed map differs from the recorded decisions.
 """
 from __future__ import annotations
 
@@ -172,9 +173,8 @@ if errors:
 summary = {"fields": len(out_fields), "pending": sum(f["status"] == "pending" for f in out_fields),
            "agreed_team": sum(f["status"] == "agreed (team)" for f in out_fields),
            "agreed_abdo": sum(f["status"] == "agreed (Abdo)" for f in out_fields)}
-json.dump({"schema": "blabn-phase1-field-map/1", "findings_version": json.load(open(os.path.join(D, "findings.json"), encoding="utf-8"))["version"],
-           "summary": summary, "fields": out_fields, "findings_without_field": NO_FIELD},
-          open(os.path.join(D, "field-map.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+map_json = json.dumps({"schema": "blabn-phase1-field-map/1", "findings_version": json.load(open(os.path.join(D, "findings.json"), encoding="utf-8"))["version"],
+                       "summary": summary, "fields": out_fields, "findings_without_field": NO_FIELD}, ensure_ascii=False, indent=1)
 
 cell = lambda s: str(s).replace("|", "\\|")
 L = ["# Phase 1 report field map", "",
@@ -199,5 +199,18 @@ for x in sorted(pend):
     need = "Required for Phase 1" if F[x].get("abdo") == "required" else ("Before " + F[x].get("abdo_by", "a later phase") if F[x].get("abdo") == "later" else "Decision")
     L.append(f"| {x} | {need} | {', '.join(pend[x])} |")
 L.append("")
-open(os.path.join(D, "FIELD_MAP.md"), "w", encoding="utf-8").write("\n".join(L))
+outputs = {"field-map.json": map_json, "FIELD_MAP.md": "\n".join(L)}
+if "--check" in sys.argv[1:]:
+    # The map is derived from the findings and every decision record (agreed-outcomes.json included).
+    # A recorded decision without a regenerated map leaves stale field statuses in the repository.
+    def on_disk(name):
+        p = os.path.join(D, name)
+        return open(p, encoding="utf-8").read().replace("\r\n", "\n") if os.path.exists(p) else None
+    stale = [name for name, text in outputs.items() if on_disk(name) != text]
+    if stale:
+        sys.exit("field map is out of date (" + ", ".join(stale) + "); run python scripts/phase1/build_field_map.py")
+    print("field map is up to date", json.dumps(summary))
+    sys.exit(0)
+for name, text in outputs.items():
+    open(os.path.join(D, name), "w", encoding="utf-8").write(text)
 print(json.dumps(summary))

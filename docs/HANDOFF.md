@@ -2,7 +2,7 @@
 
 Read this first in every session, then compare it with the actual repository state (`git status`, `git log -3`, `git fetch` and the PR list) before continuing. Update it after each meaningful task and before ending a session.
 
-_Last updated: 22 November 2026. Phases 1 through 5 are complete for local development. Phase 6 is next. The November recipe start date and other unresolved catalog records still require business approval before their consumption can post. Production provisioning of his account is pending._
+_Last updated: 23 November 2026, after the [independent audit of Phases 1–5](#independent-audit-of-phases-15-23-november-2026) at `3145a38`. Phases 1 through 5 are complete for local development; the audit fixed two clean-checkout defects and one stale generated record, and found no defect in the application or database. Phase 6 starts after the audit pull request is merged. The November recipe start date and other unresolved catalog records still require business approval before their consumption can post. Production provisioning of his account is pending. **The GitHub repository is public although these documents require it to stay private — see the first open item of the audit.**_
 
 The bilingual workspace uses the [B.Laban interface refresh](BRAND_DESIGN.md). Phase 4 implements the [confirmed daily close and Yawmeya workflow](phase4/OPERATING_CLOSE.md) on the signed-in person's Supabase session.
 
@@ -10,11 +10,74 @@ The bilingual workspace uses the [B.Laban interface refresh](BRAND_DESIGN.md). P
 
 | Item | Value |
 |---|---|
-| Repository | https://github.com/MohammedHssan11/blabn (private) |
+| Repository | https://github.com/MohammedHssan11/blabn. **GitHub reports it as public (checked 23 November 2026).** [SOURCE_MATERIAL.md](SOURCE_MATERIAL.md), [DATA_AND_REPORTS.md](DATA_AND_REPORTS.md) and [DECISIONS.md](DECISIONS.md) require a private repository. The owner must resolve this; see the audit's open items. |
 | Phase 3 branch | `codex/phase-3-accounts-permissions`, based on `main` at the Phase 2 merge (`2d21e31`). |
-| Development baseline | Fetch `origin/main` before starting Phase 6. Read the Phase 5 handover and its documented posting prerequisites. |
+| Audit branch | `audit/phases-1-5`, from `origin/main` at `3145a38` (Phase 5 merge, PR #8). |
+| Development baseline | Fetch `origin/main` after the audit pull request merges, then start Phase 6. Read the Phase 5 handover and its documented posting prerequisites. |
+| Local tooling | `npm ci` installs the pinned Supabase CLI 2.122.1. Use `npx supabase …`; an older global CLI cannot read `supabase/config.toml`. |
 | Phase 2 pull request | [PR #2](https://github.com/MohammedHssan11/blabn/pull/2), merged. |
 | Local-only material | `C:\Users\mh978\Downloads\abdo\abdo temp\`, `...\outputs\`, `...\archive\`, `...\screenshot\` — outside Git; keep them out of commits. |
+
+## Independent audit of Phases 1–5 (23 November 2026)
+
+**Audited commit:** `3145a38` (`origin/main`, Phase 5 merged in PR #8), checked out fresh as branch `audit/phases-1-5`. The previous checkout was still at `1502722`. Its one untracked file (an older `docs/ARCHITECTURE_REVIEW.md`) was kept in a local Git stash and not committed. Every check below was rerun on this commit in a Windows 11 checkout with Git's default `core.autocrlf=true`, Node 24.15, Python 3.10 with openpyxl 3.1.5, desktop Excel 2019 (16.0), and Docker Desktop. The two disposable local Supabase stacks used Supabase CLI 2.122.1 and PostgreSQL image 17.11.0.006. Nothing ran against a hosted project. No real reference day was entered. All accounts and data were synthetic.
+
+### Defects found and fixed
+
+| # | Defect (reproduced first) | Fix | Regression coverage |
+|---|---|---|---|
+| A1 | **`npm test` failed on a clean Windows checkout:** 3 of 190 tests in `tests/access-catalog.test.ts`. Git for Windows checks the migrations out with CRLF, and the test's statement-end patterns match `\n` only, so it parsed no permissions, groups or grants. | The test normalizes line endings when it reads a migration, as `catalog.test.ts` and `seed.test.ts` already do. | The same three tests now pass on CRLF and LF checkouts: 190/190. |
+| A2 | **The local database could not be started from a clean checkout.** The repository does not pin the Supabase CLI, and every script calls `npx supabase`. A global CLI 2.102 refused `supabase/config.toml` (`local_smtp`, `auth.email.enabled`, `db.orioledb_version`), and without a global CLI, `npx` would fetch whatever version is current. | `supabase` 2.122.1 is pinned as an exact dev dependency. The runbook in [phase3/ACCOUNTS_AND_PERMISSIONS.md](phase3/ACCOUNTS_AND_PERMISSIONS.md#verifying) says to run `npm ci` and lists the services the checks do not need. | The whole suite below ran through the pinned CLI. |
+| A3 | **The committed report field map was stale.** `agreed-outcomes.json` records Abdo's later answers for P1-19 (Phase 4) and P1-24 (22 November), but `FIELD_MAP.md` and `field-map.json` were not regenerated. LG-01 (business date and branch) and INV-08 (book balance) showed "agreed (team)" instead of "agreed (Abdo)". The summary showed 43/5 instead of 41/7. | The map was regenerated. Only those two statuses and the summary changed. | `npm run fieldmap:check` (`build_field_map.py --check`) fails on the stale map and passes on the current one. Run it after every `record_outcome.py`. |
+
+No defect was found in the application code, migrations, policies or calculations. Two candidate issues were investigated and found to be by design:
+
+- `app_operating_report` looks up a branch by code without an organization filter. It runs with the caller's rights, and the `branches_select` policy (`can_see_branch`) already hides other organizations' branches.
+- A later day's stored expected cash is not recomputed after an earlier day is corrected. [OPERATING_CLOSE.md](phase4/OPERATING_CLOSE.md) defines it as an as-counted result, and the opening and carry-forward views do update.
+
+### Results by phase
+
+| Phase | Acceptance item | Result on `3145a38` + fixes | How it was checked |
+|---|---|---|---|
+| 1 | 37 findings against their sources | **Pass.** 37 unique IDs. Every location resolves to a tracked file or a recorded local source and names its sheet or cell. Statuses: 19 verified, 6 partial, 7 rules, 4 deferred, 1 decision. Each partial finding names what remains. | Independent script over `findings.json`, `source-inventory.json` and `corrections-log.csv` (4,400 operations: 4,082 applied, 318 deferred by the owner) |
+| 1 | Corrected copies vs originals | **Pass.** 0 unexplained changes in all 13 copies. The 12 tracked originals match their recorded SHA-256. SRC-13 and SRC-14 match the hashes recorded for the local originals LOC-01 and LOC-02. | `diff_corrected.py` (output byte-identical to the committed file), hash comparison |
+| 1 | Value checks | **Pass.** 71/71 (26 independent, 37 construction, 8 decision). Excel error cells: 54,206 → 0 in the 11 non-ledger copies, 89 → 85 in the ledgers. | `verify_fixes.py` (output byte-identical to the committed file) |
+| 1 | Excel boundary tests in desktop Excel | **Pass.** 26/26: blank vs zero, empty periods, the four average-order cases, inventory blank vs explicit zero counts, monthly deviation. | `boundary_tests.ps1` in Excel 2019 (only the timestamp in `boundary-tests.json` changed) |
+| 1 | Excel recalculation of the originals | **Pass.** 983,305 formulas, 0 differences between cached and recalculated values. The earlier 984,217 also covered 912 formulas in the local-only LOC-03 and LOC-04, which were not available (open item 4). | Full rebuild in Excel 2019 of scratch copies of the 14 tracked workbooks; every formula's cached value compared with the recalculated one |
+| 1 | Abdo's six answers traced to corrections and rules | **Pass.** **P1-03** (accept): `D3:D33` = `IF(N(C)=0,"",ROUND(B/C,2))` in both Daily Sales copies; 1 Oct = 50,125 ÷ 632 = 79.31; 2 Nov = 48,695 ÷ 639 = 76.21; originals keep the typed values; the app averages net sales ÷ orders and leaves zero or blank orders blank (SQL and unit tests). **P1-08** (keep): the weekly ratio cells stay `=C6/G6`-style current ÷ prior. **P1-10** (accept): all four current dates are 10 Nov and all four prior dates 3 Nov, all Tuesdays. **P1-13** (accept): the count precedes the remittance (expected cash through the count instant; Phase 4 SQL and browser). **P1-29** (keep): SRC-13 `'7'!F327` = 12 in the copy and the original; the Kinder mapping stays a separate pending review. **P1-35** (keep): two-day rule; the legacy date is confirmed as expected receipt in `agreed-outcomes.json` (22 Nov). | Audit script reading the cells; decision records |
+| 1 | Question locations, field map, closure | **Pass.** 169/169 location checks. Field map: 54 fields, 6 pending for later phases (after fix A3). `phase1_status.py`: "Phase 1 can close". | `verify_questions.py`, `build_field_map.py --check`, `phase1_status.py` |
+| 2 | Setup from a clean checkout | **Pass after A1 and A2.** `npm ci`, then `npx supabase start` with the pinned CLI applies 12 migrations, the seed and the catalog seed. | Fresh branch from `origin/main` and a fresh local stack |
+| 2 | Typecheck, unit tests, build | **Pass.** `tsc` clean; 190/190 tests in 12 files; production build passes (39 pages generated). | `npm run check` |
+| 2 | SQL checks, seeds, smoke, Arabic and English | **Pass.** Phase 2 SQL checks; `seed:check` and `seed:catalog:check` up to date; 69/69 smoke checks (language routing and cookie, `lang`/`dir` on every page, the cash-count example in both languages, 54 fields with 6 pending). | `npm run db:check`, `npm run test:smoke` |
+| 3 | Sign-in, recovery, roles, branch isolation, audit, upgrade | **Pass.** Phase 3 SQL checks; 27/27 concurrency checks (at least one System Admin remains in every round); 372/372 HTTP checks; 105/105 browser checks in Edge in English and Arabic, with no console errors; upgrade test sections A–D (including the flagged-account and email-reconciliation upgrade); schemas and grants match the fresh build. | `db:check:phase3`, `test:concurrency`, `test:phase3`, `test:browser`, `db:upgrade-test` |
+| 4 | Daily close, denominations, blank vs zero, shortage and overage, remittance, Yawmeya, corrections, reproducible reports | **Pass.** Phase 4 SQL checks: Casablanca GMT in November and the 02:00 cutoff boundaries; missing count blank; explicit zero count real (−497.00); match 0, overage +3.00, shortage; duplicate deposit refused; variance unchanged after the late remittance; correction approval updates the current day-2 opening while the earlier basis is preserved; 17 audit rows. Browser check: 30/30 on a second, empty, disposable stack, then removed. Covers the English desktop and Arabic 375 px statement and Yawmeya, one bank movement, a byte-identical earlier CSV basis, and two simultaneous saves giving exactly one revision. | `db:check:phase4`, `test:phase4` |
+| 5 | Mappings, units, exact recipe quantities with packaging, effective dates, approvals | **Pass.** Phase 5 SQL checks; 147/147 HTTP checks; 71/71 browser checks; upgrade section E (Phase 4 → 5: 556 items, 1,721 recipe lines, Phase 2–5 checks, schema equal to a fresh build); `catalog:extract -- --check` and `seed:catalog:check` up to date. | `db:check:phase5`, `test:phase5`, `test:phase5:browser`, `db:upgrade-test`, extraction check |
+| 5 | Blocked lines stay blocked, valid lines resolve, later versions keep earlier results | **Pass (independent probe, rolled back).** See the details below the table. | Separate SQL probe on synthetic items against the clean seed (not committed; it duplicates `phase5_checks.sql` coverage) |
+
+Phase 5 probe details:
+
+- **Blocked lines.** One request held an unmapped name, a pending Foodics name and a zero quantity. Those three lines were blocked with reasons and consumed nothing. Two valid lines in the same request resolved.
+- **Exact totals.** Totals came out exact with a component used twice in one recipe and a carton → piece packaging conversion: flour 69/400 kg, boxes 9/2, spoons 9.
+- **Later versions.** Approving version 2 closed version 1 on 4 Nov and left the 15 Oct result identical. 5 Nov uses version 2. 30 Sep reports `no_recipe_for_date`.
+- **Refusals.** Same-day and backdated overlaps were refused. So were direct line edits, a change to a conversion an approved recipe uses, and approval by a storekeeper.
+- **Seed state.** A gated November version is refused with `CT001`. No loaded recipe is approved.
+
+### Open items (owner, next action)
+
+1. **Repository visibility — project owner (MohammedHssan11).** GitHub shows `MohammedHssan11/blabn` as **public**, but the documents above require a private repository. The public repository holds the original workbooks, the corrected copies, the 7 November report photos, Abdo's decision text and the local folder paths. No credential or customer phone number was found: `git grep` across history; the non-inventory workbooks were scanned for phone-like values. **Next action:** change the visibility to private in the repository settings, then decide whether history needs to be rewritten. The files have been public since at least commit `1502722` (11 November), so treat them as already exposed. This audit added nothing sensitive.
+2. **November recipe start date (P1-32) — Abdo.** Record it on `/catalog/review`. Until then the 11 affected November versions stay drafts, and their consumption stays blocked.
+3. **Remaining catalog approvals — Abdo or the catalog owner.** Six proposed Foodics names, the Kinder cake (P1-29), 18 unit conflicts, 61 empty Product Mix rows, 9 unlinked recipes and 69 components missing from the inventory list (see the Phase 5 list below). **Next action:** go through the review queue before Phase 6 posts real consumption. All recipes are drafts.
+4. **Phase 1 checks that need local-only material — project owner.**
+   - The byte comparison against `abdo temp/` (LOC-01) was replaced by the recorded-hash match above.
+   - LOC-03 and LOC-04 (`outputs/`) and the cell-cache steps of `extract_workbooks.py` and `compare_recalc.py` were not rerun.
+   - The 318 protected-sheet corrections remain deferred by the owner and need the sheet password.
+   - **Next action:** only if the owner wants them, rerun those scripts on the machine that holds the local folders.
+5. **Voice-note decisions — project owner with Abdo.** The 21 and 22 November decisions are transcribed from private audio that this audit did not have. **Next action:** confirm them at the scheduled Phase 10 walkthrough.
+6. **Stale history notes — project owner (low).** `findings.json` (`remaining_en` for P1-24 and P1-35) and `owner-deferrals.json` (`legacy-order-sheet-date`: deferred) predate the 22 November answers. `agreed-outcomes.json`, `CLOSURE.md` and the Phase 1 README carry the current outcome. They were left unchanged as the dated Phase 1 record. Update them only through `record_outcome.py` if the owner wants them aligned.
+7. **Environment notes — developer.**
+   - The pinned CLI uses PostgreSQL image 17.11.0.006 (earlier sessions recorded 17.12). The Casablanca assertions pass on it. Rerun them on the hosted image before any operational use.
+   - `test:phase5` and `test:phase5:browser` leave approved synthetic recipes in the local database. Run `npx supabase db reset` before using it for anything else.
+   - Not run in this audit, as before: hosted Supabase, a real SMTP provider, Safari, a physical phone.
 
 ## Phase 4 status
 
@@ -395,6 +458,7 @@ Environment: the checks ran on this project's own local Supabase instance (`bala
 
 ## Next steps (in order)
 
-1. Start Phase 6 from updated `origin/main` after the Phase 5 pull request merges. Post theoretical consumption through the approved recipe version using the [Phase 5 handover notes](phase5/CATALOG_AND_RECIPES.md#handover-to-phase-6). Ask Abdo for the November recipe start date first.
+0. Project owner: resolve the repository visibility (audit open item 1), then review and merge the audit pull request.
+1. Start Phase 6 from updated `origin/main` after the audit pull request merges. Post theoretical consumption through the approved recipe version using the [Phase 5 handover notes](phase5/CATALOG_AND_RECIPES.md#handover-to-phase-6). Ask Abdo for the November recipe start date first.
 2. Before production rollout, provision an authorized hosted Supabase project, set the Auth options and `SITE_URL`, configure SMTP, and bootstrap Abdo. See the [accounts and permissions runbook](phase3/ACCOUNTS_AND_PERMISSIONS.md).
 3. Carry forward the weekly total-ratio rule and live comparison source and entry owner (Phase 7), the confirmed expected receipt mapping (Phase 8), Abdo's walkthrough (Phase 10) and reviewed opening data (Phase 11).

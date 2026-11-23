@@ -4,8 +4,8 @@
  "summary": {
   "fields": 54,
   "pending": 6,
-  "agreed_team": 43,
-  "agreed_abdo": 5
+  "agreed_team": 41,
+  "agreed_abdo": 7
  },
  "fields": [
   {
@@ -472,7 +472,7 @@
     "P1-19"
    ],
    "pending_on": [],
-   "status": "agreed (team)",
+   "status": "agreed (Abdo)",
    "waiting_for_answer": [],
    "contested_without_agreed_rule": [],
    "implemented_in": "Phase 4"
@@ -1060,7 +1060,7 @@
     "P1-24"
    ],
    "pending_on": [],
-   "status": "agreed (team)",
+   "status": "agreed (Abdo)",
    "waiting_for_answer": [],
    "contested_without_agreed_rule": [],
    "implemented_in": "Phase 6"
