@@ -214,6 +214,44 @@ step("a fresh build passes the Phase 4 and Phase 5 checks too", () => {
   supabase(["db", "reset"]);
   return [runSqlFile("phase4_checks.sql"), runSqlFile("phase5_checks.sql")].join("; ");
 });
+
+console.log("\nF. Upgrade of a Phase 5 database to Phase 6 (Product Mix, stock movements, counts and variance)");
+const PHASE5_HEAD = "20261122120000";
+step(`reset to migration ${PHASE5_HEAD} (Phase 5 head, with the base and catalog seeds)`, () => {
+  supabase(["db", "reset", "--version", PHASE5_HEAD]);
+  if (psql("select to_regclass('public.stock_movements') is not null") !== "f") throw new Error("Phase 6 tables exist at the Phase 5 head");
+  return runSqlFile("phase5_checks.sql");
+});
+step("the Phase 5 catalog exists before the upgrade", () => {
+  const counts = psql("select (select count(*) from public.catalog_items)||'/'||(select count(*) from public.recipe_lines)||'/'||(select count(*) from public.recipe_versions where status = 'approved')");
+  if (counts !== "556/1721/0") throw new Error(`unexpected catalog counts ${counts}`);
+  return `items/recipe lines/approved versions = ${counts}`;
+});
+step("apply the Phase 6 migration (supabase migration up)", () => {
+  supabase(["migration", "up"]);
+  return psql("select max(version) from supabase_migrations.schema_migrations");
+});
+step("the catalog survived and inventory.consume reached the existing groups", () => {
+  const counts = psql("select (select count(*) from public.catalog_items)||'/'||(select count(*) from public.recipe_lines)");
+  const groups = psql("select string_agg(group_key, ',' order by group_key) from public.group_permissions where permission_key = 'inventory.consume'");
+  if (counts !== "556/1721" || groups !== "manager,storekeeper,system_admin") throw new Error(`catalog ${counts}, groups ${groups}`);
+  return `catalog ${counts}; inventory.consume -> ${groups}`;
+});
+step("Phase 2 to 6 checks after the Phase 5 upgrade", () =>
+  ["phase2_checks.sql", "phase3_checks.sql", "phase4_checks.sql", "phase5_checks.sql", "phase6_checks.sql"].map(runSqlFile).join("; "));
+step("its schema, table privileges and function privileges equal the fresh build", () => {
+  const again = schemaDump();
+  if (again !== fresh) {
+    const a = again.split("\n");
+    const b = fresh.split("\n");
+    const at = a.findIndex((line, i) => line !== b[i]);
+    throw new Error(`first difference at line ${at + 1}:\n  upgraded: ${a[at]}\n  fresh:    ${b[at]}`);
+  }
+});
+step("a fresh build passes the Phase 6 checks too", () => {
+  supabase(["db", "reset"]);
+  return runSqlFile("phase6_checks.sql");
+});
 step("leave a fresh database (db reset)", () => {
   supabase(["db", "reset"]);
 });

@@ -1,7 +1,8 @@
 /**
  * The permission catalog: which permissions exist and which groups hold them.
  *
- * The database is the authority (migration 20261121000005 seeds `permissions`, `permission_groups`
+ * The database is the authority (migration 20261121000005 seeds, and later migrations such as
+ * 20261123120000_phase6_stock add to, `permissions`, `permission_groups`
  * and `group_permissions`; every decision is made there). This file mirrors it for the screens:
  * it names the keys the code asks about and lists what a group grants so the staff screen can
  * show it. tests/access-catalog.test.ts fails if this file and the migration differ, and
@@ -25,6 +26,7 @@ export const PERMISSIONS = [
   { key: "inventory.hospitality", scope: "branch", branchKind: "operational" },
   { key: "inventory.adjust", scope: "branch", branchKind: "operational" },
   { key: "inventory.adjust_approve", scope: "branch", branchKind: "operational" },
+  { key: "inventory.consume", scope: "branch", branchKind: "operational" },
   { key: "purchase_order.propose", scope: "branch", branchKind: "operational" },
   { key: "purchase_order.approve", scope: "branch", branchKind: "operational" },
   { key: "reports.view", scope: "branch", branchKind: "operational" },
@@ -56,9 +58,10 @@ export const GROUP_PERMISSIONS: Record<GroupKey, readonly PermissionKey[]> = {
     "inventory.waste",
     "inventory.hospitality",
     "inventory.adjust",
+    "inventory.consume",
     "purchase_order.propose",
   ],
-  manager: ["daily_close.view", "daily_close.close", "inventory.view", "inventory.adjust_approve", "comparison.view"],
+  manager: ["daily_close.view", "daily_close.close", "inventory.view", "inventory.adjust_approve", "inventory.consume", "comparison.view"],
   comparison_editor: ["comparison.enter"],
   attendance_kiosk: ["attendance.event.create"],
 };

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { createTranslator, flattenKeys, getMessages } from "@/i18n/dictionary";
 import { locales } from "@/i18n/config";
@@ -19,10 +19,12 @@ const migrationsDir = path.resolve(__dirname, "../supabase/migrations");
 // and the statement-end patterns below match "\n".
 const migration = (file: string) => readFileSync(path.join(migrationsDir, file), "utf8").replaceAll("\r\n", "\n");
 const ACCOUNTS = migration("20261121000005_accounts_and_permissions.sql");
+// Later phases add permissions with forward migrations (Phase 6: inventory.consume).
+const ALL_MIGRATIONS = readdirSync(migrationsDir).filter((f) => f.endsWith(".sql")).sort().map(migration).join("\n");
 
 describe("permission catalog (application code mirrors the database seed)", () => {
-  it("lists exactly the permissions the migration inserts, with scope and branch kind", () => {
-    const block = /insert into public\.permissions[\s\S]*?;\n/.exec(ACCOUNTS)?.[0] ?? "";
+  it("lists exactly the permissions the migrations insert, with scope and branch kind", () => {
+    const block = [...ALL_MIGRATIONS.matchAll(/insert into public\.permissions[\s\S]*?;\n/g)].map((m) => m[0]).join("\n");
     const rows = [...block.matchAll(/\('([a-z_.]+)',\s*'[^']*',\s*'(organization|branch)',\s*'(operational|comparison|any)'\)/g)].map((m) => `${m[1]}|${m[2]}|${m[3]}`);
     const code = PERMISSIONS.map((p) => `${p.key}|${p.scope}|${p.branchKind}`);
     expect(rows.length).toBeGreaterThan(20);
@@ -37,11 +39,15 @@ describe("permission catalog (application code mirrors the database seed)", () =
   });
 
   it("grants each group exactly the permissions the migration grants", () => {
-    const explicit = /insert into public\.group_permissions \(group_key, permission_key\) values([\s\S]*?);\n/.exec(ACCOUNTS)?.[1] ?? "";
+    const explicit = [...ALL_MIGRATIONS.matchAll(/insert into public\.group_permissions \(group_key, permission_key\) values([\s\S]*?);\n/g)]
+      .map((m) => m[1]).join("\n");
     const fromSql = new Map<string, string[]>();
     for (const [, group, permission] of explicit.matchAll(/\('([a-z_]+)',\s*'([a-z_.]+)'\)/g)) {
       fromSql.set(group as string, [...(fromSql.get(group as string) ?? []), permission as string]);
     }
+    // Migration 05 grants System Admin every permission that existed then; later migrations grant it each new one.
+    const later = PERMISSIONS.map((p) => p.key).filter((key) => !/insert into public\.permissions[\s\S]*?;\n/.exec(ACCOUNTS)?.[0].includes(`'${key}'`));
+    for (const key of later) expect(fromSql.get("system_admin") ?? [], `system_admin is granted ${key}`).toContain(key);
     fromSql.set("system_admin", PERMISSIONS.map((p) => p.key)); // "select ... from public.permissions"
     expect(ACCOUNTS).toMatch(/select 'system_admin', key from public\.permissions/);
     for (const group of GROUPS) {

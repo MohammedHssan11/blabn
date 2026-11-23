@@ -139,7 +139,7 @@ export const WARNING_CODES = ["discontinued_before_date"] as const;
 
 export type CatalogErrorCode =
   | "forbidden" | "invalid_input" | "unavailable" | "catalog_stale" | "catalog_duplicate" | "catalog_overlap"
-  | "catalog_date_unconfirmed" | "catalog_incomplete" | "catalog_unit";
+  | "catalog_date_unconfirmed" | "catalog_incomplete" | "catalog_unit" | "catalog_recipe_posted";
 
 /** SQLSTATE of a refused catalog command -> the message code shown to the person. */
 export function mapCatalogError(code: string | undefined): CatalogErrorCode {
@@ -151,6 +151,7 @@ export function mapCatalogError(code: string | undefined): CatalogErrorCode {
     case "CT001": return "catalog_date_unconfirmed";
     case "CT002": return "catalog_incomplete";
     case "CT003": return "catalog_unit";
+    case "CT004": return "catalog_recipe_posted";
     default: return code && (code.startsWith("22") || code.startsWith("23")) ? "invalid_input" : "unavailable";
   }
 }

@@ -256,6 +256,8 @@ The Storekeeper can see what arrived, what was consumed, expected stock, physica
 - Product Mix section totals reconcile without inflating the day's total.
 - Inventory figures follow the Phase 1 outcomes and Abdo's decisions on differences between the October and November inventory workbooks (SRC-06 and SRC-07), including the recipe effective date (P1-32) and units (P1-31).
 
+Local implementation status and evidence: [Phase 6 stock and variance](phase6/STOCK_AND_VARIANCE.md) and the [handover](HANDOFF.md#phase-6-status). Real consumption stays blocked until Abdo approves the recipes and the November start date. Receipts link to purchase-order lines in Phase 8.
+
 ## Phase 7 — Cross-branch sales comparison
 
 ### Goal
