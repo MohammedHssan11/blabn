@@ -10,6 +10,8 @@ Phase 3 local acceptance is complete. It adds sign-in, password recovery, staff 
 
 Phase 4 acceptance is complete locally. It adds the [daily close, cash reconciliation and Yawmeya workflow](docs/phase4/OPERATING_CLOSE.md) with two ledgers, role-based approvals and reproducible report revisions. Phase 5 adds the [catalog, Foodics mappings, units and effective-dated recipes](docs/phase5/CATALOG_AND_RECIPES.md) with a review queue and an exact consumption-eligibility check; Phase 6 is next.
 
+Phases 6–8 (stock and variance, cross-branch comparison, replenishment) are merged. Phase 9, the [five Excel report families](docs/phase9/EXCEL_REPORTS.md), is implemented and verified locally on `phase-9/excel-reports` and waits for review.
+
 The bilingual interface uses B.Laban’s blue and white palette across sign-in, the workspace, and operational screens. See the [brand references](docs/BRAND_DESIGN.md).
 
 ## Product scope
@@ -49,6 +51,7 @@ The bilingual interface uses B.Laban’s blue and white palette across sign-in, 
 - [Phase 4 operating workflow](docs/phase4/OPERATING_CLOSE.md)
 - [Abdo's workflow decisions for Phases 5–11](docs/ABDO_WORKFLOW_DECISIONS.md)
 - [Phase 5 catalog, units and recipes](docs/phase5/CATALOG_AND_RECIPES.md)
+- [Phase 9 Excel reports](docs/phase9/EXCEL_REPORTS.md)
 
 ## Repository rules
 

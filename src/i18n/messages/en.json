@@ -24,7 +24,8 @@
     "catalog": "Catalog and recipes",
     "stock": "Stock",
     "comparisonEntry": "Comparison entry",
-    "replenishment": "Replenishment"
+    "replenishment": "Replenishment",
+    "exports": "Excel reports"
   },
   "common": {
     "blank": "Blank",
@@ -477,7 +478,12 @@
     "po_override_reason": "The final quantity differs from the suggestion: give a reason.",
     "po_request_reused": "This form was already used for a different request. Reload the page.",
     "po_stale": "The settings were changed by someone else. Reload and try again.",
-    "po_expected_invalid": "Choose an expected receipt date from the order business date on (within 60 days)."
+    "po_expected_invalid": "Choose an expected receipt date from the order business date on (within 60 days).",
+    "export_invalid": "The report, branches or period are not valid. Choose them again.",
+    "export_failed": "The workbook could not be built or stored. Nothing was marked complete. You can retry.",
+    "export_busy": "This export is being built right now. Refresh in a moment.",
+    "export_not_found": "That export does not exist or is not yours.",
+    "export_request_reused": "This form was already used for a different export. Reload the page and try again."
   },
   "notices": {
     "created": "The account was created. Give the temporary password to the person privately.",
@@ -513,7 +519,9 @@
     "po_receive": "Receipt saved and added to stock.",
     "po_cancel_rest": "The rest of the line is cancelled.",
     "po_replayed": "This form was already sent. Nothing new was saved.",
-    "po_settings_saved": "Settings saved."
+    "po_settings_saved": "Settings saved.",
+    "export_complete": "The workbook is ready and stored privately.",
+    "export_replayed": "This form was already sent: here is the same export, not a second copy."
   },
   "warnings": {
     "auth_not_updated": "The change was saved, but the sign-in service did not confirm it. Every request from this person is already refused; try the same action again to finish."
@@ -1554,5 +1562,84 @@
       "twoDay": "Exceptions to the two-day rule: a supplier, a weekend or a holiday?",
       "cutoff": "Which business day does an order created after midnight belong to?"
     }
+  },
+  "exports": {
+    "title": "Excel reports",
+    "intro": "Choose a report, its period and the workbook language. Each file is built from saved data, checked, stored privately and recorded with the revisions it came from. A finished file never changes; export again to include later corrections.",
+    "newTitle": "Request a workbook",
+    "none": "You have no report you may export.",
+    "family": {
+      "sales_comparison": "Sales comparison",
+      "daily_sales": "Daily Sales Maarief",
+      "daily_statement": "Daily statement",
+      "daily_ledger": "Yawmeya (daily ledger)",
+      "inventory": "Inventory and replenishment"
+    },
+    "familyHint": {
+      "sales_comparison": "Al Quds, Maarif, Bourgogne and their total: one weekday against the same weekday, or a month against the previous month.",
+      "daily_sales": "Sales, orders, average order value, cash, expenses, card and ratios for every day of the month.",
+      "daily_statement": "One sheet per closed day: expenses, card, counted cash and the reconciliation saved at count time.",
+      "daily_ledger": "Cash and purchasing-custody ledgers, sales, payments, count, cancellations, carry-forward and the month summary.",
+      "inventory": "Product Mix, recipe consumption, stock movements, counts, deviation and purchase orders with their three dates."
+    },
+    "mode": "Period",
+    "modeMonth": "Month",
+    "modeDay": "One business day",
+    "modeWeek": "Weekly (same weekday)",
+    "month": "Month",
+    "date": "Business date",
+    "current": "Current date",
+    "prior": "Prior date (same weekday)",
+    "branches": "Branches",
+    "workbookLanguage": "Workbook language",
+    "arabic": "Arabic",
+    "english": "English",
+    "drafts": "Include days that are not closed (draft export)",
+    "submit": "Build workbook",
+    "mine": "My exports",
+    "noExports": "No export yet.",
+    "columns": {
+      "requested": "Requested",
+      "report": "Report",
+      "branches": "Branches",
+      "period": "Period",
+      "language": "Language",
+      "status": "Status",
+      "file": "File"
+    },
+    "status": {
+      "pending": "Waiting",
+      "running": "Building",
+      "failed": "Failed",
+      "complete": "Complete"
+    },
+    "draftTag": "Draft",
+    "download": "Download",
+    "retry": "Retry",
+    "details": "Details",
+    "detailTitle": "Export details",
+    "provenance": "Provenance",
+    "template": "Template version",
+    "calc": "Calculation rules version",
+    "snapshot": "Data as of",
+    "fingerprint": "Data fingerprint",
+    "fileSha": "File SHA-256",
+    "bytes": "Size (bytes)",
+    "attempt": "Attempt",
+    "lastError": "Last error",
+    "sources": "Saved sources",
+    "history": "History",
+    "event": "Event",
+    "actor": "By",
+    "events": {
+      "requested": "Requested",
+      "started": "Attempt started",
+      "failed": "Attempt failed",
+      "completed": "Completed",
+      "downloaded": "Downloaded",
+      "refused": "Refused (no permission)"
+    },
+    "notAllowed": "You no longer hold the permission for this report, so the file cannot be downloaded.",
+    "immutable": "This file is kept exactly as it was built. A later correction appears only in a new export."
   }
 }

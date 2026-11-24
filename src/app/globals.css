@@ -467,3 +467,9 @@ select.wide { max-width: 100%; min-width: 0; width: 100%; }
 .chips li.obs-before_live { color: var(--muted); }
 fieldset.stack { border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; margin: 0; min-width: 0; }
 fieldset.stack legend { font-weight: 600; padding: 0 4px; }
+
+/* Phase 9: export details (label / value pairs). */
+dl.kv { display: grid; grid-template-columns: minmax(8rem, max-content) 1fr; gap: 4px 16px; margin: 0; }
+dl.kv dt { font-weight: 600; }
+dl.kv dd { margin: 0; min-width: 0; }
+@media (max-width: 480px) { dl.kv { grid-template-columns: 1fr; } dl.kv dd { margin-bottom: 6px; } }

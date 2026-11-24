@@ -88,6 +88,16 @@ describe("every route handler checks access", () => {
 
   it("downloads are never cached", () => {
     expect(read("src/app/api/exports/[kind]/route.ts")).toMatch(/"Cache-Control": "no-store"/);
+    expect(read("src/app/api/report-exports/[id]/route.ts")).toMatch(/"Cache-Control": "no-store"/);
+  });
+
+  it("Phase 9: an Excel download re-checks the family's permission for every branch of the export", () => {
+    const route = read("src/app/api/report-exports/[id]/route.ts");
+    expect(route).toMatch(/authorizeRequest\(exportRequirements\(record\.family, record\.branches, record\.include_drafts\)\)/);
+    expect(route.indexOf("authorizeRequest(exportRequirements")).toBeLessThan(route.indexOf("downloadExport("));
+    const actions = read("src/modules/exports/actions.ts");
+    expect(actions).toMatch(/require: exportRequirements\(checked\.family, checked\.branches, includeDrafts\)/);
+    expect(actions).toMatch(/require: exportRequirements\(record\.family, record\.branches, record\.include_drafts\)/);
   });
 });
 
@@ -99,7 +109,8 @@ describe("server actions authorize before they act", () => {
     return parts.map((part) => ({ name: part.slice(0, part.indexOf("(")), body: part }));
   }
 
-  const GUARDED_FILES = ["src/modules/access/staff-actions.ts", "src/modules/inventory/actions.ts", "src/modules/replenishment/actions.ts"];
+  const GUARDED_FILES = ["src/modules/access/staff-actions.ts", "src/modules/inventory/actions.ts", "src/modules/replenishment/actions.ts",
+    "src/modules/exports/actions.ts"];
   for (const file of GUARDED_FILES) {
     it(`${file}: every action calls requireAccess before anything that reads or writes`, () => {
       const list = actions(file);

@@ -10,6 +10,7 @@ import { MainNav } from "@/components/MainNav";
 import { getAccessContext, holds } from "@/modules/access/session";
 import { ALL_BRANCH_CODES, COMPARISON_BRANCH_CODES, OPERATING_BRANCH_CODE } from "@/modules/access/catalog";
 import { signOutAction } from "@/modules/access/auth-actions";
+import { isReportExportOwner } from "@/modules/exports/access";
 
 export const dynamicParams = false;
 
@@ -45,6 +46,9 @@ export default async function LocaleLayout({
 
   // Menu entries are a convenience: they only list what the person holds. Every page checks again.
   const access = await getAccessContext();
+  const showExcelReports = access.state === "active"
+    && (holds(access, "reports.export", OPERATING_BRANCH_CODE) || ALL_BRANCH_CODES.some((code) => holds(access, "comparison.export", code)))
+    && await isReportExportOwner();
   const items =
     access.state === "active"
       ? [
@@ -65,6 +69,8 @@ export default async function LocaleLayout({
             ? [{ href: `/${locale}/comparison/entry`, label: t("nav.comparisonEntry") }]
             : []),
           ...(holds(access, "reports.view", OPERATING_BRANCH_CODE) ? [{ href: `/${locale}/reports`, label: t("nav.reportMap") }] : []),
+          // Phase 9: Excel reports, for a person who may export at least one report family.
+          ...(showExcelReports ? [{ href: `/${locale}/reports/exports`, label: t("nav.exports") }] : []),
           ...(holds(access, "inventory.view", OPERATING_BRANCH_CODE) ? [{ href: `/${locale}/inventory`, label: t("nav.stock") }] : []),
           ...(holds(access, "inventory.view", OPERATING_BRANCH_CODE) ? [{ href: `/${locale}/replenishment`, label: t("nav.replenishment") }] : []),
           ...(holds(access, "inventory.adjust", OPERATING_BRANCH_CODE)
