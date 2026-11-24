@@ -2,7 +2,7 @@
 
 Read this first in every session, then compare it with the actual repository state (`git status`, `git log -3`, `git fetch` and the PR list) before continuing. Update it after each meaningful task and before ending a session.
 
-_Last updated: 23 November 2026. [Phase 8](#phase-8-status) (three-month planning, purchase orders and receiving) is merged into `main` through PR #14 (`e1403fb`), and migration `20261125090000_phase8_replenishment.sql` is applied to the shared hosted Supabase project (see [Hosted deployment](#hosted-deployment)). Phase 7 (cross-branch comparison) was merged through PR #12 (`a265524`) and is also applied. Waiting on Abdo: the Phase 8 replenishment decisions (minimum observations, safety stock, constraints, two-day exceptions, after-midnight orders), the live source and entry owner for Al Quds and Bourgogne, the November recipe start date and other catalog records. Production provisioning of his account is pending. **The GitHub repository is public although these documents require it to stay private — see the first open item of the audit.**_
+_Last updated: 24 November 2026. [Phase 9](#phase-9-status) passed local release review. The owner authorized publication on GitHub at its current visibility. Hosted deployment and the production Excel account designation are pending. See the [hosted deployment record](#hosted-deployment) for Phases 7 and 8._
 
 The bilingual workspace uses the [B.Laban interface refresh](BRAND_DESIGN.md). Phase 4 implements the [confirmed daily close and Yawmeya workflow](phase4/OPERATING_CLOSE.md) on the signed-in person's Supabase session.
 
@@ -10,16 +10,103 @@ The bilingual workspace uses the [B.Laban interface refresh](BRAND_DESIGN.md). P
 
 | Item | Value |
 |---|---|
-| Repository | https://github.com/MohammedHssan11/blabn. **GitHub reports it as public (checked 23 November 2026).** [SOURCE_MATERIAL.md](SOURCE_MATERIAL.md), [DATA_AND_REPORTS.md](DATA_AND_REPORTS.md) and [DECISIONS.md](DECISIONS.md) require a private repository. The owner must resolve this; see the audit's open items. |
+| Repository | https://github.com/MohammedHssan11/blabn. The repository is public. See the audit for the earlier visibility findings. |
 | Phase 3 branch | `codex/phase-3-accounts-permissions`, based on `main` at the Phase 2 merge (`2d21e31`). |
 | Audit and Phase 6 | [PR #9](https://github.com/MohammedHssan11/blabn/pull/9) (`audit/phases-1-5`) merged as `b2fdc42`; [PR #10](https://github.com/MohammedHssan11/blabn/pull/10) (`phase-6/stock`) merged as `5994747`. |
 | Phase 7 | [PR #12](https://github.com/MohammedHssan11/blabn/pull/12) (`phase-7/comparison`) merged as `a265524`. |
 | Phase 8 | [PR #14](https://github.com/MohammedHssan11/blabn/pull/14) (`phase-8/replenishment`) merged as `e1403fb`. |
-| Development baseline | `origin/main` at `e1403fb` or later. Start Phase 9 from there. |
+| Phase 9 | Excel reports, reviewed locally and submitted through the Phase 9 pull request. |
+| Development baseline | `origin/main` at `8c6df2b`. Phase 10 starts after Phase 9 is reviewed and merged. |
+| Phase 9 validation | Disposable Supabase stack balaban-p9 with synthetic data. Workbook samples and the full release receipt are local. |
 | Hosted Supabase | Shared project `xitryskkqgtkpdawddqe`. Hosted migration history matches `main` through `20261125090000` (23 November 2026). Deploy with `npx supabase db push --linked --dry-run` first; never use `--include-seed`, because the seed files are local test data. |
 | Local tooling | `npm ci` installs the pinned Supabase CLI 2.122.1. Use `npx supabase …`; an older global CLI cannot read `supabase/config.toml`. |
 | Phase 2 pull request | [PR #2](https://github.com/MohammedHssan11/blabn/pull/2), merged. |
 | Local-only material | `C:\Users\mh978\Downloads\abdo\abdo temp\`, `...\outputs\`, `...\archive\`, `...\screenshot\` — outside Git; keep them out of commits. |
+
+## Phase 9 status
+
+### Release review on 24 November 2026
+
+| Check | Result |
+|---|---|
+| Revision | The Phase 9 release source and the access and Storage fixes were verified locally. |
+| Abdo-only Excel access | The original grants allowed any System Admin to export. The release adds a private, single-account designation alongside live branch and draft permissions. Signed-in staff start without a designation, including System Admins. The production operator must verify and designate Abdo's provisioned staff account. [Account setup](phase9/EXCEL_REPORTS.md#production-account-setup) |
+| Storage and retries | The migration creates a private 25 MiB bucket with the XLSX MIME restriction. Download authorizes against the current designation and every saved branch. Storage only serves authenticated downloads of completed files and refuses signed URLs. Concurrent submissions share one export, stale attempts cannot complete it and a completed file stays byte-identical. |
+| Desktop Excel | Opened `daily_sales_ar.xlsx` and `daily_ledger_ar.xlsx` in Microsoft Excel. Both displayed right-to-left with readable Arabic. Daily Sales showed 1,554.50 MAD total, 22 orders and a 70.66 average. The 2 November Yawmeya showed 1,234.50 MAD of sales and a −3.00 MAD cash closing balance. Empty days stayed blank and recorded zeros showed as `0.00`. Excel preview showed the Daily Sales sheet on one A4 landscape page and the 2 November Yawmeya on two A4 landscape pages. |
+| `npm run check` | Passed on the `balaban-p9` validation copy. Typecheck and production build passed, with 291/291 unit tests in 16 files. |
+| Phase 9 database check | `npx supabase db reset --local` and `npm run db:check:phase9` passed. Tested account designation, branch and draft grants, Storage restrictions, frozen records and revocation. |
+| Phase 9 HTTP check | `npm run test:phase9` passed. The repeat with `--no-reset` after the upgrade suite passed all 124 checks. Tested all five families, live revocation at the app and Storage API, signed URL refusal, concurrent submission, retry and stable downloads. |
+| Database upgrade | `npm run db:upgrade-test` passed paths A–I. The Phase 8 to Phase 9 path preserved saved data, passed the Phase 2–9 SQL checks and matched the fresh schema and grants. |
+| Local security advisors | `npx supabase db advisors --local --type security --level warn --fail-on none` returned four mutable search-path warnings in earlier phases and no findings for Phase 9. |
+| GitHub | The owner approved publishing Phase 9 through a pull request against main. |
+| Hosted Supabase | Phase 9 hosted verification and migration are pending a separate deployment. |
+| Validation stack | Phase 9 SQL checks passed after resetting balaban-p9 to fresh disposable seeds. |
+
+**Hosted deployment.** Deploy separately from the merged `main` revision when authorized. Confirm the project reference and check the existing bucket and policies, including broad policies that may match `report-exports`. Confirm that the hosted Storage schema provides `storage.allow_only_operation(text)`. Run `npx supabase db push --linked --dry-run` and apply with `npx supabase db push --linked` only if the preview lists exactly `20261126090000_phase9_report_exports.sql` and zero seeds. Verify the remote migration, the private 25 MiB XLSX bucket and its policies, then repeat the dry run. Provision and designate the verified Abdo account before live Excel access.
+
+**Morning developer.** Use the existing workbooks for the Phase 10 bilingual walkthrough. Under the confirmed P1-19 workflow, Abdo counts the Maarif drawer and the counter, role, time, cashier and recorder remain separate fields. Carry forward the two approved Dubai chocolate cake Foodics spellings (P1-28) and mixed-nut kilogram conversions (P1-31). Review only the unresolved mappings and units, and record the P1-32 November recipe start date on `/catalog/review`. The Yawmeya template and sample still show a pending P1-19 annotation. Use the agreed first live business date for Maarif sales. At the Phase 11 handover, collect reviewed opening balances, opening stock and outstanding orders. [Phase 4 decisions](phase4/ABDO_DECISIONS.md), [Phase 5 decisions](phase5/CATALOG_AND_RECIPES.md)
+
+### Separate follow-up after Phase 9 merges
+
+Implement an editable safety-stock default of **20% of forecast consumption for the coverage period**. Add that safety stock to the coverage forecast before subtracting available stock and confirmed incoming stock. Leave image upload and OCR for later.
+
+### Earlier Phase 9 implementation evidence
+
+The original implementation used synthetic data. The earlier results below describe the branch before the account designation and Storage operation restrictions. See the [report implementation](phase9/EXCEL_REPORTS.md).
+
+What was built:
+- Migration `20261126090000_phase9_report_exports.sql`:
+  - `report_exports` (family, branches, period, language, drafts, requester, status, attempt, snapshot, template and calculation-rule versions, sources, data fingerprint, private file path, file SHA-256 and size) and `report_export_events`, both append-only, with a completed export frozen;
+  - the commands `app_report_export_request / _claim / _complete / _fail / _download`, plus `app_report_exports` and `app_report_export`;
+  - the private bucket `report-exports` (25 MiB, xlsx only) and Storage insert and select policies that re-check the permission. There is no update or delete policy.
+- `src/modules/exports`: language-neutral report model, Arabic and English labels from Abdo's sheet headings, five builders on the Phase 4–8 readers, ExcelJS writer (A4, fit to width, right-to-left Arabic, values only), and a file scan.
+- Screens `/reports/exports` and `/reports/exports/<id>` in both languages, and the download `/api/report-exports/<id>`. Menu entry "Excel reports".
+- Library: ExcelJS 4.4.0, tested first: a 20,000-row Arabic sheet built in about 1 s and opened and paginated in desktop Excel 16. `uuid` is overridden to 11.1.1 (`npm audit`: 0). `jszip` is a direct dependency.
+- No new permission: `comparison.export` per branch for the comparison; `reports.export` + `daily_close.view` (+ `daily_close.export_draft` for drafts) for the three daily families; `reports.export` + `inventory.view` for inventory.
+
+| Acceptance check | Result | Evidence |
+|---|---|---|
+| Every report family opens and prints clearly in Excel | **Pass** | 14 synthetic workbooks (all five families, both languages, day and month periods) opened in desktop Excel 16.0 and exported to PDF: every sheet right-to-left in Arabic and left-to-right in English, 2–50 printed pages, no formula or error cell. Previews of the Arabic Daily Sales, Yawmeya day, weekly comparison and stock sheets inspected. `outputs\phase9\` (local only) |
+| Shared values appear consistently | **Pass** | `test:phase9` §4: 1,234.50 MAD of 2 November is the same in Daily Sales, the statement (month and day) and the Yawmeya. Arabic and English files have identical numeric cells and the same data fingerprint. |
+| An earlier export stays reviewable after a correction, with its source revision | **Pass** | §5: after an approved correction the earlier file downloads byte for byte, and its record and page keep the earlier `operating_basis`. A new export shows 1,334.50 with a later basis. |
+| Partial months and missing values keep their meaning | **Pass** | Unit tests and §3–4: blank for not closed, 0.00 for a recorded zero, "days included n of m", coverage "n of m", reasons instead of ratios, a blank count versus a counted zero |
+| A failed export can be retried without duplicate completed files | **Pass** | `phase9_checks.sql` §4 (stale attempt cannot complete; size must match the stored object). §6: Storage refused → failed, nothing stored. Retry → complete. Re-sending the form returns the same export. History: started 1, failed 1, started 2, completed 2; one row, one object. |
+| Download fails after the permission is lost | **Pass** | SQL §5 (download refused and recorded, Storage invisible, record kept). §7: 200 before, 403 after the group is removed, a direct Storage read refused, not downloadable by another administrator (404), the cashier (404) or anonymous visitors (401). |
+| No export of a branch without permission | **Pass** | SQL §2. §8: the Al Quds exporter exports Al Quds only; forms forged for Bourgogne or Maarif create nothing; the database answers `42501`; the manager cannot export the Yawmeya. |
+| Historical reporting figures appear only where needed and change no live balance | **Pass** | §10: a historical Bourgogne figure appears in the comparison with its reference and is counted in the record. The Maarif carry-forward, the daily-close revisions and stock are unchanged. Daily Sales holds no Bourgogne figure. Maarif historical entry is refused. |
+| Drafts only where allowed | **Pass** | §9: the draft day appears only in a draft export by a person with `daily_close.export_draft`. The cashier (draft CSV only) cannot export Excel. |
+| User text written literally; no formulas, external links, broken references or error values | **Pass** | Unit tests (the scan refuses an injected formula, error value and external link). Every exported file is scanned before storage and again by `test:phase9`. `=SUM(1)+"…"` and `@…` stay text. |
+
+| Command (final code, disposable stack `balaban-p9`) | Result |
+|---|---|
+| `npm run check` | `tsc` clean; **291/291** tests in 16 files (260 before; +29 in `tests/exports.test.ts`, +2 architecture cases); build passes (2 new dynamic pages, 1 route) |
+| `seed:check`, `seed:catalog:check`, `fieldmap:check` | up to date (54 fields, 6 pending) |
+| `db:check`, `db:check:phase3` … `db:check:phase9` | all pass on a fresh database (Phase 2–8 also passed before any change) |
+| `npm run db:upgrade-test` | pass, paths A–I. I = Phase 8 → 9: a saved day and a stock movement unchanged; private bucket and policies created; no export; Phase 2–9 checks pass; schema and grants equal a fresh build |
+| `npm run test:phase9` | **116/116** HTTP checks (all five families in both languages) |
+| Earlier phases | `test:phase3` 372/372; `test:browser` 105/105; `test:phase4` 30/30 (empty database); smoke 69/69; concurrency pass; `test:phase5` 147/147; `test:phase5:browser` 71/71; `test:phase6` 70/70; `test:phase6:browser` 21/21; `test:phase7` 130/130; `test:phase7:browser` 71/71; `test:phase8` 109/109; `test:phase8:browser` 112/112 |
+| Main development stack `balaban-dev` | untouched: row counts, audit hash and migration list identical before and after; `.env.local` unchanged |
+
+Found and fixed while building:
+- The shared append-only trigger read `status` on the history table (no such column).
+- A refused download raised an error, which also rolled back the "refused" history entry. It is now answered and kept.
+- Duplicate branches in a request were silently merged; they are now refused.
+- Blank daily-sales cells lost their type; they are now typed blanks.
+- The comparison source label repeated itself.
+
+Earlier files changed, with reasons:
+- `src/modules/closing/operations.ts`: exports the day type.
+- `src/app/[locale]/layout.tsx`: menu entry.
+- `tests/access-architecture.test.ts`: export actions guarded; download re-checks every branch.
+- `scripts/phase3/upgrade-test.mjs`: path I.
+- `next.config.ts`: `serverExternalPackages`.
+- i18n catalogs.
+
+No earlier SQL check file changed.
+
+Not verified: a printed paper copy; Excel on another machine or Excel for Mac; LibreOffice; the hosted project; the shared Storage service in production (only the local Storage API ran).
+
+Other open implementation items are whether Maarif figures before the first live date are needed, adding an "as of" reader for comparison entries and Product Mix, and cleaning up abandoned attempt objects.
 
 ## Phase 8 status
 
@@ -70,12 +157,12 @@ Found and fixed while building: a receipt in the same minute as the order's crea
 Open items:
 - **Abdo: the open replenishment decisions.** Each is a setting on `/replenishment/settings` that starts empty. Until the minimum is set, every item stays in review and only manual orders are possible. Questions, in plain Arabic (also shown on that page):
   1. Minimum observations: «يا عبده، عشان البرنامج يقترح كمية لصنف: محتاج كام يوم كامل من نفس يوم الأسبوع (مثلاً كام سبت فات البيع والجرد بتوعهم متسجلين كاملين) قبل ما نثق في المتوسط؟ 3 ولا 4 ولا أكتر؟»
-  2. Safety stock: «لكل صنف، عايز نسيب كام زيادة احتياطي فوق الاستهلاك المتوقع (مخزون الأمان)؟ ولو صنف مش محتاج احتياطي نكتبله صفر.»
+  2. Safety stock default agreed during the Phase 9 review. See the [separate implementation follow-up](#separate-follow-up-after-phase-9-merges).
   3. Pack size, supplier minimum, shelf life, cut-off: «فيه أصناف بتتطلب بالكرتونة أو بعدد ثابت (حجم العبوة)؟ فيه أقل كمية لازم تتطلب من المصنع أو المخزن؟ الصنف بيفضل صالح كام يوم؟ وآخر ساعة ينفع تبعت فيها الطلبية لكل جهة كام؟»
   4. Exceptions to the two-day rule: «قاعدة إن الطلبية بتوصل بعد يومين من يوم الطلب: فيه استثناءات؟ مثلاً جهة بتوصل في يوم واحد، أو يوم إجازة أو يوم في الأسبوع مفيش فيه توريد؟»
   5. Orders after midnight: «لو الطلبية اتعملت بعد نص الليل (مثلاً الساعة 1 أو 2 الفجر)، نحسبها على أنهي يوم؟ البرنامج دلوقتي بيحسب أي حاجة قبل الساعة 2 الفجر على اليوم اللي فات. ده صح ولا نغيّر الساعة؟»
 
-  **Next action (administrator):** enter answers 1–4 on `/replenishment/settings`. For 5, a developer changes the rule only after his answer; no new after-midnight rule was automated.
+  **Next action for the administrator.** Enter answers 1, 3 and 4 on `/replenishment/settings`. For 5, await Abdo's answer before changing the after-midnight rule.
 - **Abdo / administrator: the first live business date.** Planning history starts there (`/comparison/settings`, the Phase 7 per-branch date). Until it is set, every item is in review. **Next action:** set it at handover (Phase 11).
 - **Developer (later phase): correcting a saved purchase-order receipt.** A Phase 6 reversal refuses it on purpose; today the fixes are an over-receipt with a reason or a Phase 6 adjustment. **Next action:** design a receipt-correction command that keeps the one-movement rule.
 - **Developer (Phase 11): legacy order history.** `import_legacy` exists without a screen. **Next action:** import real SRC-01 history only in a private environment, if the owner wants it.
@@ -669,6 +756,6 @@ Environment: the checks ran on this project's own local Supabase instance (`bala
 0. Project owner: resolve the repository visibility (audit open item 1).
 1. Ask Abdo the five Phase 8 questions (see "Phase 8 status") and the Phase 7 question (live source, entry owner and start day for Al Quds and Bourgogne); record the answers on `/replenishment/settings` and `/comparison/settings`.
 2. Developer: investigate the Phase 4 concurrent-save gateway timeout on PostgREST v14.18 (Phase 7 open items) before concurrent use on the hosted project.
-3. Start Phase 9 (the five Excel report families) from `main` at `e1403fb` or later. Real consumption, and so real planning history, still needs Abdo's November recipe start date and the review-queue approvals (see "Phase 6 status").
+3. Follow the Phase 9 hosted deployment steps when separately authorized. Use the Phase 10 walkthrough to resolve the remaining recipe date and review-queue items. [Phase 9 status](#phase-9-status)
 4. Before production rollout, confirm whether the shared project `xitryskkqgtkpdawddqe` is the production project or a separate one is needed. Then set the Auth options and `SITE_URL`, configure SMTP, and bootstrap Abdo. See the [accounts and permissions runbook](phase3/ACCOUNTS_AND_PERMISSIONS.md).
 5. Carry forward Abdo's walkthrough (Phase 10) and the reviewed opening data, first live business date and outstanding orders (Phase 11).

@@ -4,7 +4,7 @@
 //                  the Phase 2 and Phase 3 checks;
 //   B. fresh     - rebuild from scratch (all migrations + seed) and run the same checks;
 //   C. equality  - the upgraded and the freshly built schemas are identical.
-//   D-H. later upgrade paths (migration 08 with a flagged account; Phase 4 -> 5; 5 -> 6; 6 -> 7; 7 -> 8).
+//   D-I. later upgrade paths (migration 08 with a flagged account; Phase 4 -> 5; 5 -> 6; 6 -> 7; 7 -> 8; 8 -> 9).
 // Usage: npm run db:upgrade-test   (Docker running, `npx supabase start` done)
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
@@ -369,6 +369,77 @@ step("its schema, table privileges and function privileges equal the fresh build
 step("a fresh build passes the Phase 8 checks too", () => {
   supabase(["db", "reset"]);
   return runSqlFile("phase8_checks.sql");
+});
+console.log("\nI. Upgrade of a Phase 8 database to Phase 9 (Excel report exports and their private storage)");
+const PHASE8_HEAD = "20261125090000";
+const SAVED = `select json_build_array(
+  (select coalesce(json_agg(json_build_array(id, revision, state, data, expected_at_count, cash_change, custody_change) order by id), '[]') from public.operating_day_revisions),
+  (select coalesce(json_agg(json_build_array(id, item_id, kind, direction, quantity_num, quantity_den) order by id), '[]') from public.stock_movements),
+  (select coalesce(json_agg(json_build_array(id, value, active, purpose) order by id), '[]') from public.comparison_entries))::text`;
+let savedBefore = "";
+step(`reset to migration ${PHASE8_HEAD} (Phase 8 head)`, () => {
+  supabase(["db", "reset", "--version", PHASE8_HEAD]);
+  if (psql("select to_regclass('public.report_exports') is not null") !== "f") throw new Error("Phase 9 tables exist at the Phase 8 head");
+  if (psql("select count(*) from storage.buckets where id = 'report-exports'") !== "0") throw new Error("the export bucket exists at the Phase 8 head");
+  return runSqlFile("phase8_checks.sql");
+});
+step("Phase 8 data exists before the upgrade (a closed-day revision and a stock receipt by synthetic staff)", () => {
+  psql(`begin;
+    insert into auth.users(id, email) values ('a9a00000-0000-4000-8000-000000000001', 'upgrade.admin@phase9.test');
+    insert into public.employees(id, organization_id, full_name) select 'a9a00000-0000-4000-8000-000000000001', organization_id, 'Upgrade admin' from public.branches where code = 'maarif';
+    insert into public.staff_accounts(user_id, employee_id, organization_id, email) select id, id, organization_id, 'upgrade.admin@phase9.test' from public.employees where id = 'a9a00000-0000-4000-8000-000000000001';
+    insert into public.staff_group_assignments(staff_id, branch_id, group_key) values ('a9a00000-0000-4000-8000-000000000001', null, 'system_admin');
+    -- Also the branch cashier, so the saved day can name them.
+    insert into public.branch_memberships(staff_id, branch_id) select 'a9a00000-0000-4000-8000-000000000001', id from public.branches where code = 'maarif';
+    insert into public.staff_group_assignments(staff_id, branch_id, group_key) select 'a9a00000-0000-4000-8000-000000000001', id, 'cashier' from public.branches where code = 'maarif';
+    select set_config('request.jwt.claims', '{"sub":"a9a00000-0000-4000-8000-000000000001","role":"authenticated"}', true);
+    set local role authenticated;
+    select public.app_operating_command('maarif', '2026-11-10', 'save', 0, 'a9a00000-0000-4000-8000-0000000000b1',
+      '{"sales":10000,"posCash":10000,"card":0,"orders":2,"cashier":"a9a00000-0000-4000-8000-000000000001","openingCash":0,"openingCustody":0}');
+    select public.app_stock_command('maarif', '2026-11-10', 'movement', 'a9a00000-0000-4000-8000-0000000000b2',
+      jsonb_build_object('kind', 'receipt', 'item', (select id from public.catalog_items where stock_tracked and kind <> 'sold' and base_unit is not null order by name_ar limit 1), 'quantity', '3', 'local', '2026-11-10T09:00'));
+    commit;`);
+  savedBefore = psql(SAVED);
+  return `${psql("select count(*) from public.operating_day_revisions")} revision, ${psql("select count(*) from public.stock_movements")} movement`;
+});
+step("apply the Phase 9 migration (supabase migration up)", () => {
+  supabase(["migration", "up"]);
+  return psql("select max(version) from supabase_migrations.schema_migrations");
+});
+step("saved data unchanged; private bucket and storage policies created; no export yet", () => {
+  const after = psql(SAVED);
+  if (!savedBefore || savedBefore.startsWith('[[],')) throw new Error("no Phase 8 data was recorded before the upgrade");
+  if (after !== savedBefore) throw new Error("saved Phase 4-8 data changed during the upgrade");
+  const bucket = psql("select public::text || ':' || file_size_limit from storage.buckets where id = 'report-exports'");
+  if (bucket !== "false:26214400") throw new Error(`bucket ${bucket}`);
+  const policies = psql("select string_agg(policyname || ':' || cmd, ',' order by policyname) from pg_policies where schemaname = 'storage' and policyname like 'report_exports_%'");
+  if (policies !== "report_exports_download:SELECT,report_exports_upload:INSERT") throw new Error(`storage policies ${policies}`);
+  const none = psql("select (select count(*) from public.report_exports) + (select count(*) from public.report_export_events)");
+  if (none !== "0") throw new Error(`expected no export, found ${none}`);
+  psql(`set session_replication_role = replica;
+    delete from public.stock_movements; delete from public.stock_postings; delete from public.operating_day_revisions; delete from public.operating_days;
+    delete from public.audit_log where actor_id = 'a9a00000-0000-4000-8000-000000000001';
+    delete from public.staff_group_assignments where staff_id = 'a9a00000-0000-4000-8000-000000000001';
+    delete from public.branch_memberships where staff_id = 'a9a00000-0000-4000-8000-000000000001';
+    delete from public.staff_accounts where user_id = 'a9a00000-0000-4000-8000-000000000001'; delete from public.employees where id = 'a9a00000-0000-4000-8000-000000000001';
+    delete from auth.users where id = 'a9a00000-0000-4000-8000-000000000001';
+    set session_replication_role = origin;`);
+  return `data identical; bucket ${bucket}; ${policies}; 0 exports`;
+});
+step("Phase 2 to 9 checks after the Phase 8 upgrade", () =>
+  ["phase2_checks.sql", "phase3_checks.sql", "phase4_checks.sql", "phase5_checks.sql", "phase6_checks.sql", "phase7_checks.sql", "phase8_checks.sql", "phase9_checks.sql"].map(runSqlFile).join("; "));
+step("its schema, table privileges and function privileges equal the fresh build", () => {
+  const again = schemaDump();
+  if (again !== fresh) {
+    const a = again.split("\n");
+    const b = fresh.split("\n");
+    const at = a.findIndex((line, i) => line !== b[i]);
+    throw new Error(`first difference at line ${at + 1}:\n  upgraded: ${a[at]}\n  fresh:    ${b[at]}`);
+  }
+});
+step("a fresh build passes the Phase 9 checks too", () => {
+  supabase(["db", "reset"]);
+  return runSqlFile("phase9_checks.sql");
 });
 step("leave a fresh database (db reset)", () => {
   supabase(["db", "reset"]);

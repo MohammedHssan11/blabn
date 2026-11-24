@@ -83,7 +83,7 @@ export interface OperatingSummary {
   remittanceRatio: number | null;
 }
 
-interface HistoryEntry {
+export interface HistoryEntry {
   revision: number;
   basis: number;
   actor: string;
@@ -93,7 +93,7 @@ interface HistoryEntry {
   local: string;
 }
 
-interface OperatingDay {
+export interface OperatingDay {
   revision: number;
   state: DayState;
   closedLocal: string | null;

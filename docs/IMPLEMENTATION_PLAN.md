@@ -361,6 +361,8 @@ Abdo can select a day or period and download consistent reports from saved appli
 - Download fails after the requester loses the relevant permission.
 - Historical reporting figures appear only in the reports that need them and do not change any live balance.
 
+Implementation status and evidence (local branch `phase-9/excel-reports`, not yet pushed, merged or applied to the hosted project): [Phase 9 Excel reports](phase9/EXCEL_REPORTS.md) and the [handover](HANDOFF.md#phase-9-status). Who besides Abdo may export, whether Maarif figures before the first live date are needed, and the pending P1-19/P1-28/P1-31/P1-32 rules still wait for Abdo.
+
 ## Phase 10 — End-to-end web validation in Arabic and English
 
 ### Goal
