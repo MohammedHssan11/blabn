@@ -10,6 +10,7 @@ import {
 } from "@/lib/dates";
 import { parseMadInput, sumMinor, type Blank, type Minor } from "@/lib/money";
 import { recordRef, traced, type Traced } from "@/modules/reports/trace";
+import { isPending, requireField } from "@/modules/reports/field-map";
 import {
   computeDailyFigures,
   computePeriodTotals,
@@ -293,7 +294,7 @@ export async function getCashCountView(dateParam?: string, countedParam?: string
       record: `${dayRec} + ${moveRec}`,
     }),
     preview: { raw, asOf, error, snapshot },
-    pendingFields: ["ST-09", "LG-08"],
+    pendingFields: ["ST-09", "LG-08"].filter((id) => isPending(requireField(id))),
   };
 }
 

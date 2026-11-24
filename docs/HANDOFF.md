@@ -2,7 +2,7 @@
 
 Read this first in every session, then compare it with the actual repository state (`git status`, `git log -3`, `git fetch` and the PR list) before continuing. Update it after each meaningful task and before ending a session.
 
-_Last updated: 24 November 2026. [Phase 9](#phase-9-status) passed local release review. The owner authorized publication on GitHub at its current visibility. Hosted deployment and the production Excel account designation are pending. See the [hosted deployment record](#hosted-deployment) for Phases 7 and 8._
+_Last updated: 24 November 2026. [Phase 10](#phase-10-status) technical rehearsal is complete on `codex/phase-10-web-validation` (based on main `9b25afb`; release branch verified locally). **Abdo's acceptance is pending** and the hosted Phase 9 migration is **not applied** (release blocker for Phase 11). Phase 9 merged via PR #16. See the [hosted deployment record](#hosted-deployment) for Phases 7 and 8._
 
 The bilingual workspace uses the [B.Laban interface refresh](BRAND_DESIGN.md). Phase 4 implements the [confirmed daily close and Yawmeya workflow](phase4/OPERATING_CLOSE.md) on the signed-in person's Supabase session.
 
@@ -10,18 +10,40 @@ The bilingual workspace uses the [B.Laban interface refresh](BRAND_DESIGN.md). P
 
 | Item | Value |
 |---|---|
-| Repository | https://github.com/MohammedHssan11/blabn. The repository is public. See the audit for the earlier visibility findings. |
+| Repository | https://github.com/MohammedHssan11/blabn. The repository remained public when the owner approved the Phase 9 push and merge. |
 | Phase 3 branch | `codex/phase-3-accounts-permissions`, based on `main` at the Phase 2 merge (`2d21e31`). |
 | Audit and Phase 6 | [PR #9](https://github.com/MohammedHssan11/blabn/pull/9) (`audit/phases-1-5`) merged as `b2fdc42`; [PR #10](https://github.com/MohammedHssan11/blabn/pull/10) (`phase-6/stock`) merged as `5994747`. |
 | Phase 7 | [PR #12](https://github.com/MohammedHssan11/blabn/pull/12) (`phase-7/comparison`) merged as `a265524`. |
 | Phase 8 | [PR #14](https://github.com/MohammedHssan11/blabn/pull/14) (`phase-8/replenishment`) merged as `e1403fb`. |
-| Phase 9 | Excel reports, reviewed locally and submitted through the Phase 9 pull request. |
-| Development baseline | `origin/main` at `8c6df2b`. Phase 10 starts after Phase 9 is reviewed and merged. |
-| Phase 9 validation | Disposable Supabase stack balaban-p9 with synthetic data. Workbook samples and the full release receipt are local. |
+| Phase 9 | [PR #16](https://github.com/MohammedHssan11/blabn/pull/16) merged into main at `9b25afbb27a96c880ec4b344db81a8693c6808e6`. |
+| Development baseline | Verified `origin/main` at `9b25afbb27a96c880ec4b344db81a8693c6808e6`. |
+| Phase 9 validation copy | `C:\Users\mh978\Downloads\abdo-p9-validation\` with the running disposable stack `balaban-p9` (API `127.0.0.1:59321`, Postgres `127.0.0.1:59322`). Synthetic desktop Excel samples are in `C:\Users\mh978\Downloads\abdo\outputs\phase9\`. |
 | Hosted Supabase | Shared project `xitryskkqgtkpdawddqe`. Hosted migration history matches `main` through `20261125090000` (23 November 2026). Deploy with `npx supabase db push --linked --dry-run` first; never use `--include-seed`, because the seed files are local test data. |
 | Local tooling | `npm ci` installs the pinned Supabase CLI 2.122.1. Use `npx supabase …`; an older global CLI cannot read `supabase/config.toml`. |
 | Phase 2 pull request | [PR #2](https://github.com/MohammedHssan11/blabn/pull/2), merged. |
 | Local-only material | `C:\Users\mh978\Downloads\abdo\abdo temp\`, `...\outputs\`, `...\archive\`, `...\screenshot\` — outside Git; keep them out of commits. |
+
+## Phase 10 status
+
+Full record, with every report difference: [phase10/WEB_VALIDATION.md](phase10/WEB_VALIDATION.md). Walkthrough for Abdo (Arabic and English, not yet run): [phase10/WALKTHROUGH.md](phase10/WALKTHROUGH.md).
+
+| Item | Result |
+|---|---|
+| Revision | Branch `codex/phase-10-web-validation` from `origin/main` `9b25afbb27a96c880ec4b344db81a8693c6808e6` with the P1-19 fix, Phase 10 scripts and docs, and the Phase 9 handoff record. The rehearsal ran in `C:\Users\mh978\Downloads\abdo-p9-validation\` on the disposable stack `balaban-p9`. |
+| Phase 9 handoff | Merge confirmed (`9b25afb`). Hosted migration `20261126090000` **missing**: read-only `migration list --linked` shows hosted equal to `main` through `20261125090000`. Nothing was pushed to hosted. The CLI had to be linked locally (`supabase link`; untracked `.temp` only). |
+| Tests run | `npm run check` 291/291 + build; `test:phase9` 124/124; Phase 2 smoke 69/69; `fieldmap:check`; private 2 November reference (`PHASE4_REFERENCE_FILE` with `scripts/phase4/browser-check.mjs`) 25/25; `npm run test:phase10` 78/78; `node scripts/phase10/browser-check.mjs` 35/35 in Edge (English desktop, Arabic 375 px); `scripts/phase10/compare_reports.py` 994 comparisons, 5 differences; sampled workbooks opened and paginated in desktop Excel 16. **Not run:** `db:upgrade-test` and the Phase 3–8 suites (no database change), the hosted project, paper print, Excel for Mac, LibreOffice, a visual render of the print pages. |
+| Real data used | All October days and 1–2 November from the Daily Sales workbooks, the 2 November statement and count slip, the 7 November Foodics sample (its count, expenses and float were not observed), and the 10/3 November weekly comparison. Read from `outputs\phase10\workbook-reference.json` (written by `scripts/phase10/extract_reference.py`; local only, never commit). |
+| Report differences | Daily Sales matches the workbook in every compared cell. Open: D-1 book-balance carry-forward produces a different variance from the workbook, D-2 purchasing-custody pass-through, D-3 missing cancellations and hospitality columns, D-4 display rounding, D-5 skipped days cannot be back-filled, D-6 inventory values not compared. Details and owners in the record. |
+| Fix | P1-19 was settled but still shown as pending (the field-map builder ignored agreed outcomes). Fixed in `build_field_map.py`; map regenerated (4 pending); the statement, Yawmeya and cash-count page no longer say «Pending: P1-19». |
+| Abdo's acceptance | **Pending.** He was not available. No walkthrough result or date is recorded. |
+
+**Release review:** Phase 10 remained local after GitHub reported the repository as public. The stricter rehearsal still passed 78/78 and the branch-row comparison found the same five differences. Obtain repository privacy before pushing the Phase 10 branch.
+
+**Open decisions:** D-1 to D-5; the P1-32 November recipe start date; remaining ambiguous catalog pairs and units; the P1-29 Kinder size; remaining replenishment settings (minimum observations, factory constraints, and confirmed delivery exceptions); walkthrough confirmation of the Phase 1 summary.
+
+**Safety stock.** The editable 20 % default has not landed (nothing on `main` references it). It remains the separate follow-up under [Phase 9 status](#separate-follow-up-after-phase-9-merges). OCR and image upload stay for later.
+
+**Readiness for Phase 11.** Technically ready for the daily workflow in both languages, but the live rollout should not start until: (1) the hosted Phase 9 migration is applied (the dry run must list exactly `20261126090000_phase9_report_exports.sql` and zero seeds) and Abdo's account is provisioned and designated for Excel; (2) Abdo runs the walkthrough and decides D-1, which changes carried balances and so must be settled before live balances open; (3) the P1-32 date and recipe approvals are recorded if live consumption should post. First live date, opening cash and custody, opening stock and outstanding orders are collected at the Phase 11 handover, not here.
 
 ## Phase 9 status
 
@@ -29,7 +51,7 @@ The bilingual workspace uses the [B.Laban interface refresh](BRAND_DESIGN.md). P
 
 | Check | Result |
 |---|---|
-| Revision | The Phase 9 release source and the access and Storage fixes were verified locally. |
+| Revision | Reviewed the original tip `8e1aebb` and release fixes at `96967f294b7b6fed9868368b0deedcb52ebb28e4`. The published commit `585369cb4e5901c959710e79ddf23f7f25d80b73` uses the verified release source and public handoff summary. |
 | Abdo-only Excel access | The original grants allowed any System Admin to export. The release adds a private, single-account designation alongside live branch and draft permissions. Signed-in staff start without a designation, including System Admins. The production operator must verify and designate Abdo's provisioned staff account. [Account setup](phase9/EXCEL_REPORTS.md#production-account-setup) |
 | Storage and retries | The migration creates a private 25 MiB bucket with the XLSX MIME restriction. Download authorizes against the current designation and every saved branch. Storage only serves authenticated downloads of completed files and refuses signed URLs. Concurrent submissions share one export, stale attempts cannot complete it and a completed file stays byte-identical. |
 | Desktop Excel | Opened `daily_sales_ar.xlsx` and `daily_ledger_ar.xlsx` in Microsoft Excel. Both displayed right-to-left with readable Arabic. Daily Sales showed 1,554.50 MAD total, 22 orders and a 70.66 average. The 2 November Yawmeya showed 1,234.50 MAD of sales and a −3.00 MAD cash closing balance. Empty days stayed blank and recorded zeros showed as `0.00`. Excel preview showed the Daily Sales sheet on one A4 landscape page and the 2 November Yawmeya on two A4 landscape pages. |
@@ -38,11 +60,11 @@ The bilingual workspace uses the [B.Laban interface refresh](BRAND_DESIGN.md). P
 | Phase 9 HTTP check | `npm run test:phase9` passed. The repeat with `--no-reset` after the upgrade suite passed all 124 checks. Tested all five families, live revocation at the app and Storage API, signed URL refusal, concurrent submission, retry and stable downloads. |
 | Database upgrade | `npm run db:upgrade-test` passed paths A–I. The Phase 8 to Phase 9 path preserved saved data, passed the Phase 2–9 SQL checks and matched the fresh schema and grants. |
 | Local security advisors | `npx supabase db advisors --local --type security --level warn --fail-on none` returned four mutable search-path warnings in earlier phases and no findings for Phase 9. |
-| GitHub | The owner approved publishing Phase 9 through a pull request against main. |
-| Hosted Supabase | Phase 9 hosted verification and migration are pending a separate deployment. |
-| Validation stack | Phase 9 SQL checks passed after resetting balaban-p9 to fresh disposable seeds. |
+| GitHub | The owner lifted the original visibility gate. GitHub reported the PR mergeable with no required checks, and merged it at `9b25afbb27a96c880ec4b344db81a8693c6808e6`. The remote main tree matches the reviewed PR tree. [PR #16](https://github.com/MohammedHssan11/blabn/pull/16) |
+| Hosted Supabase | The latest request covered GitHub publication and merge. Hosted verification and migration remain pending. The documented project is `xitryskkqgtkpdawddqe`. |
+| Validation stack | `balaban-p9` remains running in `C:\Users\mh978\Downloads\abdo-p9-validation\`, with the reviewed Phase 9 migration and fresh disposable seed data. The Phase 9 SQL check passed again after the final reset. An operator can designate a synthetic staff account for an Excel rehearsal using the procedure above. |
 
-**Hosted deployment.** Deploy separately from the merged `main` revision when authorized. Confirm the project reference and check the existing bucket and policies, including broad policies that may match `report-exports`. Confirm that the hosted Storage schema provides `storage.allow_only_operation(text)`. Run `npx supabase db push --linked --dry-run` and apply with `npx supabase db push --linked` only if the preview lists exactly `20261126090000_phase9_report_exports.sql` and zero seeds. Verify the remote migration, the private 25 MiB XLSX bucket and its policies, then repeat the dry run. Provision and designate the verified Abdo account before live Excel access.
+**Hosted deployment.** When authorized, use merged `main` at `9b25afbb27a96c880ec4b344db81a8693c6808e6` to verify the linked Supabase project and preflight the Storage bucket and policies, including broad policies that might match `report-exports`. Confirm the hosted Storage schema provides `storage.allow_only_operation(text)`. Run `npx supabase db push --linked --dry-run`. Apply with `npx supabase db push --linked` only when the dry run lists exactly `20261126090000_phase9_report_exports.sql` and zero seeds. Stop and record any unexpected result. Verify the remote migration, private bucket, 25 MiB limit, XLSX restriction and policies, then confirm a second dry run is up to date. If the migration is already recorded, verify its actual configuration. Provision and designate Abdo's account before the live Excel rollout.
 
 **Morning developer.** Use the existing workbooks for the Phase 10 bilingual walkthrough. Under the confirmed P1-19 workflow, Abdo counts the Maarif drawer and the counter, role, time, cashier and recorder remain separate fields. Carry forward the two approved Dubai chocolate cake Foodics spellings (P1-28) and mixed-nut kilogram conversions (P1-31). Review only the unresolved mappings and units, and record the P1-32 November recipe start date on `/catalog/review`. The Yawmeya template and sample still show a pending P1-19 annotation. Use the agreed first live business date for Maarif sales. At the Phase 11 handover, collect reviewed opening balances, opening stock and outstanding orders. [Phase 4 decisions](phase4/ABDO_DECISIONS.md), [Phase 5 decisions](phase5/CATALOG_AND_RECIPES.md)
 

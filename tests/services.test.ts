@@ -75,10 +75,10 @@ describe("synthetic cash count example", () => {
     }
   });
 
-  it("marks the counter and cashier fields as pending instead of inventing values", async () => {
+  it("treats the counter and cashier fields as settled by Abdo's agreed P1-19 rule, so nothing is shown as pending", async () => {
     const view = await getCashCountView("2026-11-02");
-    expect(view.pendingFields).toEqual(["ST-09", "LG-08"]);
-    for (const id of view.pendingFields) expect(getField(id)!.status).toBe("pending");
+    expect(view.pendingFields).toEqual([]);
+    for (const id of ["ST-09", "LG-08"]) expect(getField(id)!.status).toBe("agreed (Abdo)");
   });
 });
 

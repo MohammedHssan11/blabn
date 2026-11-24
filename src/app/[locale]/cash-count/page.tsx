@@ -226,7 +226,7 @@ export default async function CashCountPage({
         </>
       ) : null}
 
-      <h2>{t("cashCount.pendingTitle")}</h2>
+      {view.pendingFields.length ? <><h2>{t("cashCount.pendingTitle")}</h2>
       <div className="card" data-section="pending">
         <p style={{ marginTop: 0 }}>{t("cashCount.pendingBody")}</p>
         <ul className="kv-list">
@@ -246,7 +246,7 @@ export default async function CashCountPage({
             );
           })}
         </ul>
-      </div>
+      </div></> : null}
     </>
   );
 }

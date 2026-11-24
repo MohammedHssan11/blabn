@@ -6,6 +6,7 @@ import {
   type Cell, type Row, type SheetModel, type WorkbookModel,
 } from "../model";
 import type { LabelKey } from "../labels";
+import { isPending, requireField } from "@/modules/reports/field-map";
 
 /**
  * Daily Sales Maarief (DS-01–DS-11), Daily statement (ST-01–ST-09) and Yawmeya (LG-01–LG-11).
@@ -129,7 +130,7 @@ const activeEntries = (day: OperatingDay): CashEntry[] => day.data.entries.filte
 function peopleRows(day: OperatingDay): Cell[][] {
   const count = day.data.count;
   return [
-    [L("st.counter"), count ? userText(count.counter.name) : blank, pending(["P1-19"])],
+    [L("st.counter"), count ? userText(count.counter.name) : blank, ...(isPending(requireField("ST-09")) ? [pending(["P1-19"])] : [])],
     [L("st.counterRole"), count ? L(`role.${count.counter.role}` as LabelKey) : blank],
     [L("st.cashier"), day.data.cashier ? userText(day.data.cashier.name) : blank],
     [L("st.shift"), day.data.shift ? L(`shift.${day.data.shift}` as LabelKey) : blank],

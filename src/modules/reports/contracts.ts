@@ -4,6 +4,8 @@
  * a page produces is traced to one of these fields and that each field exists
  * in the reviewed Phase 1 field map.
  */
+import { isPending, requireField } from "./field-map";
+
 export type PrototypeId = "dailyClose" | "cashCount" | "comparison";
 
 export const PROTOTYPE_FIELDS: Readonly<Record<PrototypeId, readonly string[]>> = {
@@ -18,7 +20,8 @@ export const PROTOTYPE_FIELDS: Readonly<Record<PrototypeId, readonly string[]>> 
 /** Fields the prototypes name but deliberately do not fill in: they wait for a later-phase decision. */
 export const PENDING_IN_PROTOTYPES: Readonly<Record<PrototypeId, readonly string[]>> = {
   dailyClose: [],
-  cashCount: ["ST-09", "LG-08"],
+  // ST-09 and LG-08 waited for P1-19; Abdo's agreed rule settled them (docs/phase1/decisions/agreed-outcomes.json).
+  cashCount: ["ST-09", "LG-08"].filter((id) => isPending(requireField(id))),
   comparison: [],
 };
 

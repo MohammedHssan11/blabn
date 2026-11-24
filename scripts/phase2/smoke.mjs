@@ -144,7 +144,7 @@ try {
     check(`${locale}: stored variance renders twice (at count and after the later deposit)`, (html.match(/data-field="ST-08"/g) ?? []).length >= 3);
     check(`${locale}: later deposit 500.00 listed after the count`, /data-section="after-count"[\s\S]*?500\.00/.test(html));
     check(`${locale}: drawer after later movements 103.00`, /103\.00/.test(text));
-    check(`${locale}: counter/cashier fields marked pending for Phase 4`, html.includes('data-pending-field="ST-09"') && html.includes('data-pending-field="LG-08"'));
+    check(`${locale}: counter/cashier fields are settled by Abdo's P1-19 rule, so no pending marker is shown`, !html.includes('data-pending-field="ST-09"') && !html.includes('data-pending-field="LG-08"'));
   }
   res = await get("/en/cash-count?date=2026-11-02&counted=", { cookie: "balaban-locale=en" });
   let html = await res.text();
@@ -204,7 +204,7 @@ try {
   res = await get("/en/reports", { cookie: "balaban-locale=en" });
   html = await res.text();
   check("report map lists 54 fields", (html.match(/data-field-row="/g) ?? []).length === 54);
-  check("pending fields are marked", (html.match(/data-pending="true"/g) ?? []).length === 6);
+  check("pending fields are marked", (html.match(/data-pending="true"/g) ?? []).length === 4);
 } catch (error) {
   failures += 1;
   console.error(error);
