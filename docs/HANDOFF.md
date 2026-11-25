@@ -2,7 +2,7 @@
 
 Read this first in every session, then compare it with the actual repository state (`git status`, `git log -3`, `git fetch` and the PR list) before continuing. Update it after each meaningful task and before ending a session.
 
-_Last updated: 24 November 2026. [Abdo's decisions were reviewed against the application](phase10/DECISION_REVIEW.md): the approved 20 % safety-stock rule is now implemented (migration `20261127090000`, local only, not committed). [Phase 10](#phase-10-status) technical rehearsal is complete; **Abdo's acceptance is pending** and the hosted Phase 9 migration is **not applied**. See the [hosted deployment record](#hosted-deployment)._
+_Last updated: 25 November 2026. [Phase 10](#phase-10-status) merged in [PR #17](https://github.com/MohammedHssan11/blabn/pull/17) at `11af5dd7000323d3bdd13454ea4ddc12489a0dcf`; the hosted database is at migration `20261127090000`. **Abdo's acceptance walkthrough is still pending.** His production staff account must be provisioned and verified before Excel export designation. See the [hosted deployment record](#hosted-deployment)._
 
 The bilingual workspace uses the [B.Laban interface refresh](BRAND_DESIGN.md). Phase 4 implements the [confirmed daily close and Yawmeya workflow](phase4/OPERATING_CLOSE.md) on the signed-in person's Supabase session.
 
@@ -16,9 +16,9 @@ The bilingual workspace uses the [B.Laban interface refresh](BRAND_DESIGN.md). P
 | Phase 7 | [PR #12](https://github.com/MohammedHssan11/blabn/pull/12) (`phase-7/comparison`) merged as `a265524`. |
 | Phase 8 | [PR #14](https://github.com/MohammedHssan11/blabn/pull/14) (`phase-8/replenishment`) merged as `e1403fb`. |
 | Phase 9 | [PR #16](https://github.com/MohammedHssan11/blabn/pull/16) merged into main at `9b25afbb27a96c880ec4b344db81a8693c6808e6`. |
-| Development baseline | Verified `origin/main` at `9b25afbb27a96c880ec4b344db81a8693c6808e6`. |
+| Development baseline | Verified `origin/main` at `11af5dd7000323d3bdd13454ea4ddc12489a0dcf` (Phase 10 merge). |
 | Phase 9 validation copy | `C:\Users\mh978\Downloads\abdo-p9-validation\` with the running disposable stack `balaban-p9` (API `127.0.0.1:59321`, Postgres `127.0.0.1:59322`). Synthetic desktop Excel samples are in `C:\Users\mh978\Downloads\abdo\outputs\phase9\`. |
-| Hosted Supabase | Shared project `xitryskkqgtkpdawddqe`. Hosted migration history matches `main` through `20261125090000` (23 November 2026). Deploy with `npx supabase db push --linked --dry-run` first; never use `--include-seed`, because the seed files are local test data. |
+| Hosted Supabase | Shared project `xitryskkqgtkpdawddqe`. Hosted migration history matches `main` through `20261127090000` (25 November 2026). Deploy with `npx supabase db push --linked --dry-run` first; never use `--include-seed`, because the seed files are local test data. |
 | Local tooling | `npm ci` installs the pinned Supabase CLI 2.122.1. Use `npx supabase …`; an older global CLI cannot read `supabase/config.toml`. |
 | Phase 2 pull request | [PR #2](https://github.com/MohammedHssan11/blabn/pull/2), merged. |
 | Local-only material | `C:\Users\mh978\Downloads\abdo\abdo temp\`, `...\outputs\`, `...\archive\`, `...\screenshot\` — outside Git; keep them out of commits. |
@@ -29,21 +29,21 @@ Full record, with every report difference: [phase10/WEB_VALIDATION.md](phase10/W
 
 | Item | Result |
 |---|---|
-| Revision | Branch `codex/phase-10-web-validation` from `origin/main` `9b25afbb27a96c880ec4b344db81a8693c6808e6` with the P1-19 fix, Phase 10 scripts and docs, and the Phase 9 handoff record. The rehearsal ran in `C:\Users\mh978\Downloads\abdo-p9-validation\` on the disposable stack `balaban-p9`. |
-| Phase 9 handoff | Merge confirmed (`9b25afb`). Hosted migration `20261126090000` **missing**: read-only `migration list --linked` shows hosted equal to `main` through `20261125090000`. Nothing was pushed to hosted. The CLI had to be linked locally (`supabase link`; untracked `.temp` only). |
+| Revision | [PR #17](https://github.com/MohammedHssan11/blabn/pull/17) merged as `11af5dd7000323d3bdd13454ea4ddc12489a0dcf`. Its reviewed head was `56e727a2ab1188064bacac2c5dda51748e13ad82`; the merge tree matches that head. The rehearsal ran in `C:\Users\mh978\Downloads\abdo-p9-validation\` on the disposable stack `balaban-p9`. |
+| Hosted deployment | Both pending migrations `20261126090000` and `20261127090000` were applied and verified on 25 November 2026. No production staff accounts exist; Abdo must be provisioned and verified before Excel designation. See [the deployment record](#hosted-deployment). |
 | Tests run | `npm run check` 291/291 + build; `test:phase9` 124/124; Phase 2 smoke 69/69; `fieldmap:check`; private 2 November reference (`PHASE4_REFERENCE_FILE` with `scripts/phase4/browser-check.mjs`) 25/25; `npm run test:phase10` 78/78; `node scripts/phase10/browser-check.mjs` 35/35 in Edge (English desktop, Arabic 375 px); `scripts/phase10/compare_reports.py` 994 comparisons, 5 differences; sampled workbooks opened and paginated in desktop Excel 16. **Not run:** `db:upgrade-test` and the Phase 3–8 suites (no database change), the hosted project, paper print, Excel for Mac, LibreOffice, a visual render of the print pages. |
 | Real data used | All October days and 1–2 November from the Daily Sales workbooks, the 2 November statement and count slip, the 7 November Foodics sample (its count, expenses and float were not observed), and the 10/3 November weekly comparison. Read from `outputs\phase10\workbook-reference.json` (written by `scripts/phase10/extract_reference.py`; local only, never commit). |
 | Report differences | Daily Sales matches the workbook in every compared cell. Open: D-1 book-balance carry-forward produces a different variance from the workbook, D-2 purchasing-custody pass-through, D-3 missing cancellations and hospitality columns, D-4 display rounding, D-5 skipped days cannot be back-filled, D-6 inventory values not compared. Details and owners in the record. |
 | Fix | P1-19 was settled but still shown as pending (the field-map builder ignored agreed outcomes). Fixed in `build_field_map.py`; map regenerated (4 pending); the statement, Yawmeya and cash-count page no longer say «Pending: P1-19». |
 | Abdo's acceptance | **Pending.** He was not available. No walkthrough result or date is recorded. |
 
-**Release review:** Phase 10 remained local after GitHub reported the repository as public. The stricter rehearsal still passed 78/78 and the branch-row comparison found the same five differences. Obtain repository privacy before pushing the Phase 10 branch.
+**Release review:** The owner authorized release to the public repository. The stricter rehearsal passed 78/78 and the branch-row comparison found the same five differences. Before release, typecheck, 297/297 unit tests, the migration generator check and the field-map check passed. Review corrected percentage input validation to reject more than two decimal places for zero as well as nonzero values. GitGuardian passed on PR #17.
 
 **Open decisions:** D-1 to D-5; the P1-32 November recipe start date; remaining ambiguous catalog pairs and units; the P1-29 Kinder size; remaining replenishment settings (minimum observations, factory constraints, and confirmed delivery exceptions); walkthrough confirmation of the Phase 1 summary.
 
-**Safety stock.** Implemented after the rehearsal: 20 % of the coverage-period forecast by default, editable on `/replenishment/settings`, 0 allowed (migration `20261127090000_safety_stock_percent.sql`). Evidence and the per-decision review: [phase10/DECISION_REVIEW.md](phase10/DECISION_REVIEW.md). Before the hosted push, the dry run must now list `20261126090000` **and** `20261127090000`. OCR and image upload stay for later.
+**Safety stock.** Implemented after the rehearsal: 20 % of the coverage-period forecast by default, editable on `/replenishment/settings`, 0 allowed (migration `20261127090000_safety_stock_percent.sql`, applied to hosted). Evidence and the per-decision review: [phase10/DECISION_REVIEW.md](phase10/DECISION_REVIEW.md). OCR and image upload stay for later.
 
-**Readiness for Phase 11.** Technically ready for the daily workflow in both languages, but the live rollout should not start until: (1) the hosted Phase 9 migration is applied (once this branch is merged, the dry run must list exactly `20261126090000_phase9_report_exports.sql` and `20261127090000_safety_stock_percent.sql`, and zero seeds) and Abdo's account is provisioned and designated for Excel; (2) Abdo runs the walkthrough and decides D-1, which changes carried balances and so must be settled before live balances open; (3) the P1-32 date and recipe approvals are recorded if live consumption should post. First live date, opening cash and custody, opening stock and outstanding orders are collected at the Phase 11 handover, not here.
+**Readiness for Phase 11.** Technically ready for the daily workflow in both languages, but the live rollout should not start until: (1) Abdo's account is provisioned, verified and designated for Excel; (2) Abdo runs the walkthrough and decides D-1, which changes carried balances and so must be settled before live balances open; (3) the P1-32 date and recipe approvals are recorded if live consumption should post. First live date, opening cash and custody, opening stock and outstanding orders are collected at the Phase 11 handover, not here.
 
 ## Phase 9 status
 
@@ -64,13 +64,13 @@ Full record, with every report difference: [phase10/WEB_VALIDATION.md](phase10/W
 | Hosted Supabase | The latest request covered GitHub publication and merge. Hosted verification and migration remain pending. The documented project is `xitryskkqgtkpdawddqe`. |
 | Validation stack | `balaban-p9` remains running in `C:\Users\mh978\Downloads\abdo-p9-validation\`, with the reviewed Phase 9 migration and fresh disposable seed data. The Phase 9 SQL check passed again after the final reset. An operator can designate a synthetic staff account for an Excel rehearsal using the procedure above. |
 
-**Hosted deployment.** When authorized, use merged `main` at `9b25afbb27a96c880ec4b344db81a8693c6808e6` to verify the linked Supabase project and preflight the Storage bucket and policies, including broad policies that might match `report-exports`. Confirm the hosted Storage schema provides `storage.allow_only_operation(text)`. Run `npx supabase db push --linked --dry-run`. Apply with `npx supabase db push --linked` only when the dry run lists exactly `20261126090000_phase9_report_exports.sql` and zero seeds. Stop and record any unexpected result. Verify the remote migration, private bucket, 25 MiB limit, XLSX restriction and policies, then confirm a second dry run is up to date. If the migration is already recorded, verify its actual configuration. Provision and designate Abdo's account before the live Excel rollout.
+**Hosted deployment update:** Phase 9 and the subsequent Phase 10 safety-stock migration were applied together on 25 November 2026; see [Hosted deployment](#hosted-deployment). Provision and designate Abdo's account before the live Excel rollout.
 
 **Morning developer.** Use the existing workbooks for the Phase 10 bilingual walkthrough. Under the confirmed P1-19 workflow, Abdo counts the Maarif drawer and the counter, role, time, cashier and recorder remain separate fields. Carry forward the two approved Dubai chocolate cake Foodics spellings (P1-28) and mixed-nut kilogram conversions (P1-31). Review only the unresolved mappings and units, and record the P1-32 November recipe start date on `/catalog/review`. Use the agreed first live business date for Maarif sales. At the Phase 11 handover, collect reviewed opening balances, opening stock and outstanding orders. [Phase 4 decisions](phase4/ABDO_DECISIONS.md), [Phase 5 decisions](phase5/CATALOG_AND_RECIPES.md)
 
 ### Separate follow-up after Phase 9 merges
 
-Done locally on 24 November 2026 (not committed): an editable safety-stock default of **20 % of forecast consumption for the coverage period**, added once before subtracting usable stock at receipt and eligible confirmed incoming, floored at 0, then minimum and pack size. See [phase10/DECISION_REVIEW.md](phase10/DECISION_REVIEW.md). Image upload and OCR stay for later.
+Implemented locally on 24 November 2026, then merged and deployed on 25 November: an editable safety-stock default of **20 % of forecast consumption for the coverage period**, added once before subtracting usable stock at receipt and eligible confirmed incoming, floored at 0, then minimum and pack size. See [phase10/DECISION_REVIEW.md](phase10/DECISION_REVIEW.md). Image upload and OCR stay for later.
 
 ### Earlier Phase 9 implementation evidence
 
@@ -296,6 +296,51 @@ Open items:
 - **Developer:** retire the Phase 3 reason-only `/inventory/adjustments` once nobody uses it.
 
 ## Hosted deployment
+
+**25 November 2026: migrations `20261126090000_phase9_report_exports.sql` and `20261127090000_safety_stock_percent.sql` were applied to shared project `xitryskkqgtkpdawddqe` from merged `main` at `11af5dd7000323d3bdd13454ea4ddc12489a0dcf`.**
+
+| Step | Result |
+|---|---|
+| Before | `npx supabase migration list --linked` matched local through `20261125090000`; only `20261126090000` and `20261127090000` were missing. Read-only queries found `storage.allow_only_operation(text)`, no `report-exports` bucket, no `storage.objects` policies, and 0 `replenishment_settings` rows. |
+| Dry run (`npx supabase db push --linked --dry-run`) | Would push exactly `20261126090000_phase9_report_exports.sql` and `20261127090000_safety_stock_percent.sql`; seeds `[]`, roles `[]`. |
+| Push (`npx supabase db push --linked --yes`, no `--include-seed`) | Applied exactly those two migrations; seeds `[]`, roles `[]`. |
+| Migration history after | Both versions are listed remotely. A second dry run reported `Remote database is up to date`, with migrations `[]`, seeds `[]`, roles `[]`. |
+| Read-only checks (`npx supabase db query --linked`) | Querying `storage.buckets` showed `report-exports` private, limit `26214400`, allowed MIME types only `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`. Querying `pg_policies` for `storage.objects` showed only `report_exports_download` (SELECT) and `report_exports_upload` (INSERT); no UPDATE or DELETE policy. `app_private.report_export_owners` had 0 rows. |
+| Settings and function checks | `pg_attribute`/`pg_attrdef` showed `safety_percent` as `numeric(5,2) NOT NULL DEFAULT 20`. `replenishment_settings` remained at 0 rows; its ordered JSON fingerprint excluding the new column was unchanged (`d751713988987e9331980363e24189ce`). `to_regprocedure` found no old four-argument settings-save function; `has_function_privilege` reported EXECUTE on the five-argument signature for `authenticated` and not `anon`. |
+| Excel designation | The read-only staff query joining `staff_accounts` to `employees` and checking `staff_group_assignments` for a global `system_admin` returned no rows. No designation was inserted. Provision Abdo first using [Bootstrapping Abdo as the first System Admin](phase3/ACCOUNTS_AND_PERMISSIONS.md#bootstrapping-abdo-as-the-first-system-admin), verify his identity and obtain the owner's explicit confirmation, then follow [Production account setup](phase9/EXCEL_REPORTS.md#production-account-setup). |
+
+The read-only checks used these SQL queries via `npx supabase db query --linked` (the fingerprint excludes the new column after deployment):
+
+```sql
+-- Before: function exists, bucket count 0, settings table exists, count 0.
+select to_regprocedure('storage.allow_only_operation(text)'), to_regclass('public.replenishment_settings'),
+  (select count(*) from storage.buckets where id = 'report-exports' or name = 'report-exports'),
+  (select count(*) from public.replenishment_settings),
+  (select md5(coalesce(jsonb_agg(to_jsonb(s) order by s.branch_id)::text, '[]')) from public.replenishment_settings s);
+-- Before: no rows. After: only the SELECT and INSERT policies reported above.
+select schemaname, tablename, policyname, permissive, roles, cmd, qual, with_check
+from pg_policies where schemaname = 'storage' and tablename = 'objects' order by policyname;
+-- After: private, 26214400, XLSX only; owners 0; settings 0 and unchanged fingerprint.
+select id, public, file_size_limit, allowed_mime_types from storage.buckets where id = 'report-exports';
+select count(*) from app_private.report_export_owners;
+select count(*), md5(coalesce(jsonb_agg(to_jsonb(s) - 'safety_percent' order by s.branch_id)::text, '[]'))
+from public.replenishment_settings s;
+-- After: numeric(5,2), default 20, not null; old signature null; authenticated true, anon false.
+select format_type(a.atttypid, a.atttypmod), pg_get_expr(d.adbin, d.adrelid), a.attnotnull
+from pg_attribute a left join pg_attrdef d on d.adrelid = a.attrelid and d.adnum = a.attnum
+where a.attrelid = 'public.replenishment_settings'::regclass and a.attname = 'safety_percent' and not a.attisdropped;
+select to_regprocedure('public.app_replenishment_settings_save(text,integer,integer,integer)'),
+  has_function_privilege('authenticated', 'public.app_replenishment_settings_save(text,integer,integer,integer,numeric)', 'EXECUTE'),
+  has_function_privilege('anon', 'public.app_replenishment_settings_save(text,integer,integer,integer,numeric)', 'EXECUTE');
+-- After: no staff rows.
+select s.user_id, s.organization_id, e.full_name, s.email, s.is_active,
+  exists(select 1 from public.staff_group_assignments a
+    where a.staff_id = s.user_id and a.group_key = 'system_admin' and a.branch_id is null) as system_admin
+from public.staff_accounts s join public.employees e on e.id = s.employee_id and e.organization_id = s.organization_id
+order by e.full_name, s.email;
+```
+
+No SQL acceptance files or local seed data were run against the hosted project. Abdo's Phase 10 acceptance walkthrough remains pending.
 
 **23 November 2026: migration `20261125090000_phase8_replenishment.sql` was applied to the shared Supabase project `xitryskkqgtkpdawddqe` from `main` at `e1403fb`.**
 
