@@ -381,7 +381,8 @@ step(`reset to migration ${PHASE8_HEAD} (Phase 8 head)`, () => {
   supabase(["db", "reset", "--version", PHASE8_HEAD]);
   if (psql("select to_regclass('public.report_exports') is not null") !== "f") throw new Error("Phase 9 tables exist at the Phase 8 head");
   if (psql("select count(*) from storage.buckets where id = 'report-exports'") !== "0") throw new Error("the export bucket exists at the Phase 8 head");
-  return runSqlFile("phase8_checks.sql");
+  // phase8_checks.sql now pins the safety-stock percentage (20261127090000); it runs after the upgrade.
+  return runSqlFile("phase7_checks.sql");
 });
 step("Phase 8 data exists before the upgrade (a closed-day revision and a stock receipt by synthetic staff)", () => {
   psql(`begin;
@@ -402,7 +403,7 @@ step("Phase 8 data exists before the upgrade (a closed-day revision and a stock 
   savedBefore = psql(SAVED);
   return `${psql("select count(*) from public.operating_day_revisions")} revision, ${psql("select count(*) from public.stock_movements")} movement`;
 });
-step("apply the Phase 9 migration (supabase migration up)", () => {
+step("apply the Phase 9 migration and later ones (supabase migration up)", () => {
   supabase(["migration", "up"]);
   return psql("select max(version) from supabase_migrations.schema_migrations");
 });
@@ -427,6 +428,68 @@ step("saved data unchanged; private bucket and storage policies created; no expo
   return `data identical; bucket ${bucket}; ${policies}; 0 exports`;
 });
 step("Phase 2 to 9 checks after the Phase 8 upgrade", () =>
+  ["phase2_checks.sql", "phase3_checks.sql", "phase4_checks.sql", "phase5_checks.sql", "phase6_checks.sql", "phase7_checks.sql", "phase8_checks.sql", "phase9_checks.sql"].map(runSqlFile).join("; "));
+step("its schema, table privileges and function privileges equal the fresh build", () => {
+  const again = schemaDump();
+  if (again !== fresh) {
+    const a = again.split("\n");
+    const b = fresh.split("\n");
+    const at = a.findIndex((line, i) => line !== b[i]);
+    throw new Error(`first difference at line ${at + 1}:\n  upgraded: ${a[at]}\n  fresh:    ${b[at]}`);
+  }
+});
+console.log("J. Upgrade from the Phase 9 head to the safety-stock percentage (20261127090000)");
+const PHASE9_HEAD = "20261126090000";
+const SAVED_J = `select json_build_array(
+  (select coalesce(json_agg((to_jsonb(s) - 'safety_percent') order by branch_id), '[]') from public.replenishment_settings s),
+  (select coalesce(json_agg(to_jsonb(x) order by item_id), '[]') from public.replenishment_item_settings x),
+  (select coalesce(json_agg(to_jsonb(o) order by id), '[]') from public.purchase_orders o),
+  (select coalesce(json_agg(to_jsonb(l) order by id), '[]') from public.purchase_order_lines l))::text`;
+let savedJ = "";
+step(`reset to migration ${PHASE9_HEAD} (Phase 9 head)`, () => {
+  supabase(["db", "reset", "--version", PHASE9_HEAD]);
+  if (psql("select count(*) from information_schema.columns where table_schema = 'public' and table_name = 'replenishment_settings' and column_name = 'safety_percent'") !== "0") {
+    throw new Error("safety_percent exists at the Phase 9 head");
+  }
+  return runSqlFile("phase9_checks.sql");
+});
+step("Phase 8 settings with a per-item safety quantity and a saved purchase order exist before the upgrade", () => {
+  psql(`begin;
+    insert into auth.users(id, email) values ('a9b00000-0000-4000-8000-000000000001', 'upgrade.admin@safety.test');
+    insert into public.employees(id, organization_id, full_name) select 'a9b00000-0000-4000-8000-000000000001', organization_id, 'Upgrade admin' from public.branches where code = 'maarif';
+    insert into public.staff_accounts(user_id, employee_id, organization_id, email) select id, id, organization_id, 'upgrade.admin@safety.test' from public.employees where id = 'a9b00000-0000-4000-8000-000000000001';
+    insert into public.staff_group_assignments(staff_id, branch_id, group_key) values ('a9b00000-0000-4000-8000-000000000001', null, 'system_admin');
+    select set_config('request.jwt.claims', '{"sub":"a9b00000-0000-4000-8000-000000000001","role":"authenticated"}', true);
+    set local role authenticated;
+    select public.app_replenishment_settings_save('maarif', 0, 3, 1);
+    select public.app_replenishment_item_settings_save('maarif', (select id from public.catalog_items where stock_tracked and kind <> 'sold' and base_unit is not null order by name_ar limit 1), 0, '5', null, null, null, 'factory');
+    select public.app_purchase_order_command('maarif', 'create', 'a9b00000-0000-4000-8000-0000000000c1',
+      jsonb_build_object('lines', jsonb_build_array(jsonb_build_object('item', (select id from public.catalog_items where stock_tracked and kind <> 'sold' and base_unit is not null order by name_ar limit 1), 'quantity', '7', 'source', 'factory'))));
+    commit;`);
+  savedJ = psql(SAVED_J);
+  return `${psql("select count(*) from public.replenishment_item_settings where safety_num is not null")} item with a safety quantity, ${psql("select count(*) from public.purchase_order_lines")} order line`;
+});
+step("apply 20261127090000 (supabase migration up)", () => {
+  supabase(["migration", "up"]);
+  return psql("select max(version) from supabase_migrations.schema_migrations");
+});
+step("saved settings, orders and lines unchanged; the existing branch row takes the approved 20 %; the legacy quantity is kept, unused", () => {
+  if (psql(SAVED_J) !== savedJ) throw new Error("saved replenishment settings or orders changed during the upgrade");
+  const pct = psql("select string_agg(safety_percent::text, ',') from public.replenishment_settings");
+  if (pct !== "20.00") throw new Error(`safety_percent after upgrade: ${pct}`);
+  const legacy = psql("select safety_num || '/' || safety_den from public.replenishment_item_settings");
+  if (legacy !== "5/1") throw new Error(`legacy safety quantity: ${legacy}`);
+  psql(`set session_replication_role = replica;
+    delete from public.purchase_order_events; delete from public.purchase_order_expected_dates; delete from public.purchase_order_lines; delete from public.purchase_orders;
+    delete from public.replenishment_item_settings; delete from public.replenishment_settings;
+    delete from public.audit_log where actor_id = 'a9b00000-0000-4000-8000-000000000001';
+    delete from public.staff_group_assignments where staff_id = 'a9b00000-0000-4000-8000-000000000001';
+    delete from public.staff_accounts where user_id = 'a9b00000-0000-4000-8000-000000000001'; delete from public.employees where id = 'a9b00000-0000-4000-8000-000000000001';
+    delete from auth.users where id = 'a9b00000-0000-4000-8000-000000000001';
+    set session_replication_role = origin;`);
+  return `data identical; existing row ${pct} %; legacy item quantity ${legacy} kept`;
+});
+step("Phase 2 to 9 checks after the safety-stock upgrade", () =>
   ["phase2_checks.sql", "phase3_checks.sql", "phase4_checks.sql", "phase5_checks.sql", "phase6_checks.sql", "phase7_checks.sql", "phase8_checks.sql", "phase9_checks.sql"].map(runSqlFile).join("; "));
 step("its schema, table privileges and function privileges equal the fresh build", () => {
   const again = schemaDump();

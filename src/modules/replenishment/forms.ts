@@ -33,6 +33,13 @@ export function normalizeOrderQuantity(raw: string): string | null {
   return text !== null && /^\d{1,9}(\.\d{1,3})?$/.test(text) ? text : null;
 }
 
+/** Safety percentage from 0 to 100, with at most two decimal places. */
+export function normalizeSafetyPercent(raw: string): string | null {
+  const value = raw.trim().replace(/[%٪]$/, "").trim();
+  const text = /^[0٠۰]{1,3}([.,٫][0٠۰]{1,2})?$/.test(value) ? "0" : normalizeQuantityInput(value);
+  return text !== null && /^\d{1,3}(\.\d{1,2})?$/.test(text) && Number(text) <= 100 ? text : null;
+}
+
 const isFraction = (value: string) => /^-?\d{1,30}\/\d{1,30}$/.test(value);
 const isLocalTime = (value: string) => /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(value);
 const isDate = (value: string) => /^\d{4}-\d{2}-\d{2}$/.test(value);

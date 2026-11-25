@@ -52,7 +52,7 @@ export default async function ReplenishmentSettingsPage({ params, searchParams }
       <section className="card stack" data-section="questions">
         <h2>{t("replenishment.settings.questions")}</h2>
         <ul className="plain-list">
-          {(["minimum", "safety", "constraints", "twoDay", "cutoff"] as const).map((k) => (
+          {(["minimum", "constraints", "twoDay"] as const).map((k) => (
             <li key={k} data-question={k}>
               <span lang="ar" dir="rtl">{tAr(`replenishment.questions.${k}` as MessageKey)}</span>
               {locale === "en" ? <div className="legend">{t(`replenishment.questions.${k}` as MessageKey)}</div> : null}
@@ -71,6 +71,10 @@ export default async function ReplenishmentSettingsPage({ params, searchParams }
               data-undecided={settings.min_observations === null ? "true" : undefined} />
           </label>
           <label>{t("replenishment.settings.coverage")}<input name="coverage_days" type="number" min={1} max={14} defaultValue={settings.coverage_days} required /></label>
+          <label>{t("replenishment.settings.safetyPercent")}
+            <input name="safety_percent" inputMode="decimal" dir="ltr" defaultValue={String(Number(settings.safety_percent))} required />
+          </label>
+          <p className="legend" data-legend="safety-percent">{t("replenishment.settings.safetyPercentNote")}</p>
           <p className="legend">
             {t("replenishment.dates.liveFrom")}: {settings.live_from ? <DateText date={settings.live_from} locale={locale} /> : t("replenishment.settings.notSet")}
             {" · "}<Link href={`/${locale}/comparison/settings`}>{t("replenishment.settings.liveFromWhere")}</Link>
@@ -114,7 +118,6 @@ export default async function ReplenishmentSettingsPage({ params, searchParams }
             <input type="hidden" name="item" value={chosen.id} />
             <input type="hidden" name="revision" value={current?.revision ?? 0} />
             <p className="legend">{t("replenishment.settings.baseUnitNote")}</p>
-            <label>{t("replenishment.col.safety")}<input name="safety" inputMode="decimal" dir="ltr" defaultValue={decimal(current?.safety ?? null)} /></label>
             <label>{t("replenishment.settings.pack")}<input name="pack" inputMode="decimal" dir="ltr" defaultValue={decimal(current?.pack ?? null)} /></label>
             <label>{t("replenishment.settings.minOrder")}<input name="min_order" inputMode="decimal" dir="ltr" defaultValue={decimal(current?.min_order ?? null)} /></label>
             <label>{t("replenishment.settings.shelfLife")}<input name="shelf_life_days" type="number" min={1} max={3650} defaultValue={current?.shelf_life_days ?? ""} /></label>
@@ -135,7 +138,6 @@ export default async function ReplenishmentSettingsPage({ params, searchParams }
               <thead>
                 <tr>
                   <th scope="col">{t("replenishment.col.item")}</th>
-                  <th scope="col" className="numeric">{t("replenishment.col.safety")}</th>
                   <th scope="col" className="numeric">{t("replenishment.settings.pack")}</th>
                   <th scope="col" className="numeric">{t("replenishment.settings.minOrder")}</th>
                   <th scope="col" className="numeric">{t("replenishment.settings.shelfLife")}</th>
@@ -146,7 +148,6 @@ export default async function ReplenishmentSettingsPage({ params, searchParams }
                 {settings.items.map((i) => (
                   <tr key={i.item_id} data-item={i.name_ar}>
                     <th scope="row"><Link href={`${path}?item=${i.item_id}`}>{itemName(i, locale)}</Link></th>
-                    <td className="numeric"><Qty value={i.safety} /></td>
                     <td className="numeric"><Qty value={i.pack} /></td>
                     <td className="numeric"><Qty value={i.min_order} /></td>
                     <td className="numeric">{i.shelf_life_days ?? "—"}</td>

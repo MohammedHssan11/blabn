@@ -56,17 +56,17 @@ export async function runPurchaseOrderCommand(command: string, request: string, 
   return client.rpc("app_purchase_order_command", { p_branch: OPERATING_BRANCH_CODE, p_command: command, p_request: request, p_payload: payload });
 }
 
-export async function saveBranchSettings(expected: number, minObservations: number | null, coverageDays: number) {
+export async function saveBranchSettings(expected: number, minObservations: number | null, coverageDays: number, safetyPercent: string) {
   const client = await createUserClient();
   return client.rpc("app_replenishment_settings_save", { p_branch: OPERATING_BRANCH_CODE, p_expected: expected,
-    p_min_observations: minObservations, p_coverage_days: coverageDays });
+    p_min_observations: minObservations, p_coverage_days: coverageDays, p_safety_percent: safetyPercent });
 }
 
-export async function saveItemSettings(item: string, expected: number, values: { safety: string | null; pack: string | null; minOrder: string | null;
+export async function saveItemSettings(item: string, expected: number, values: { pack: string | null; minOrder: string | null;
   shelfLife: number | null; source: string | null }) {
   const client = await createUserClient();
   return client.rpc("app_replenishment_item_settings_save", { p_branch: OPERATING_BRANCH_CODE, p_item: item, p_expected: expected,
-    p_safety: values.safety, p_pack: values.pack, p_min_order: values.minOrder, p_shelf_life_days: values.shelfLife, p_source: values.source });
+    p_safety: null, p_pack: values.pack, p_min_order: values.minOrder, p_shelf_life_days: values.shelfLife, p_source: values.source });
 }
 
 export async function saveSourceSettings(source: string, expected: number, leadDays: number | null, cutoff: string | null) {

@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
   addDays, applyConstraints, computePlan, defaultExpectedDate, fraction, incomingBucket, isoWeekday, parseLegacyOrderDate, parseQ, q,
-  recommend, sameWeekdayForecast, weekdayDates, ZERO, type Observation, type PlanInput,
+  recommend, safetyStock, sameWeekdayForecast, weekdayDates, ZERO, type Observation, type PlanInput,
 } from "@/modules/replenishment/planning";
 import { verifyItemPlan } from "@/modules/replenishment/verify";
-import { buildCreatePayload, buildReceivePayload, mapPurchaseOrderError, normalizeOrderQuantity } from "@/modules/replenishment/forms";
+import { buildCreatePayload, buildReceivePayload, mapPurchaseOrderError, normalizeOrderQuantity, normalizeSafetyPercent } from "@/modules/replenishment/forms";
 import type { ItemPlanJson } from "@/modules/replenishment/types";
 
 /** Synthetic numbers only. 18 Nov 2026 is a Wednesday. */
@@ -37,7 +37,8 @@ function base(overrides: Partial<PlanInput> = {}): PlanInput {
     todayDemand: ZERO,
     observations: (weekday) => history(WED, weekday, [0, 0, 0]),
     incoming: [],
-    safety: null,
+    // 0 % isolates the other rules; the default 20 % and explicit values are tested below.
+    safetyPercent: q(0),
     minOrder: null,
     pack: null,
     ...overrides,
@@ -113,15 +114,16 @@ describe("the recommendation formula", () => {
     expect(fraction(r.recommended)).toBe("0/1");
   });
 
-  it("the same case through the whole plan", () => {
+  it("the same case through the whole plan (25 % of a 20 forecast is the 5 of safety stock)", () => {
     const p = computePlan(base({
       onHand: q(7),
-      safety: q(5),
+      safetyPercent: q(25),
       observations: (weekday) => history(WED, weekday, weekday === 5 ? [18, 22, 20] : [0, 0, 0]),
       incoming: [{ expected: FRI, outstanding: q(3) }],
     }));
     expect(p.status).toBe("recommend");
     expect(fraction(p.forecast!)).toBe("20/1");
+    expect(fraction(p.safety!)).toBe("5/1");
     expect(fraction(p.usable)).toBe("7/1");
     expect(fraction(p.eligible)).toBe("3/1");
     expect(fraction(p.recommended!)).toBe("15/1");
@@ -165,7 +167,6 @@ describe("usable stock at the expected receipt time", () => {
 describe("confirmed incoming stock", () => {
   it("counts incoming inside the window, once; excludes it after the window and when overdue", () => {
     const p = computePlan(base({
-      safety: q(10),
       incoming: [
         { expected: "2026-11-17", outstanding: q(1) }, // overdue
         { expected: THU, outstanding: q(4) }, // before the receipt: usable stock
@@ -176,11 +177,13 @@ describe("confirmed incoming stock", () => {
     expect(p.buckets).toEqual(["overdue", "before_receipt", "window", "after_window"]);
     expect(fraction(p.usable)).toBe("4/1");
     expect(fraction(p.eligible)).toBe("3/1");
-    expect(fraction(p.recommended!)).toBe("3/1"); // 0 + 10 − 4 − 3
+    // 0 forecast (+ 0 safety) − 4 usable − 3 eligible = −7. Counting Saturday's 9, Thursday's 4 twice or the overdue 1 would change −7.
+    expect(fraction(p.raw!)).toBe("-7/1");
+    expect(fraction(p.recommended!)).toBe("0/1");
   });
 
   it("changing the expected receipt date of an order changes the plan", () => {
-    const input = base({ onHand: q(7), safety: q(5), observations: (weekday) => history(WED, weekday, weekday === 5 ? [18, 22, 20] : [0, 0, 0]) });
+    const input = base({ onHand: q(7), safetyPercent: q(25), observations: (weekday) => history(WED, weekday, weekday === 5 ? [18, 22, 20] : [0, 0, 0]) });
     const before = computePlan({ ...input, incoming: [{ expected: FRI, outstanding: q(3) }] });
     const after = computePlan({ ...input, incoming: [{ expected: SAT, outstanding: q(3) }] });
     expect(fraction(before.recommended!)).toBe("15/1");
@@ -194,6 +197,57 @@ describe("confirmed incoming stock", () => {
     const p = computePlan(base({ coverageDays: 2, observations: (weekday) => history(WED, weekday, [2, 2, 2]) }));
     expect(p.windowEnd).toBe(SAT);
     expect(fraction(p.forecast!)).toBe("4/1");
+  });
+});
+
+describe("safety stock as a percentage of the forecast (owner-approved, 24 November 2026)", () => {
+  it("validates percentages including explicit zero and rejects excess precision", () => {
+    for (const input of ["0", "0.00", "٠٫٠٠٪"]) expect(normalizeSafetyPercent(input)).toBe("0");
+    expect(normalizeSafetyPercent("١٢٫٥٪")).toBe("12.5");
+    expect(normalizeSafetyPercent("100.00")).toBe("100.00");
+    for (const input of ["", "-1", "100.01", "0.000", "٠٫٠٠٠", "1.001", "1/2"]) expect(normalizeSafetyPercent(input), input).toBeNull();
+  });
+  // 10 kg forecast for the covered Friday, 10 kg usable at receipt, no eligible incoming.
+  const tenAndTen = (overrides: Partial<PlanInput> = {}) => computePlan(base({
+    onHand: q(10),
+    observations: (weekday) => history(WED, weekday, weekday === 5 ? [10, 10, 10] : [0, 0, 0]),
+    ...overrides,
+  }));
+
+  it("the owner's example: 10 forecast, 10 available, no incoming -> 2 at 20 % and 0 at 0 %", () => {
+    const at20 = tenAndTen({ safetyPercent: q(20) });
+    expect([fraction(at20.forecast!), fraction(at20.usable), fraction(at20.eligible)]).toEqual(["10/1", "10/1", "0/1"]);
+    expect(fraction(at20.safety!)).toBe("2/1");
+    expect(fraction(at20.recommended!)).toBe("2/1");
+    const at0 = tenAndTen({ safetyPercent: q(0) });
+    expect(fraction(at0.safety!)).toBe("0/1");
+    expect(fraction(at0.recommended!)).toBe("0/1");
+  });
+
+  it("is taken from the forecast of every covered day, exactly", () => {
+    expect(fraction(safetyStock(q(8), q(25, 2)))).toBe("1/1"); // 12.5 % of 8
+    const two = computePlan(base({ coverageDays: 2, safetyPercent: q(20), observations: (weekday) => history(WED, weekday, [5, 5, 5]) }));
+    expect(fraction(two.forecast!)).toBe("10/1");
+    expect(fraction(two.safety!)).toBe("2/1");
+  });
+
+  it("pack size and supplier minimum apply after the safety stock", () => {
+    const packed = tenAndTen({ safetyPercent: q(20), pack: q(5) });
+    expect(fraction(packed.recommended!)).toBe("2/1");
+    expect(fraction(packed.suggested!)).toBe("5/1");
+    const minimum = tenAndTen({ safetyPercent: q(20), minOrder: q(3) });
+    expect(fraction(minimum.suggested!)).toBe("3/1");
+    expect(fraction(tenAndTen({ safetyPercent: q(0), pack: q(5), minOrder: q(3) }).suggested!)).toBe("0/1");
+  });
+
+  it("is subtracted against usable and incoming stock once, and the result floors at 0", () => {
+    const p = tenAndTen({ safetyPercent: q(20), incoming: [{ expected: FRI, outstanding: q(5) }] });
+    expect(fraction(p.raw!)).toBe("-3/1"); // 10 + 2 − 10 − 5
+    expect(fraction(p.recommended!)).toBe("0/1");
+  });
+
+  it("there is no safety stock without a forecast (review)", () => {
+    expect(tenAndTen({ minObservations: null, safetyPercent: q(20) }).safety).toBeNull();
   });
 });
 
@@ -314,11 +368,12 @@ describe("the page cross-check", () => {
       ],
       usable: f(7), incoming: [{ order: "o", order_no: 1, line: "l", line_no: 1, source: "factory", expected: FRI, original_expected: FRI, overridden: false,
         outstanding: f(3), bucket: "window" }],
-      eligible_incoming: f(3), forecast: f(20), safety: f(5), safety_set: true, raw: f(15), recommended: f(15), constraints: [], suggested: f(15),
+      eligible_incoming: f(3), forecast: f(20), safety: f(5), safety_percent: 25, raw: f(15), recommended: f(15), constraints: [], suggested: f(15),
       settings: { pack: null, min_order: null, shelf_life_days: null, cutoff: null, revision: 1 }, warnings: [], history: null,
     } as unknown as ItemPlanJson;
     const settings = { coverage_days: 1, min_observations: 3, live_from: "2026-08-01" };
     expect(verifyItemPlan(settings, item).mismatches).toEqual([]);
     expect(verifyItemPlan(settings, { ...item, recommended: f(16) }).mismatches).toEqual(["recommended"]);
+    expect(verifyItemPlan(settings, { ...item, safety_percent: 20 }).mismatches).toEqual(["safety", "raw", "recommended", "suggested"]);
   });
 });

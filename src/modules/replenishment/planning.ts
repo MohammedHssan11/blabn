@@ -7,6 +7,7 @@
  * item with it and flag any difference, so the two implementations check each other.
  *
  *   recommended = max(0, forecast demand + safety stock − usable stock at receipt − eligible incoming)
+ *   safety stock = forecast demand for the coverage period × the branch safety percentage (default 20 %, 0 allowed)
  *
  * - Forecast: the plain average of the COMPLETE same-weekday observations in the 13 weeks up to the
  *   order business date. Missing dates are left out (never 0); a complete date without consumption
@@ -53,6 +54,7 @@ export const sub = (a: Q, b: Q): Q => q(a.n * b.d - b.n * a.d, a.d * b.d);
 export const lt = (a: Q, b: Q): boolean => a.n * b.d < b.n * a.d;
 export const eq = (a: Q, b: Q): boolean => a.n * b.d === b.n * a.d;
 export const max0 = (a: Q): Q => (a.n < 0n ? ZERO : a);
+export const mul = (a: Q, b: Q): Q => q(a.n * b.n, a.d * b.d);
 export const sum = (list: Q[]): Q => list.reduce(add, ZERO);
 
 /** "12.5", "3", "1/3" or a {num, den} object from the database. */
@@ -160,7 +162,8 @@ export interface PlanInput {
   /** Observations by ISO weekday (only the weekdays the plan needs). */
   observations: (weekday: number) => Observation[];
   incoming: Array<{ expected: string; outstanding: Q }>;
-  safety: Q | null;
+  /** Safety stock as a percentage of the coverage-period forecast (the branch setting; 20 when unset). */
+  safetyPercent: Q;
   minOrder: Q | null;
   pack: Q | null;
 }
@@ -194,7 +197,8 @@ export interface PlanResult {
   eligible: Q;
   buckets: IncomingBucket[];
   forecast: Q | null;
-  safety: Q;
+  /** forecast × percentage; null in review (there is no forecast to take a percentage of). */
+  safety: Q | null;
   raw: Q | null;
   recommended: Q | null;
   constraints: ConstraintStep[];
@@ -220,6 +224,11 @@ export function applyConstraints(quantity: Q, minOrder: Q | null, pack: Q | null
     }
   }
   return { value, steps };
+}
+
+/** Safety stock for the coverage period: forecast × percent / 100 (exact). */
+export function safetyStock(forecast: Q, percent: Q): Q {
+  return mul(forecast, q(percent.n, percent.d * 100n));
 }
 
 /** recommended = max(0, forecast + safety − usable − eligible); the raw value is kept for display. */
@@ -277,11 +286,11 @@ export function computePlan(input: PlanInput): PlanResult {
   if (input.minObservations === null) reasons.push("minimum_unset");
   if (insufficient && input.liveFrom !== null && input.minObservations !== null) reasons.push("insufficient_history");
 
-  const safety = input.safety ?? ZERO;
   if (reasons.length > 0) {
-    return { status: "review", reasons, windowEnd, coverage, bridge, usable, eligible, buckets, forecast: null, safety,
+    return { status: "review", reasons, windowEnd, coverage, bridge, usable, eligible, buckets, forecast: null, safety: null,
       raw: null, recommended: null, constraints: [], suggested: null };
   }
+  const safety = safetyStock(forecast, input.safetyPercent);
   const { raw, recommended } = recommend(forecast, safety, usable, eligible);
   const constrained = applyConstraints(recommended, input.minOrder, input.pack);
   return { status: "recommend", reasons, windowEnd, coverage, bridge, usable, eligible, buckets, forecast, safety, raw,

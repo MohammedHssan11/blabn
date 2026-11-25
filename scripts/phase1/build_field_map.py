@@ -148,8 +148,8 @@ for row in FIELDS:
     waiting, contested, by_abdo = [], [], []
     for x in findings:
         d = DEC.get(x)
-        if x in pending_on and not answered(d):
-            waiting.append(x)  # no answer yet, or "not sure"
+        if x in pending_on and not answered(d) and x not in AGREED:
+            waiting.append(x)  # no answer yet, or "not sure", and no rule agreed with Abdo (agreed-outcomes.json)
         elif answered(d) and needs_rule(x, d) and x not in AGREED:
             contested.append(x)
         elif answered(d):

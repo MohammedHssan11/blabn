@@ -1,4 +1,4 @@
-import { computePlan, eq, parseQ, ZERO, type Observation, type PlanResult, type Q } from "./planning";
+import { computePlan, eq, parseQ, q, ZERO, type Observation, type PlanResult, type Q } from "./planning";
 import type { ItemPlanJson, ObservationsJson, PlanJson } from "./types";
 
 /**
@@ -33,7 +33,7 @@ export function planInput(plan: Pick<PlanJson, "coverage_days" | "min_observatio
     todayDemand: todayDemand ?? postedToday(item),
     observations: (weekday: number) => byWeekday.get(weekday) ?? [],
     incoming: item.incoming.map((x) => ({ expected: x.expected, outstanding: parseQ(x.outstanding) ?? ZERO })),
-    safety: item.safety_set ? parseQ(item.safety) : null,
+    safetyPercent: parseQ(String(item.safety_percent ?? 20)) ?? q(20),
     minOrder: parseQ(item.settings.min_order),
     pack: parseQ(item.settings.pack),
   };
@@ -62,6 +62,7 @@ export function verifyItemPlan(plan: Pick<PlanJson, "coverage_days" | "min_obser
   check("usable", result.usable, parseQ(item.usable));
   check("eligible_incoming", result.eligible, parseQ(item.eligible_incoming));
   check("forecast", result.forecast, parseQ(item.forecast));
+  check("safety", result.safety, parseQ(item.safety));
   check("raw", result.raw, parseQ(item.raw));
   check("recommended", result.recommended, parseQ(item.recommended));
   check("suggested", result.suggested, parseQ(item.suggested));

@@ -3,9 +3,9 @@
  "findings_version": "2026-11-21.1",
  "summary": {
   "fields": 54,
-  "pending": 6,
+  "pending": 4,
   "agreed_team": 41,
-  "agreed_abdo": 7
+  "agreed_abdo": 9
  },
  "fields": [
   {
@@ -449,10 +449,8 @@
    "pending_on": [
     "P1-19"
    ],
-   "status": "pending",
-   "waiting_for_answer": [
-    "P1-19"
-   ],
+   "status": "agreed (Abdo)",
+   "waiting_for_answer": [],
    "contested_without_agreed_rule": [],
    "implemented_in": "Phase 4"
   },
@@ -623,10 +621,8 @@
    "pending_on": [
     "P1-19"
    ],
-   "status": "pending",
-   "waiting_for_answer": [
-    "P1-19"
-   ],
+   "status": "agreed (Abdo)",
+   "waiting_for_answer": [],
    "contested_without_agreed_rule": [],
    "implemented_in": "Phase 4"
   },

@@ -1359,7 +1359,10 @@
       "minOrder": "Supplier minimum",
       "shelfLife": "Shelf life (days)",
       "viewPlan": "View the plan of this item",
-      "noneSet": "No item has a setting yet."
+      "noneSet": "No item has a setting yet.",
+      "safetyPercent": "Safety stock (% of forecast consumption)",
+      "safetyPercentNote": "Added to the forecast for the days the delivery covers. Default 20 %; 0 means no safety stock. Pack size and supplier minimum apply afterwards.",
+      "percentOfForecast": "{pct} % of the forecast"
     },
     "dates": {
       "title": "Dates",
@@ -1557,10 +1560,8 @@
     },
     "questions": {
       "minimum": "How many complete same-weekday days does an item need before we trust the average?",
-      "safety": "How much extra stock should each item keep above the expected consumption (safety stock)?",
       "constraints": "Pack sizes, supplier minimums, shelf life and order cut-off times per supplier?",
-      "twoDay": "Exceptions to the two-day rule: a supplier, a weekend or a holiday?",
-      "cutoff": "Which business day does an order created after midnight belong to?"
+      "twoDay": "Exceptions to the two-day rule: a supplier, a weekend or a holiday?"
     }
   },
   "exports": {

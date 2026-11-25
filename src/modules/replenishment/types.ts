@@ -68,8 +68,12 @@ export interface ItemPlanJson {
   incoming: IncomingJson[];
   eligible_incoming: FractionJson;
   forecast: FractionJson | null;
-  safety: FractionJson;
-  safety_set: boolean;
+  /** Safety stock for the coverage period; null in review. Lines saved before 20261127090000 hold a fixed quantity. */
+  safety: FractionJson | null;
+  /** The branch percentage the safety stock was taken from (absent on lines saved before it existed). */
+  safety_percent?: number | string;
+  /** Phase 8 plans only: a per-item quantity was set. */
+  safety_set?: boolean;
   raw: FractionJson | null;
   recommended: FractionJson | null;
   constraints: Array<{ code: "supplier_minimum" | "pack_size"; value: FractionJson; pack?: FractionJson; packs?: number }>;
@@ -155,6 +159,7 @@ export interface SettingsJson {
   min_observations: number | null;
   coverage_days: number;
   revision: number;
+  safety_percent: number | string;
   live_from: string | null;
   sources: Array<{ source: "factory" | "store"; lead_days: number | null; cutoff: string | null; revision: number }>;
   items: Array<{ item_id: string; name_ar: string; name_en: string | null; base_unit: string; safety: FractionJson | null; pack: FractionJson | null;

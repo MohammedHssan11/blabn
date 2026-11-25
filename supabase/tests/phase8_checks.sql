@@ -506,9 +506,17 @@ declare
   ord text;
 begin
   perform public.phase8_act_as(admin);
-  perform public.app_replenishment_item_settings_save('maarif', b::uuid, 0, '5', null, null, null, null);
-  perform public.phase8_expect('22023', format($q$select public.app_replenishment_item_settings_save('maarif', %L, 1, 'x', null, null, null, null)$q$, b));
-  perform public.phase8_expect('40001', format($q$select public.app_replenishment_item_settings_save('maarif', %L, 0, '5', null, null, null, null)$q$, b));
+  -- Safety stock is the branch percentage of the forecast (default 20, owner-approved); a per-item quantity is refused.
+  perform public.phase8_expect('22023', format($q$select public.app_replenishment_item_settings_save('maarif', %L, 0, '5', null, null, null, null)$q$, b));
+  perform public.app_replenishment_item_settings_save('maarif', b::uuid, 0, null, null, null, null, null);
+  perform public.phase8_expect('22023', format($q$select public.app_replenishment_item_settings_save('maarif', %L, 1, null, 'x', null, null, null)$q$, b));
+  perform public.phase8_expect('40001', format($q$select public.app_replenishment_item_settings_save('maarif', %L, 0, null, null, null, null, null)$q$, b));
+  assert (public.app_replenishment_settings('maarif') ->> 'safety_percent')::numeric = 20, 'the safety percentage starts at the default 20';
+  perform public.phase8_expect('22023', format($q$select public.app_replenishment_settings_save('maarif', %s, 3, 1, 100.5)$q$, (public.app_replenishment_settings('maarif') ->> 'revision')::int));
+  perform public.phase8_expect('22023', format($q$select public.app_replenishment_settings_save('maarif', %s, 3, 1, -1)$q$, (public.app_replenishment_settings('maarif') ->> 'revision')::int));
+  perform public.phase8_expect('22023', format($q$select public.app_replenishment_settings_save('maarif', %s, 3, 1, 12.345)$q$, (public.app_replenishment_settings('maarif') ->> 'revision')::int));
+  -- 25 % of a 20 forecast is the 5 of safety stock in the Phase 8 example.
+  perform public.app_replenishment_settings_save('maarif', (public.app_replenishment_settings('maarif') ->> 'revision')::int, 3, 1, 25);
   -- 3 of B expected Friday (the receipt date): eligible incoming.
   perform public.phase8_act_as(keeper);
   r := public.phase8_po('create', jsonb_build_object('lines', jsonb_build_array(jsonb_build_object('item', b, 'quantity', '3', 'source', 'factory'))), '2026-11-18T20:00');
@@ -519,16 +527,35 @@ begin
   perform public.phase8_act_as(admin);
   perform public.phase8_po('approve', jsonb_build_object('order', o2), '2026-11-18T20:10');
   perform public.phase8_act_as(keeper);
-  -- B: forecast Friday (18 + 22 + 20) / 3 = 20; safety 5; usable 7 (Thursday forecast 0); incoming 3.
+  -- B: forecast Friday (18 + 22 + 20) / 3 = 20; safety 25 % of 20 = 5; usable 7 (Thursday forecast 0); incoming 3.
   p := public.phase8_plan(b, '2026-11-18T20:30');
   assert p ->> 'status' = 'recommend' and public.phase8_q(p -> 'forecast') = '20/1' and public.phase8_q(p -> 'safety') = '5/1'
+     and (p ->> 'safety_percent')::numeric = 25
      and public.phase8_q(p -> 'usable') = '7/1' and public.phase8_q(p -> 'eligible_incoming') = '3/1'
      and public.phase8_q(p -> 'raw') = '15/1' and public.phase8_q(p -> 'recommended') = '15/1' and public.phase8_q(p -> 'suggested') = '15/1',
     format('20 + 5 - 7 - 3 = 15: %s', p - 'coverage' - 'history');
-  -- C: 4 + 0 - 100 - 0 = -96 -> 0.
+  -- C: 4 + 1 (25 %) - 100 - 0 = -95 -> 0.
   p := public.phase8_plan(public.phase8_get('c'), '2026-11-18T20:30');
-  assert public.phase8_q(p -> 'raw') = '-96/1' and public.phase8_q(p -> 'recommended') = '0/1' and (p ->> 'safety_set')::boolean = false,
-    'a negative result floors at 0; safety stock not set counts as 0 and is shown as not set';
+  assert public.phase8_q(p -> 'raw') = '-95/1' and public.phase8_q(p -> 'recommended') = '0/1' and public.phase8_q(p -> 'safety') = '1/1',
+    'a negative result floors at 0; safety stock is 25 % of the forecast of 4';
+  -- The default 20 % and an explicit 0 %: B gives 20 + 4 - 7 - 3 = 14 and 20 + 0 - 7 - 3 = 10.
+  perform public.phase8_act_as(admin);
+  perform public.app_replenishment_settings_save('maarif', (public.app_replenishment_settings('maarif') ->> 'revision')::int, 3, 1, 20);
+  perform public.phase8_act_as(keeper);
+  p := public.phase8_plan(b, '2026-11-18T20:30');
+  assert public.phase8_q(p -> 'safety') = '4/1' and public.phase8_q(p -> 'recommended') = '14/1', '20 percent: 20 + 4 - 7 - 3 = 14';
+  perform public.phase8_act_as(admin);
+  perform public.app_replenishment_settings_save('maarif', (public.app_replenishment_settings('maarif') ->> 'revision')::int, 3, 1, 0);
+  perform public.phase8_act_as(keeper);
+  p := public.phase8_plan(b, '2026-11-18T20:30');
+  assert public.phase8_q(p -> 'safety') = '0/1' and public.phase8_q(p -> 'recommended') = '10/1', '0 percent: no safety stock, 20 - 7 - 3 = 10';
+  perform public.phase8_act_as(admin);
+  perform public.app_replenishment_settings_save('maarif', (public.app_replenishment_settings('maarif') ->> 'revision')::int, 3, 1, 25);
+  perform public.phase8_act_as(null);
+  assert (select (a.changes -> 'after' ->> 'safety_percent')::numeric = 25 and (a.changes -> 'before' ->> 'safety_percent')::numeric = 0
+          from public.audit_log a where a.action = 'replenishment.settings_changed' order by a.occurred_at desc, a.id desc limit 1),
+    'each percentage change is audited with before and after';
+  perform public.phase8_act_as(keeper);
 
   -- Orders from the plan keep the suggestion, the final quantity and the override reason.
   r := public.phase8_po('create', jsonb_build_object('lines', jsonb_build_array(jsonb_build_object('item', b, 'quantity', '15', 'source', 'factory',
@@ -562,43 +589,45 @@ begin
     perform public.phase8_act_as(keeper);
   end loop;
   perform public.phase8_act_as(admin);
-  perform public.app_replenishment_item_settings_save('maarif', e::uuid, 0, '10', null, null, null, 'store');
+  perform public.app_replenishment_item_settings_save('maarif', e::uuid, 0, null, null, null, null, 'store');
   perform public.phase8_act_as(keeper);
-  -- 0 forecast + 10 safety - (0 + 4) usable - 3 eligible = 3. Counting Saturday's 9 would give 0;
-  -- counting Thursday's 4 twice would give 0 too; counting the overdue 1 would give 2.
+  -- 0 forecast + 0 safety - (0 + 4) usable - 3 eligible = -7. Counting Saturday's 9 would give -16;
+  -- counting Thursday's 4 twice would give -11; counting the overdue 1 would give -8.
   p := public.phase8_plan(e, '2026-11-18T20:30');
-  assert public.phase8_q(p -> 'usable') = '4/1' and public.phase8_q(p -> 'eligible_incoming') = '3/1' and public.phase8_q(p -> 'recommended') = '3/1',
+  assert public.phase8_q(p -> 'usable') = '4/1' and public.phase8_q(p -> 'eligible_incoming') = '3/1' and public.phase8_q(p -> 'raw') = '-7/1'
+     and public.phase8_q(p -> 'recommended') = '0/1',
     format('incoming outside the window is excluded and nothing is counted twice: %s', p - 'coverage' - 'history');
   assert (select array_agg(x ->> 'bucket' order by x ->> 'expected') from jsonb_array_elements(p -> 'incoming') x)
      = array['overdue', 'before_receipt', 'window', 'after_window'], 'each incoming line is shown with how it is counted';
   assert (select x ->> 'original_expected' = '2026-11-20' and (x ->> 'overridden')::boolean from jsonb_array_elements(p -> 'incoming') x
           where x ->> 'bucket' = 'after_window'), 'the incoming list shows the original and the overridden date';
 
-  -- Constraints after the forecast, only once confirmed: minimum 5 then packs of 6 -> 6.
+  -- Constraints after the forecast and the safety stock, only once confirmed: B 15 -> minimum 16 -> packs of 6 -> 18.
   perform public.phase8_act_as(admin);
-  perform public.app_replenishment_item_settings_save('maarif', e::uuid, 1, '10', '6', '5', 1, 'store');
-  perform public.app_replenishment_settings_save('maarif', 3, 3, 2);
+  perform public.app_replenishment_item_settings_save('maarif', b::uuid, 1, null, '6', '16', 1, null);
+  perform public.app_replenishment_settings_save('maarif', (public.app_replenishment_settings('maarif') ->> 'revision')::int, 3, 2);
   perform public.app_replenishment_source_settings_save('maarif', 'store', 0, null, '18:00');
   perform public.phase8_act_as(keeper);
-  p := public.phase8_plan(e, '2026-11-18T20:30');
-  -- Two coverage days (Fri, Sat): Saturday has no complete history -> review; constraints wait.
-  assert p ->> 'status' = 'review' and p -> 'suggested' = 'null'::jsonb, 'a coverage day without history: review';
+  p := public.phase8_plan(b, '2026-11-18T20:30');
+  -- Two coverage days (Fri, Sat): Saturday has no complete history -> review; constraints wait, no safety stock is invented.
+  assert p ->> 'status' = 'review' and p -> 'suggested' = 'null'::jsonb and p -> 'safety' = 'null'::jsonb, 'a coverage day without history: review';
   perform public.phase8_act_as(admin);
-  perform public.app_replenishment_settings_save('maarif', 4, 3, 1);
+  perform public.app_replenishment_settings_save('maarif', (public.app_replenishment_settings('maarif') ->> 'revision')::int, 3, 1);
   perform public.phase8_act_as(keeper);
-  p := public.phase8_plan(e, '2026-11-18T20:30');
-  assert public.phase8_q(p -> 'recommended') = '3/1' and public.phase8_q(p -> 'suggested') = '6/1'
-     and p #>> '{constraints,0,code}' = 'supplier_minimum' and public.phase8_q(p #> '{constraints,0,value}') = '5/1'
-     and p #>> '{constraints,1,code}' = 'pack_size' and (p #>> '{constraints,1,packs}')::int = 1,
-    format('minimum then pack size: 3 -> 5 -> 6: %s', p -> 'constraints');
+  p := public.phase8_plan(b, '2026-11-18T20:30');
+  assert (p ->> 'safety_percent')::numeric = 25 and public.phase8_q(p -> 'recommended') = '15/1' and public.phase8_q(p -> 'suggested') = '18/1'
+     and p #>> '{constraints,0,code}' = 'supplier_minimum' and public.phase8_q(p #> '{constraints,0,value}') = '16/1'
+     and p #>> '{constraints,1,code}' = 'pack_size' and (p #>> '{constraints,1,packs}')::int = 3,
+    format('the percentage survives other setting saves; minimum then pack size: 15 -> 16 -> 18: %s', p -> 'constraints');
+  p := public.phase8_plan(e, '2026-11-18T20:30');  -- E is a store item
   assert p -> 'warnings' @> '[{"code":"after_cutoff","cutoff":"18:00"}]', '20:30 is after the 18:00 cut-off of the store';
   assert not (public.phase8_plan(e, '2026-11-18T17:00') -> 'warnings' @> '[{"code":"after_cutoff"}]'), '17:00 is before it';
   assert public.phase8_plan(e, '2026-11-19T01:30') -> 'warnings' @> '[{"code":"after_cutoff"}]', '01:30 (same business day) is after it';
   perform public.phase8_act_as(admin);
-  perform public.app_replenishment_item_settings_save('maarif', e::uuid, 2, '10', null, null, null, 'store');
+  perform public.app_replenishment_item_settings_save('maarif', b::uuid, 2, null, null, null, null, null);
   perform public.app_replenishment_source_settings_save('maarif', 'store', 1, null, null);
   perform public.phase8_act_as(keeper);
-  assert public.phase8_q(public.phase8_plan(e, '2026-11-18T20:30') -> 'suggested') = '3/1', 'cleared constraints have no effect';
+  assert public.phase8_q(public.phase8_plan(b, '2026-11-18T20:30') -> 'suggested') = '15/1', 'cleared constraints have no effect';
 end $$;
 
 -- ------------------------------------------------------------------ 9. a changed expected receipt date: original kept, effect on the plan

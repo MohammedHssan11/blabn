@@ -6,7 +6,7 @@ import { localeField, textField } from "@/modules/access/forms";
 import { requireAccess } from "@/modules/access/guard";
 import { isCatalogId, normalizeQuantityInput } from "@/modules/catalog/forms";
 import { runPurchaseOrderCommand, saveBranchSettings, saveItemSettings, saveSourceSettings } from "./data";
-import { buildCommandPayload, isPurchaseOrderCommand, mapPurchaseOrderError, purchaseOrderPermission, safeReplenishmentPath } from "./forms";
+import { buildCommandPayload, isPurchaseOrderCommand, mapPurchaseOrderError, normalizeSafetyPercent, purchaseOrderPermission, safeReplenishmentPath } from "./forms";
 
 function withParam(path: string, name: string, value: string): string {
   const url = new URL(path, "http://site.invalid");
@@ -47,7 +47,7 @@ const intOrNull = (raw: string, min: number, max: number): number | null | undef
   return n >= min && n <= max ? n : undefined;
 };
 
-/** Minimum number of complete observations and days covered by one delivery (System Admin). */
+/** Minimum number of complete observations, days covered by one delivery and the safety-stock percentage (System Admin). */
 export async function saveBranchSettingsAction(data: FormData): Promise<void> {
   const locale = localeField(data);
   const back = `/${locale}/replenishment/settings`;
@@ -55,15 +55,16 @@ export async function saveBranchSettingsAction(data: FormData): Promise<void> {
   const expected = intOrNull(textField(data, "revision"), 0, 9999);
   const min = intOrNull(textField(data, "min_observations"), 1, 13);
   const coverage = intOrNull(textField(data, "coverage_days"), 1, 14);
-  if (expected === undefined || expected === null || min === undefined || coverage === undefined || coverage === null) {
+  const safetyPercent = normalizeSafetyPercent(textField(data, "safety_percent"));
+  if (expected === undefined || expected === null || min === undefined || coverage === undefined || coverage === null || safetyPercent === null) {
     redirect(withParam(back, "error", "invalid_input"));
   }
-  const { error } = await saveBranchSettings(expected, min, coverage);
+  const { error } = await saveBranchSettings(expected, min, coverage, safetyPercent);
   if (error) redirect(withParam(back, "error", mapPurchaseOrderError(error.code)));
   redirect(withParam(back, "notice", "po_settings_saved"));
 }
 
-/** Safety stock, pack size, supplier minimum, shelf life and source of one item (System Admin). Blank = not confirmed. */
+/** Pack size, supplier minimum, shelf life and source of one item (System Admin). Blank = not confirmed. Safety stock is the branch percentage. */
 export async function saveItemSettingsAction(data: FormData): Promise<void> {
   const locale = localeField(data);
   const back = safeReplenishmentPath(locale, textField(data, "back"), `/${locale}/replenishment/settings`);
@@ -79,14 +80,13 @@ export async function saveItemSettingsAction(data: FormData): Promise<void> {
     const text = normalizeQuantityInput(raw);
     return text !== null && /^\d{1,12}(\.\d{1,6})?$/.test(text) ? text : undefined;
   };
-  const safety = qty("safety", true);
   const pack = qty("pack", false);
   const minOrder = qty("min_order", false);
-  if (!isCatalogId(item) || expected === undefined || expected === null || shelfLife === undefined || safety === undefined || pack === undefined
+  if (!isCatalogId(item) || expected === undefined || expected === null || shelfLife === undefined || pack === undefined
     || minOrder === undefined || (source !== null && source !== "factory" && source !== "store")) {
     redirect(withParam(back, "error", "invalid_input"));
   }
-  const { error } = await saveItemSettings(item.toLowerCase(), expected, { safety, pack, minOrder, shelfLife, source });
+  const { error } = await saveItemSettings(item.toLowerCase(), expected, { pack, minOrder, shelfLife, source });
   if (error) redirect(withParam(back, "error", mapPurchaseOrderError(error.code)));
   redirect(withParam(back, "notice", "po_settings_saved"));
 }
