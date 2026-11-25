@@ -9,7 +9,9 @@ Phase 8 lets Abdo see how much history each stock item has, understand a suggest
 
 All data used to build and test it is synthetic. No workbook figure, supplier detail or real order was committed. The legacy import (P1-35) is tested with invented values only.
 
-**Open decisions (Abdo):** the minimum number of complete observations, safety stock, pack sizes, supplier minimums, shelf life, order cut-off times, exceptions to the two-day rule, and the business day of an order created after midnight. Each is a setting that starts empty and changes nothing until it is confirmed. See "Questions for Abdo".
+**Open decisions (Abdo):** the minimum number of complete observations, pack sizes, supplier minimums, shelf life, order cut-off times and exceptions to the two-day rule. Each is a setting that starts empty and changes nothing until it is confirmed. See "Questions for Abdo".
+
+**Decided since Phase 8 (24 November 2026):** safety stock is a branch percentage of the coverage-period forecast, **20 % by default**, editable on `/replenishment/settings` (0 allowed). Approved by the project owner; migration `20261127090000_safety_stock_percent.sql`. An order made after midnight belongs to the business day that ends at 02:00 (the Phase 4 rule, which Abdo repeated in his 24 November reply); nothing changed in the code for it.
 
 ## What is stored
 
@@ -54,7 +56,7 @@ recommended = max(0, forecast demand + safety stock − usable stock at the expe
 
   Proposed, rejected and historical orders are not confirmed incoming.
 - **Constraints after the forecast**, only once set: the supplier minimum raises a positive quantity to the minimum, then the pack size rounds it up to whole packs. Shelf life and cut-off do not change the number: they add a warning (coverage longer than the shelf life; the order is after the source's cut-off, counted from the 02:00 business-day start).
-- Safety stock that is not set counts as 0 and is shown as "not set".
+- **Safety stock** = forecast demand for the coverage window × the branch percentage (`replenishment_settings.safety_percent`, 20 when the branch has no setting row; 0 means none; 0–100 with two decimals). It is added once, before usable stock and eligible incoming are subtracted, and before the supplier minimum and pack size. A plan in review has no forecast, so it shows no safety stock. The Phase 8 per-item safety quantity is no longer used: existing values are kept as history and the item settings command refuses new ones. Saved purchase-order lines keep the plan they were created from.
 
 ### Worked example (the plan's acceptance case)
 
@@ -63,7 +65,7 @@ Order on Wednesday evening, business date 18 November. Default receipt Friday 20
 | Input | Value | Where it comes from |
 |---|---|---|
 | Forecast demand (Friday) | 20 | complete Fridays 30 Oct, 6 Nov, 13 Nov: 18, 22, 20 → 60 / 3. Friday 23 Oct is missing (Product Mix not locked) and is left out |
-| Safety stock | 5 | item setting |
+| Safety stock | 5 | 25 % of the forecast of 20 (the test sets 25 %; the default is 20 %, which gives 4 and a result of 14) |
 | Usable at receipt | 7 | book stock 7 on Wednesday (Product Mix posted); Thursday's forecast is 0 (three complete Thursdays without consumption) |
 | Eligible incoming | 3 | an approved order of 3 expected Friday |
 | Result | **15** | 20 + 5 − 7 − 3 |
@@ -129,7 +131,7 @@ All results below are from branch `phase-8/replenishment` on 23 November 2026, e
 |---|---|---|
 | A Wednesday-evening order gets Friday; the after-midnight case follows the existing 02:00 rule | **Pass** | `phase8_checks.sql` §3: 18 Nov 20:00 → business date 18, expected 20 (Fri); 19 Nov 01:30 → 18 → 20; 19 Nov 02:00 → 19 → 21. Unit test "dates". `test:phase8` §4: business date and expected date of a real order = DB business date + 2. Browser: dates panel and order page in both languages |
 | 10 on hand + 190 incoming = 200 projected; a forecast of 150 leaves 50; actual stock stays tied to movements | **Pass** | §7 (Thursday row: incoming 190, opening 200, consumption 150, closing 50; usable 50; book stock still 10 on Thursday; no `purchase_order` movement); unit test "Abdo's example" |
-| 20 + 5 − 7 − 3 = 15; a negative result floors at 0 | **Pass** | §8 (B: forecast 20, safety 5, usable 7, incoming 3 → 15; C: −96 → 0); unit tests; `test:phase8` §4 (X: 20 + 5 − 7 − 3 = 15 through the real pages, en and ar); browser |
+| 20 + 5 − 7 − 3 = 15; a negative result floors at 0 | **Pass** | §8 (B: forecast 20, safety 5 = 25 % since `20261127090000`, usable 7, incoming 3 → 15; C: −95 → 0); unit tests; `test:phase8` §4 (X: 20 + 5 − 7 − 3 = 15 through the real pages, en and ar); browser |
 | Incoming outside the coverage window is excluded; incoming is never counted twice | **Pass** | §8 (E: overdue 1, before-receipt 4, window 3, after-window 9 → usable 4, eligible 3, recommended 3; any double count or inclusion gives a different result); unit tests; §7 (the 190 counted only in usable) |
 | Changing the expected receipt date keeps the original and the reason and shows the effect | **Pass** | §9 (revisions `20 default` and `21 override + reason`, audited; B 15 → 18; what-if date); `test:phase8` §5 (order page shows both dates and the reason; plan 15 → 18 → back to 15; item page what-if side by side); browser (admin changes the date; both dates shown) |
 | Receiving 4 then 6 of 10 adds 10 as two movements; a retry adds nothing; over-receipt refused or explicit and audited | **Pass** | §10 (2 movements, book +10 on the arrival date; same request = replay, no posting/receipt/event; reused id with other content `23505`; 1 more → `CT801`; with a reason accepted, stored and audited); `test:phase8` §7 (same rendered form twice → `po_replayed`); browser (4 then 6 through the form, order closed) |
@@ -174,10 +176,10 @@ Found and fixed while building:
 Shown on `/replenishment/settings` in plain Arabic; the answers go into the settings on the same page.
 
 1. **Minimum observations.** «يا عبده، عشان البرنامج يقترح كمية لصنف: محتاج كام يوم كامل من نفس يوم الأسبوع (مثلاً كام سبت فات البيع والجرد بتوعهم متسجلين كاملين) قبل ما نثق في المتوسط؟ 3 ولا 4 ولا أكتر؟»
-2. **Safety stock.** «لكل صنف، عايز نسيب كام زيادة احتياطي فوق الاستهلاك المتوقع (مخزون الأمان)؟ ولو صنف مش محتاج احتياطي نكتبله صفر.»
+2. **Safety stock.** Answered: 20 % of the forecast by default, editable by Abdo (owner-approved, 24 November 2026). No longer asked on the settings page.
 3. **Pack size, supplier minimum, shelf life, cut-off.** «فيه أصناف بتتطلب بالكرتونة أو بعدد ثابت (حجم العبوة)؟ فيه أقل كمية لازم تتطلب من المصنع أو المخزن؟ الصنف بيفضل صالح كام يوم؟ وآخر ساعة ينفع تبعت فيها الطلبية لكل جهة كام؟»
 4. **Exceptions to the two-day rule.** «قاعدة إن الطلبية بتوصل بعد يومين من يوم الطلب: فيه استثناءات؟ مثلاً جهة بتوصل في يوم واحد، أو يوم إجازة أو يوم في الأسبوع مفيش فيه توريد؟»
-5. **Orders after midnight.** «لو الطلبية اتعملت بعد نص الليل (مثلاً الساعة 1 أو 2 الفجر)، نحسبها على أنهي يوم؟ البرنامج دلوقتي بيحسب أي حاجة قبل الساعة 2 الفجر على اليوم اللي فات. ده صح ولا نغيّر الساعة؟»
+5. **Orders after midnight.** Answered: the business day ends at 02:00 (Phase 4 rule, repeated by Abdo on 24 November). No longer asked on the settings page.
 
 ## Not in Phase 8
 

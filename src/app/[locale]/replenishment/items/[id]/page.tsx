@@ -208,7 +208,7 @@ function Arithmetic({ item, t, locale, label, section }: { item: ItemPlanJson; t
         <li className="kv-row" data-term="forecast"><span className="label">{t("replenishment.col.forecast")}
           <span className="legend"> ({item.coverage.map((c) => `${formatBusinessDate(c.date, locale, "weekday")}: ${c.observations.complete}`).join(", ")})</span></span>
           <span className="value"><Qty value={item.forecast} /></span></li>
-        <li className="kv-row" data-term="safety"><span className="label">+ {t("replenishment.col.safety")}{item.safety_set ? null : ` (${t("replenishment.settings.notSet")})`}</span>
+        <li className="kv-row" data-term="safety"><span className="label">+ {t("replenishment.col.safety")} ({t("replenishment.settings.percentOfForecast", { pct: Number(item.safety_percent) })})</span>
           <span className="value"><Qty value={item.safety} /></span></li>
         <li className="kv-row" data-term="usable"><span className="label">− {t("replenishment.col.usable")}</span><span className="value"><Qty value={item.usable} /></span></li>
         <li className="kv-row" data-term="incoming"><span className="label">− {t("replenishment.col.incoming")}</span><span className="value"><Qty value={item.eligible_incoming} /></span></li>

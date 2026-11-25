@@ -72,5 +72,5 @@ Retained on purpose, not differences: legacy Arabic spellings such as «الأس
 
 - Walkthrough prepared: [WALKTHROUGH.md](WALKTHROUGH.md), Arabic and English. **Abdo was not reachable in this session. It has not been run; his acceptance is pending.** Result and date: to be recorded at the walkthrough.
 - Confirmed parts of P1-19, P1-28 and P1-31 are carried forward, not re-asked. Still unresolved: the P1-32 effective date of the November recipe set, the other ambiguous catalog pairs, the P1-29 Kinder size, remaining unit conflicts, D-1 to D-5, and the replenishment settings (minimum observations, pack sizes, cut-off, exceptions, after-midnight rule).
-- The editable 20 % safety-stock rule has **not** landed (nothing on `main` references it). It stays the separate follow-up described in the handover. OCR stays for later.
+- The editable 20 % safety-stock rule was implemented after this rehearsal; see [DECISION_REVIEW.md](DECISION_REVIEW.md). OCR stays for later.
 - First live date, opening cash and custody balances, opening stock and outstanding orders belong to the Phase 11 handover.

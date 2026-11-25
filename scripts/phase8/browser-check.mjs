@@ -168,7 +168,7 @@ async function main() {
       await layout(page, locale, "approved order");
       await page.goto(`${BASE}/${locale}/replenishment/settings`);
       await layout(page, locale, "settings");
-      check("the five questions for Abdo are shown in Arabic", (await page.locator("[data-question] [lang=ar]").count()) === 5);
+      check("the three open questions for Abdo are shown in Arabic", (await page.locator("[data-question] [lang=ar]").count()) === 3);
       await context.close();
     }
 

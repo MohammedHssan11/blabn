@@ -2,7 +2,7 @@
 
 Read this first in every session, then compare it with the actual repository state (`git status`, `git log -3`, `git fetch` and the PR list) before continuing. Update it after each meaningful task and before ending a session.
 
-_Last updated: 24 November 2026. [Phase 10](#phase-10-status) technical rehearsal is complete on `codex/phase-10-web-validation` (based on main `9b25afb`; release branch verified locally). **Abdo's acceptance is pending** and the hosted Phase 9 migration is **not applied** (release blocker for Phase 11). Phase 9 merged via PR #16. See the [hosted deployment record](#hosted-deployment) for Phases 7 and 8._
+_Last updated: 24 November 2026. [Abdo's decisions were reviewed against the application](phase10/DECISION_REVIEW.md): the approved 20 % safety-stock rule is now implemented (migration `20261127090000`, local only, not committed). [Phase 10](#phase-10-status) technical rehearsal is complete; **Abdo's acceptance is pending** and the hosted Phase 9 migration is **not applied**. See the [hosted deployment record](#hosted-deployment)._
 
 The bilingual workspace uses the [B.Laban interface refresh](BRAND_DESIGN.md). Phase 4 implements the [confirmed daily close and Yawmeya workflow](phase4/OPERATING_CLOSE.md) on the signed-in person's Supabase session.
 
@@ -41,9 +41,9 @@ Full record, with every report difference: [phase10/WEB_VALIDATION.md](phase10/W
 
 **Open decisions:** D-1 to D-5; the P1-32 November recipe start date; remaining ambiguous catalog pairs and units; the P1-29 Kinder size; remaining replenishment settings (minimum observations, factory constraints, and confirmed delivery exceptions); walkthrough confirmation of the Phase 1 summary.
 
-**Safety stock.** The editable 20 % default has not landed (nothing on `main` references it). It remains the separate follow-up under [Phase 9 status](#separate-follow-up-after-phase-9-merges). OCR and image upload stay for later.
+**Safety stock.** Implemented after the rehearsal: 20 % of the coverage-period forecast by default, editable on `/replenishment/settings`, 0 allowed (migration `20261127090000_safety_stock_percent.sql`). Evidence and the per-decision review: [phase10/DECISION_REVIEW.md](phase10/DECISION_REVIEW.md). Before the hosted push, the dry run must now list `20261126090000` **and** `20261127090000`. OCR and image upload stay for later.
 
-**Readiness for Phase 11.** Technically ready for the daily workflow in both languages, but the live rollout should not start until: (1) the hosted Phase 9 migration is applied (the dry run must list exactly `20261126090000_phase9_report_exports.sql` and zero seeds) and Abdo's account is provisioned and designated for Excel; (2) Abdo runs the walkthrough and decides D-1, which changes carried balances and so must be settled before live balances open; (3) the P1-32 date and recipe approvals are recorded if live consumption should post. First live date, opening cash and custody, opening stock and outstanding orders are collected at the Phase 11 handover, not here.
+**Readiness for Phase 11.** Technically ready for the daily workflow in both languages, but the live rollout should not start until: (1) the hosted Phase 9 migration is applied (once this branch is merged, the dry run must list exactly `20261126090000_phase9_report_exports.sql` and `20261127090000_safety_stock_percent.sql`, and zero seeds) and Abdo's account is provisioned and designated for Excel; (2) Abdo runs the walkthrough and decides D-1, which changes carried balances and so must be settled before live balances open; (3) the P1-32 date and recipe approvals are recorded if live consumption should post. First live date, opening cash and custody, opening stock and outstanding orders are collected at the Phase 11 handover, not here.
 
 ## Phase 9 status
 
@@ -66,11 +66,11 @@ Full record, with every report difference: [phase10/WEB_VALIDATION.md](phase10/W
 
 **Hosted deployment.** When authorized, use merged `main` at `9b25afbb27a96c880ec4b344db81a8693c6808e6` to verify the linked Supabase project and preflight the Storage bucket and policies, including broad policies that might match `report-exports`. Confirm the hosted Storage schema provides `storage.allow_only_operation(text)`. Run `npx supabase db push --linked --dry-run`. Apply with `npx supabase db push --linked` only when the dry run lists exactly `20261126090000_phase9_report_exports.sql` and zero seeds. Stop and record any unexpected result. Verify the remote migration, private bucket, 25 MiB limit, XLSX restriction and policies, then confirm a second dry run is up to date. If the migration is already recorded, verify its actual configuration. Provision and designate Abdo's account before the live Excel rollout.
 
-**Morning developer.** Use the existing workbooks for the Phase 10 bilingual walkthrough. Under the confirmed P1-19 workflow, Abdo counts the Maarif drawer and the counter, role, time, cashier and recorder remain separate fields. Carry forward the two approved Dubai chocolate cake Foodics spellings (P1-28) and mixed-nut kilogram conversions (P1-31). Review only the unresolved mappings and units, and record the P1-32 November recipe start date on `/catalog/review`. The Yawmeya template and sample still show a pending P1-19 annotation. Use the agreed first live business date for Maarif sales. At the Phase 11 handover, collect reviewed opening balances, opening stock and outstanding orders. [Phase 4 decisions](phase4/ABDO_DECISIONS.md), [Phase 5 decisions](phase5/CATALOG_AND_RECIPES.md)
+**Morning developer.** Use the existing workbooks for the Phase 10 bilingual walkthrough. Under the confirmed P1-19 workflow, Abdo counts the Maarif drawer and the counter, role, time, cashier and recorder remain separate fields. Carry forward the two approved Dubai chocolate cake Foodics spellings (P1-28) and mixed-nut kilogram conversions (P1-31). Review only the unresolved mappings and units, and record the P1-32 November recipe start date on `/catalog/review`. Use the agreed first live business date for Maarif sales. At the Phase 11 handover, collect reviewed opening balances, opening stock and outstanding orders. [Phase 4 decisions](phase4/ABDO_DECISIONS.md), [Phase 5 decisions](phase5/CATALOG_AND_RECIPES.md)
 
 ### Separate follow-up after Phase 9 merges
 
-Implement an editable safety-stock default of **20% of forecast consumption for the coverage period**. Add that safety stock to the coverage forecast before subtracting available stock and confirmed incoming stock. Leave image upload and OCR for later.
+Done locally on 24 November 2026 (not committed): an editable safety-stock default of **20 % of forecast consumption for the coverage period**, added once before subtracting usable stock at receipt and eligible confirmed incoming, floored at 0, then minimum and pack size. See [phase10/DECISION_REVIEW.md](phase10/DECISION_REVIEW.md). Image upload and OCR stay for later.
 
 ### Earlier Phase 9 implementation evidence
 
@@ -179,12 +179,12 @@ Found and fixed while building: a receipt in the same minute as the order's crea
 Open items:
 - **Abdo: the open replenishment decisions.** Each is a setting on `/replenishment/settings` that starts empty. Until the minimum is set, every item stays in review and only manual orders are possible. Questions, in plain Arabic (also shown on that page):
   1. Minimum observations: «يا عبده، عشان البرنامج يقترح كمية لصنف: محتاج كام يوم كامل من نفس يوم الأسبوع (مثلاً كام سبت فات البيع والجرد بتوعهم متسجلين كاملين) قبل ما نثق في المتوسط؟ 3 ولا 4 ولا أكتر؟»
-  2. Safety stock default agreed during the Phase 9 review. See the [separate implementation follow-up](#separate-follow-up-after-phase-9-merges).
+  2. Safety stock: **decided** (20 % of the coverage-period forecast, editable; implemented in `20261127090000`).
   3. Pack size, supplier minimum, shelf life, cut-off: «فيه أصناف بتتطلب بالكرتونة أو بعدد ثابت (حجم العبوة)؟ فيه أقل كمية لازم تتطلب من المصنع أو المخزن؟ الصنف بيفضل صالح كام يوم؟ وآخر ساعة ينفع تبعت فيها الطلبية لكل جهة كام؟»
   4. Exceptions to the two-day rule: «قاعدة إن الطلبية بتوصل بعد يومين من يوم الطلب: فيه استثناءات؟ مثلاً جهة بتوصل في يوم واحد، أو يوم إجازة أو يوم في الأسبوع مفيش فيه توريد؟»
-  5. Orders after midnight: «لو الطلبية اتعملت بعد نص الليل (مثلاً الساعة 1 أو 2 الفجر)، نحسبها على أنهي يوم؟ البرنامج دلوقتي بيحسب أي حاجة قبل الساعة 2 الفجر على اليوم اللي فات. ده صح ولا نغيّر الساعة؟»
+  5. Orders after midnight: **decided**. The business day ends at 02:00 (Phase 4 rule, repeated by Abdo on 24 November); the application already does this.
 
-  **Next action for the administrator.** Enter answers 1, 3 and 4 on `/replenishment/settings`. For 5, await Abdo's answer before changing the after-midnight rule.
+  **Next action for the administrator.** Enter answers 1, 3 and 4 on `/replenishment/settings` when Abdo gives them. Questions 2 and 5 are no longer shown there.
 - **Abdo / administrator: the first live business date.** Planning history starts there (`/comparison/settings`, the Phase 7 per-branch date). Until it is set, every item is in review. **Next action:** set it at handover (Phase 11).
 - **Developer (later phase): correcting a saved purchase-order receipt.** A Phase 6 reversal refuses it on purpose; today the fixes are an over-receipt with a reason or a Phase 6 adjustment. **Next action:** design a receipt-correction command that keeps the one-movement rule.
 - **Developer (Phase 11): legacy order history.** `import_legacy` exists without a screen. **Next action:** import real SRC-01 history only in a private environment, if the owner wants it.

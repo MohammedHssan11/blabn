@@ -24,7 +24,7 @@ Use his current Excel sheets next to the screen. Do not re-ask what he already c
 4. **A missed day (D-5).** «لو يوم اتنسى ومتسجّلش وبعده أيام اتقفلت، نصحّح الأيام اللي بعده الأول، ولا نسمح بإضافة اليوم الناقص ونعيد الحساب؟»
 5. **P1-32.** «من أنهي تاريخ نبدأ نعتمد وصفات نوفمبر؟»
 6. **Remaining catalog items.** Only the pairs and units still on `/catalog/review`; the Kinder size (P1-29) for 7 November.
-7. **Replenishment settings.** Review the remaining settings on `/replenishment/settings`: minimum days of history, factory constraints and any confirmed delivery exceptions. The 02:00 business-day boundary and two-day default are already recorded. The owner approved an editable 20% of forecast consumption for the coverage period; implementation is tracked separately.
+7. **Replenishment settings.** Review the remaining settings on `/replenishment/settings`: minimum days of history, factory constraints and any confirmed delivery exceptions. The 02:00 business-day boundary and two-day default are already recorded. Safety stock is now 20 % of the forecast by default; show him where to change it (0 means none).
 8. **Presentation.** Daily Sales average shown with 2 decimals and ratios with 4 (D-4). Which headings or steps confuse him? Remove them.
 9. **Confirm the Phase 1 summary** (his earlier answers and the 21–22 November voice decisions, which were transcribed from private audio).
 

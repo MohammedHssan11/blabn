@@ -128,7 +128,7 @@ export default async function PlanningPage({ params, searchParams }: { params: P
                     </td>
                     <td className="numeric" data-col="history">{cov ? t("replenishment.historyCount", { complete: cov.complete, missing: cov.missing }) : "—"}</td>
                     <td className="numeric" data-col="forecast"><Qty value={item.forecast} /></td>
-                    <td className="numeric" data-col="safety"><Qty value={item.safety} />{item.safety_set ? null : <div className="legend">{t("replenishment.settings.notSet")}</div>}</td>
+                    <td className="numeric" data-col="safety" data-percent={String(Number(item.safety_percent))}><Qty value={item.safety} /><div className="legend">{t("replenishment.settings.percentOfForecast", { pct: Number(item.safety_percent) })}</div></td>
                     <td className="numeric" data-col="on-hand"><Qty value={item.on_hand} /></td>
                     <td className="numeric" data-col="usable"><Qty value={item.usable} /></td>
                     <td className="numeric" data-col="incoming"><Qty value={item.eligible_incoming} /></td>

@@ -191,14 +191,18 @@ async function main() {
       plan.html.includes(`data-date="${D}"`) && plan.html.includes(`data-date="${E}"`) && plainText(plan.html).includes("02:00 · Africa/Casablanca"));
     check("the planning page links to a manual order", /data-link="manual-order"/.test(plan.html));
     const settings = await get(admin, "/en/replenishment/settings");
-    check("settings show the five open questions for Abdo, in plain Arabic in both languages",
-      (settings.html.match(/data-question=/g) ?? []).length === 5 && /يا عبده/.test(settings.html) && /يا عبده/.test((await get(admin, "/ar/replenishment/settings")).html));
-    const saved = await post(admin, "/en/replenishment/settings", settings.html, "branch-settings", { min_observations: "3", coverage_days: "1" });
-    check("the administrator sets the minimum to 3 (a test value; Abdo decides the real one)", saved.to.includes("notice=po_settings_saved"), saved.to);
+    check("settings show the three questions still open for Abdo (safety stock and the 02:00 boundary are decided), in plain Arabic in both languages",
+      (settings.html.match(/data-question=/g) ?? []).length === 3 && /يا عبده/.test(settings.html) && /يا عبده/.test((await get(admin, "/ar/replenishment/settings")).html));
+    check("the safety-stock percentage starts at the approved default of 20", /name="safety_percent"[^>]*value="20"/.test(settings.html));
+    const badPercent = await post(admin, "/en/replenishment/settings", settings.html, "branch-settings", { min_observations: "3", coverage_days: "1", safety_percent: "120" });
+    check("a percentage above 100 is refused", badPercent.to.includes("error=invalid_input"), badPercent.to);
+    const saved = await post(admin, "/en/replenishment/settings", settings.html, "branch-settings", { min_observations: "3", coverage_days: "1", safety_percent: "25" });
+    check("the administrator sets the minimum to 3 and safety stock to 25 % (test values; Abdo decides the real ones)", saved.to.includes("notice=po_settings_saved"), saved.to);
     const itemPage = await get(admin, `/en/replenishment/settings?item=${X}`);
-    const s2 = await post(admin, "/en/replenishment/settings", itemPage.html, "item-settings", { safety: "5", pack: "", min_order: "", shelf_life_days: "", source: "factory" });
-    check("and safety stock 5 for X", s2.to.includes("notice=po_settings_saved"), s2.to);
-    const stale = await post(admin, "/en/replenishment/settings", settings.html, "branch-settings", { min_observations: "4", coverage_days: "1" });
+    check("the item settings form no longer asks for a per-item safety quantity", !/name="safety"/.test(itemPage.html));
+    const s2 = await post(admin, "/en/replenishment/settings", itemPage.html, "item-settings", { pack: "", min_order: "", shelf_life_days: "", source: "factory" });
+    check("and the factory as X's source", s2.to.includes("notice=po_settings_saved"), s2.to);
+    const stale = await post(admin, "/en/replenishment/settings", settings.html, "branch-settings", { min_observations: "4", coverage_days: "1", safety_percent: "25" });
     check("a stale settings form is refused", stale.to.includes("error=po_stale"), stale.to);
   }
 
@@ -235,7 +239,7 @@ async function main() {
   {
     const plan = await get(keeper.jar, "/en/replenishment");
     const row = rowOf(plan.html, "E8 مكون");
-    check("X: forecast 20 (missing day left out), safety 5, usable 7, eligible incoming 3",
+    check("X: forecast 20 (missing day left out), safety 25 % of 20 = 5, usable 7, eligible incoming 3",
       q(cell(row, "forecast"), "20/1") && q(cell(row, "safety"), "5/1") && q(cell(row, "usable"), "7/1") && q(cell(row, "incoming"), "3/1"), row.slice(0, 600));
     check("X: 20 + 5 − 7 − 3 = 15", q(cell(row, "raw"), "15/1") && q(cell(row, "recommended"), "15/1") && q(cell(row, "suggested"), "15/1"));
     check("the history column shows 3 complete and 1 missing same-weekday days", /3 complete, 1 missing/.test(plainText(cell(row, "history"))));
