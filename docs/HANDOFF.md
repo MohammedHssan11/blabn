@@ -2,7 +2,7 @@
 
 Read this first in every session, then compare it with the actual repository state (`git status`, `git log -3`, `git fetch` and the PR list) before continuing. Update it after each meaningful task and before ending a session.
 
-_Last updated: 25 November 2026. [Phase 10](#phase-10-status) merged in [PR #17](https://github.com/MohammedHssan11/blabn/pull/17) at `11af5dd7000323d3bdd13454ea4ddc12489a0dcf`; the hosted database is at migration `20261127090000`. **Abdo's acceptance walkthrough is still pending.** His production staff account must be provisioned and verified before Excel export designation. See the [hosted deployment record](#hosted-deployment)._
+_Last updated: 26 November 2026. [Phase 10](#phase-10-status) and the [Phases 6–10 audit](#independent-audit-of-phases-610-26-november-2026) are merged; both the local and hosted databases are at migration `20261128090000`. **Abdo's acceptance walkthrough is still pending.** At the last staff check on 25 November, no production staff account existed; provision and verify Abdo before Excel export designation. See the [hosted deployment record](#hosted-deployment)._
 
 The bilingual workspace uses the [B.Laban interface refresh](BRAND_DESIGN.md). Phase 4 implements the [confirmed daily close and Yawmeya workflow](phase4/OPERATING_CLOSE.md) on the signed-in person's Supabase session.
 
@@ -16,9 +16,9 @@ The bilingual workspace uses the [B.Laban interface refresh](BRAND_DESIGN.md). P
 | Phase 7 | [PR #12](https://github.com/MohammedHssan11/blabn/pull/12) (`phase-7/comparison`) merged as `a265524`. |
 | Phase 8 | [PR #14](https://github.com/MohammedHssan11/blabn/pull/14) (`phase-8/replenishment`) merged as `e1403fb`. |
 | Phase 9 | [PR #16](https://github.com/MohammedHssan11/blabn/pull/16) merged into main at `9b25afbb27a96c880ec4b344db81a8693c6808e6`. |
-| Development baseline | Verified `origin/main` at `11af5dd7000323d3bdd13454ea4ddc12489a0dcf` (Phase 10 merge). |
+| Development baseline | Audit [PR #19](https://github.com/MohammedHssan11/blabn/pull/19) merged at `a473cba67d77d50b0e542d91d52813108f8ce31f`; deployment record [PR #18](https://github.com/MohammedHssan11/blabn/pull/18) merged at `febae4a772345ef029cce7dabd18f282a4fc7ff5`. |
 | Phase 9 validation copy | `C:\Users\mh978\Downloads\abdo-p9-validation\` with the running disposable stack `balaban-p9` (API `127.0.0.1:59321`, Postgres `127.0.0.1:59322`). Synthetic desktop Excel samples are in `C:\Users\mh978\Downloads\abdo\outputs\phase9\`. |
-| Hosted Supabase | Shared project `xitryskkqgtkpdawddqe`. Hosted migration history matches `main` through `20261127090000` (25 November 2026). Deploy with `npx supabase db push --linked --dry-run` first; never use `--include-seed`, because the seed files are local test data. |
+| Hosted Supabase | Shared project `xitryskkqgtkpdawddqe`. Hosted migration history matches `main` through `20261128090000` (26 November 2026). Deploy with `npx supabase db push --linked --dry-run` first; never use `--include-seed`, because the seed files are local test data. |
 | Local tooling | `npm ci` installs the pinned Supabase CLI 2.122.1. Use `npx supabase …`; an older global CLI cannot read `supabase/config.toml`. |
 | Phase 2 pull request | [PR #2](https://github.com/MohammedHssan11/blabn/pull/2), merged. |
 | Local-only material | `C:\Users\mh978\Downloads\abdo\abdo temp\`, `...\outputs\`, `...\archive\`, `...\screenshot\` — outside Git; keep them out of commits. |
@@ -297,6 +297,19 @@ Open items:
 
 ## Hosted deployment
 
+**26 November 2026: audit migration `20261128090000_audit_phases6_10_fixes.sql` was applied to shared project `xitryskkqgtkpdawddqe` from merged `main` at `a473cba67d77d50b0e542d91d52813108f8ce31f`.**
+
+| Step | Result |
+|---|---|
+| Before | Migration history matched through `20261127090000`; only `20261128090000` was missing. The new function signatures and three new triggers did not exist. Stock movements, counts, adjustments, orders, exports and replenishment settings each held 0 rows. |
+| Dry run (`npx supabase db push --linked --dry-run`) | Would push only `20261128090000_audit_phases6_10_fixes.sql`; seeds `[]`, roles `[]`. |
+| Push (`npx supabase db push --linked --yes`, no `--include-seed`) | Applied only the audit migration; seeds `[]`, roles `[]`. |
+| Read-only verification | `pg_trigger` lists `catalog_items_keep_stock_unit`, `stock_adjustments_not_before_opening` and `stock_movements_not_before_opening`. `to_regprocedure` finds `app_business_today()`, `app_local_times(timestamptz[])` and `app_purchase_orders_in_period(text,date,date)`; `has_function_privilege` gives `authenticated` execute and denies `anon` for all three. `pg_get_functiondef` confirms the export claim contains the branch share lock and the stock command contains the adjustment-decision guard. The preflight row counts remain 0; `app_private.report_export_owners` remains empty. |
+| After | Both local and hosted migration histories include `20261128090000`; their second dry runs report up to date with no migrations, seeds or roles. No hosted SQL acceptance files were run. |
+| Local database | `balaban-dev` had been at `20261125090000`. A private local PostgreSQL archive was created and its table of contents validated, then `npx supabase migration up --local` applied the Phase 9, safety-stock and audit migrations without reset or seed. The export bucket is private and XLSX-only, its two policies exist, and the new triggers and functions were checked. |
+
+Abdo's account designation and acceptance walkthrough remain pending; the migration does not settle the stock-count carry-forward decision.
+
 **25 November 2026: migrations `20261126090000_phase9_report_exports.sql` and `20261127090000_safety_stock_percent.sql` were applied to shared project `xitryskkqgtkpdawddqe` from merged `main` at `11af5dd7000323d3bdd13454ea4ddc12489a0dcf`.**
 
 | Step | Result |
@@ -384,7 +397,7 @@ Not done on the hosted project: the Phase 2–6 SQL acceptance files. They creat
 
 **Audited commit:** `11af5dd7000323d3bdd13454ea4ddc12489a0dcf` (`origin/main`, Phase 10 merged in [PR #17](https://github.com/MohammedHssan11/blabn/pull/17)), branch `audit/phases-6-10`. [PR #18](https://github.com/MohammedHssan11/blabn/pull/18) (deployment record) was open and was not merged. The audit ran on 25 and 26 November on Windows 11 with Node 22.21 (time-zone data 2025b), Python 3.10 with openpyxl 3.1.5, Supabase CLI 2.122.1, PostgreSQL 17.11, Microsoft Edge and Docker. All database, HTTP and browser checks used a separate copy, `abdo-audit610-validation`, with its own disposable stack `balaban-a610` (ports 60320–60329). `balaban-dev` and the hosted project were not touched: no push, SQL or account change. The Phase 10 rehearsal read the private workbook reference from `outputs\phase10\`.
 
-**Deployment record:** The earlier Phase 9 and Phase 10 status paragraphs above predate the release and are superseded by [PR #18](https://github.com/MohammedHssan11/blabn/pull/18). Phase 10 was merged in PR #17 and the hosted Phase 9 and safety-stock migrations were applied through `20261127090000`; no production staff account was found, so Abdo was not designated for Excel. Audit migration `20261128090000` remains unapplied.
+**Deployment record:** Phase 10 was merged in PR #17 and the audit in PR #19. The hosted project and `balaban-dev` were updated through `20261128090000` on 26 November 2026; see [Hosted deployment](#hosted-deployment). No production staff account was found on 25 November, so Abdo was not designated for Excel.
 
 **Baseline.** Before any change, all 22 requested commands passed on the audited commit. The defects below are not covered by those checks.
 
@@ -501,7 +514,7 @@ Live grants on the final database: nothing for anonymous callers; every `public`
 
 ### Not verified
 
-- The hosted project. Migration `20261128090000` is **not applied** there.
+- Hosted application workflows after the audit migration. The migration and its database objects were verified read-only; the hosted SQL acceptance files and browser suites were not run.
 - A printed paper copy, Excel for Mac, Excel on another machine, LibreOffice, Safari or a physical phone.
 - Abdo's walkthrough and acceptance.
 - B8, B9, B10 and B16 are shown by unit tests, not on a live page or in a downloaded file. For B6, the item history was checked over HTTP; the comparison history only by the source check and the database function.
@@ -510,7 +523,7 @@ Live grants on the final database: nothing for anonymous callers; every `public`
 ### Open items (owner, next action)
 
 1. **Stock counts and the next day's opening — Abdo, then developer.** The field map (INV-04, agreed by the team; correction P1-24) says the next day opens at the physical count, or at the book balance when not counted. The application's opening is every earlier movement; a count never changes it unless an adjustment is approved (the Phase 6 design). Reproduced: opening 10, count 9, next day with no movement and count 9 gives opening 10 and variance −1 again. The inventory workbook's cumulative and month deviation add the daily variances, so **one unadjusted shortage of 1 is reported as −2 after two counts, and grows with every count** (from the builder's code). Not changed: it decides saved figures, like D-1 for cash. Question: «يا عبده، في الجرد: لو عدّيت صنف وطلع غير الرصيد الدفتري، «أول المدة» لليوم اللي بعده تبقى رقم العد الفعلي (زي ملف الإكسل المصحح)، ولا تفضل على الدفتري لحد ما حد يعتمد تسوية؟» Settle it before the first live inventory month.
-2. **Deployment — project owner.** Apply `20261128090000` to the hosted project **before** running this code against it: item and comparison history and the inventory export call its functions. The dry run must list only that migration and no seeds.
+2. **Deployment — project owner.** Migration `20261128090000` was applied and verified on hosted and local databases on 26 November. Complete application deployment and hosted workflow verification before live use.
 3. **Open business decisions — Abdo.** D-1 cash carry-forward, D-2 purchasing custody, D-3 cancellation and hospitality columns, D-5 back-filling skipped days (also D-4 rounding, D-6 inventory values); P1-32 November recipe start date; minimum observations; pack sizes, supplier minimums, shelf life, cut-off times and lead-time exceptions. None was decided or changed.
 4. **Developer (later).**
    - The orders page lists the newest 200 orders only; an older open order is reachable only by its link.
