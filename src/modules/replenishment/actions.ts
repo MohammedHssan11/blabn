@@ -16,6 +16,19 @@ function withParam(path: string, name: string, value: string): string {
   return `${url.pathname}${url.search}`;
 }
 
+type SubmittedLine = { item: string; source: string; from_plan: boolean };
+
+/** The new-order page address with the chosen sources: they decide the expected date and so the suggestions. */
+function withSources(path: string, lines: SubmittedLine[]): string {
+  const url = new URL(path, "http://site.invalid");
+  url.searchParams.delete("lead");
+  for (const line of lines) {
+    url.searchParams.append("lead", line.source);
+    if (line.from_plan) url.searchParams.set(`source.${line.item}`, line.source);
+  }
+  return `${url.pathname}${url.search}`;
+}
+
 /**
  * The single form handler of the purchase-order screens. It authorizes first with the permission the
  * command needs (creating, approving and receiving are separate), then sends the command as the
@@ -34,7 +47,11 @@ export async function purchaseOrderAction(data: FormData): Promise<void> {
   if (!isCatalogId(request) || !payload) redirect(withParam(back, "error", "invalid_input"));
 
   const result = await runPurchaseOrderCommand(command, request.toLowerCase(), payload);
-  if (result.error) redirect(withParam(back, "error", mapPurchaseOrderError(result.error.code)));
+  if (result.error) {
+    // A changed suggestion is reviewed for the sources that were chosen, so the next page shows the new one.
+    const review = command === "create" && result.error.code === "CT802" ? withSources(back, payload.lines as SubmittedLine[]) : back;
+    redirect(withParam(review, "error", mapPurchaseOrderError(result.error.code)));
+  }
   const out = (result.data ?? {}) as { replayed?: boolean; order?: string };
   const next = command === "create" && out.order ? `/${locale}/replenishment/orders/${out.order}` : back;
   redirect(withParam(next, "notice", out.replayed ? "po_replayed" : `po_${command}`));

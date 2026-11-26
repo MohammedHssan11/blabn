@@ -279,7 +279,7 @@ async function main() {
     check("the earlier file downloads byte-for-byte as before", again.status === 200 && sha(again.bytes) === sha(before.bytes));
     check("its record still names the earlier revision basis", psql(`select sources ->> 'operating_basis' from public.report_exports where id = '${before.id}'`) === basisBefore);
     const page = await get(admin, `/en/reports/exports/${before.id}`);
-    check("its provenance stays reviewable on its page", page.status === 200 && page.html.includes(`&quot;operating_basis&quot;: ${basisBefore}`) && page.html.includes("daily_sales@1.0.0"));
+    check("its provenance stays reviewable on its page", page.status === 200 && page.html.includes(`&quot;operating_basis&quot;: ${basisBefore}`) && page.html.includes("daily_sales@1.0.1"));
     const after = await requestExport(admin, "export-daily_sales-month", { month: "2026-11", workbook_locale: "ar" });
     const file = await download(admin, after.id);
     const info = await inspect(file.bytes, "ar");
@@ -315,6 +315,42 @@ async function main() {
     const requests = await Promise.all(Array.from({ length: 4 }, () => adminDb.rpc("app_report_export_request", payload)));
     check("concurrent submissions return one export with one original request", requests.every((r) => !r.error && r.data.id === requests[0].data?.id)
       && requests.filter((r) => r.data?.replayed === false).length === 1, requests.map((r) => r.error?.code ?? r.data?.replayed).join(", "));
+  }
+
+  section("6b. An interrupted build can be retried; the inventory file holds the whole period's orders");
+  {
+    const { data: record, error } = await adminDb.rpc("app_report_export_request", { p_family: "daily_sales", p_branches: ["maarif"],
+      p_period: { mode: "month", month: "2026-11" }, p_locale: "en", p_include_drafts: false, p_request: crypto.randomUUID() });
+    if (error) throw new Error(`request: ${error.code} ${error.message}`);
+    await adminDb.rpc("app_report_export_claim", { p_export: record.id });
+    const path = `/en/reports/exports/${record.id}`;
+    const fresh = await get(admin, path);
+    const busy = await submitForm(http, admin, path, fresh.html, "retry");
+    check("a build claimed just now answers busy to a retry", where(busy.headers.get("location")).includes("error=export_busy"), where(busy.headers.get("location")));
+    psql(`update public.report_exports set claimed_at = now() - interval '11 minutes' where id = '${record.id}'`);
+    const stale = await get(admin, path);
+    const list = await get(admin, "/en/reports/exports");
+    const listRow = list.html.slice(list.html.indexOf(`data-export="${record.id}"`)).split("</tr>")[0];
+    check("an interrupted build still shown as building offers a retry, on its page and in the list",
+      /data-status="running"/.test(stale.html) && readForm(stale.html, "retry") !== null && /data-form="retry"/.test(listRow));
+    const retried = await submitForm(http, admin, path, stale.html, "retry");
+    check("the retry takes it over and completes it as attempt 2", where(retried.headers.get("location")).includes("notice=export_complete")
+      && psql(`select status || ':' || attempt from public.report_exports where id = '${record.id}'`) === "complete:2", where(retried.headers.get("location")));
+
+    // An order of an earlier month whose delivery is expected later in the current month, after today.
+    const [today, monthEnd, earlier] = psql(`select d || '|' || (date_trunc('month', d) + interval '1 month - 1 day')::date || '|' || (date_trunc('month', d) - interval '20 days')::date
+      from (select public.business_date_of(now(), timezone, business_day_rollover) as d from public.branches where code = 'maarif') x`).split("|");
+    if (today < monthEnd) {
+      const item = psql("select id from public.catalog_items where kind = 'ingredient' and stock_tracked and status = 'active' and base_unit is not null order by name_ar limit 1");
+      const { data: order, error: orderError } = await adminDb.rpc("app_purchase_order_command", { p_branch: "maarif", p_command: "import_legacy", p_request: crypto.randomUUID(),
+        p_payload: { expected_date: monthEnd, source_value: "synthetic", created_date: earlier, lines: [{ item, quantity: "2", source: "factory" }] } });
+      if (orderError) throw new Error(`legacy order: ${orderError.code} ${orderError.message}`);
+      const result = await requestExport(admin, "export-inventory-month", { month: today.slice(0, 7), workbook_locale: "en" });
+      check("the month's inventory file includes an earlier order expected later this month", psql(`select exists (select 1 from jsonb_array_elements_text(sources -> 'orders') o
+        where o like 'PO-${order.order_no}:%') from public.report_exports where id = '${result.id}'`) === "t", result.to);
+    } else {
+      console.log("  (today is the last day of the month: the later-this-month order case does not apply)");
+    }
   }
 
   section("7. Abdo only, live revocation, and no signed download URLs");

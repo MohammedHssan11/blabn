@@ -37,6 +37,14 @@ export async function readOrders(limit = 200): Promise<{ today: string; local: s
   return data as { today: string; local: string; orders: OrderJson[] };
 }
 
+/** Every order that touches the period (created, expected or received in it), newest first, without a list limit. */
+export async function readOrderIds(from: string, to: string): Promise<string[]> {
+  const client = await createUserClient();
+  const { data, error } = await client.rpc("app_purchase_orders_in_period", { p_branch: OPERATING_BRANCH_CODE, p_from: from, p_to: to });
+  if (error) failed("Purchase orders", error);
+  return data as string[];
+}
+
 export async function readOrder(id: string): Promise<OrderJson | null> {
   const client = await createUserClient();
   const { data, error } = await client.rpc("app_purchase_order", { p_branch: OPERATING_BRANCH_CODE, p_order: id });

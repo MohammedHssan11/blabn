@@ -1,6 +1,6 @@
 import "server-only";
 import { getRepository } from "@/lib/repository";
-import { businessDateOf, isBusinessDate, isMonth, type BusinessDate } from "@/lib/dates";
+import { isBusinessDate, isMonth, type BusinessDate } from "@/lib/dates";
 import type { Blank, Minor, RatioBp } from "@/lib/money";
 import { first, type SearchParams } from "@/lib/search-params";
 import { traced, type Traced } from "@/modules/reports/trace";
@@ -30,7 +30,6 @@ import { readBranchNames, readComparisonData } from "./data";
 /** Phase 2 demonstration dates (synthetic fixtures, used by the smoke tests). */
 export const DEMO_CURRENT_DATE = "2026-11-10";
 export const SAMPLE_CURRENT_DATES: readonly BusinessDate[] = ["2026-11-10", "2026-11-17"];
-const ZONE = "Africa/Casablanca";
 
 export type Mode = "weekly" | "monthly";
 
@@ -44,13 +43,11 @@ export interface ComparisonQuery {
   invalid: boolean;
 }
 
-/** Today's business date for the defaults (the database applies each branch's own rule). */
-export function defaultToday(now: Date = new Date()): BusinessDate {
-  return businessDateOf(now, ZONE, "02:00");
-}
-
-/** Reads ?mode, ?current, ?prior, ?month and ?branches; anything invalid falls back to a default. */
-export function parseComparisonQuery(sp: SearchParams, today: BusinessDate = defaultToday()): ComparisonQuery {
+/**
+ * Reads ?mode, ?current, ?prior, ?month and ?branches; anything invalid falls back to a default.
+ * `today` is the database's business date (`readBusinessToday`), used only for the defaults.
+ */
+export function parseComparisonQuery(sp: SearchParams, today: BusinessDate): ComparisonQuery {
   let invalid = false;
   const modeParam = first(sp.mode);
   const mode: Mode = modeParam === "monthly" ? "monthly" : "weekly";

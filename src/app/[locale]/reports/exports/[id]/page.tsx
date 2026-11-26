@@ -51,7 +51,8 @@ export default async function ExportPage({ params, searchParams }: { params: Pro
           e.allowed ? <p><a href={`/api/report-exports/${e.id}`} data-link="download">{t("exports.download")}</a> <span dir="ltr">({e.file_name})</span></p>
             : <p className="notice warn" data-result="not-allowed">{t("exports.notAllowed")}</p>
         ) : null}
-        {e.allowed && (e.status === "failed" || e.status === "pending") ? (
+        {/* "Building" too: an interrupted build is taken over after 10 minutes; before that the database answers "busy". */}
+        {e.allowed && e.status !== "complete" ? (
           <form action={retryExportAction} data-form="retry">
             <input type="hidden" name="locale" value={locale} />
             <input type="hidden" name="export" value={e.id} />

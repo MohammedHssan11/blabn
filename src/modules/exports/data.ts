@@ -1,14 +1,15 @@
 import "server-only";
 import { daysInMonth } from "@/lib/dates";
+import { readBusinessToday } from "@/lib/database-time";
 import { readOperatingReport, type OperatingDay, type OperatingReport } from "@/modules/closing/operations";
 import { getComparison, parseComparisonQuery } from "@/modules/comparisons/service";
 import type { BranchDay, Figure } from "@/modules/comparisons/calc";
 import { readUnits } from "@/modules/catalog/data";
 import { readProductMix, readStockDay, type ProductMix, type StockDay } from "@/modules/inventory/stock";
-import { readOrder, readOrders } from "@/modules/replenishment/data";
+import { readOrder, readOrderIds } from "@/modules/replenishment/data";
 import type { OrderJson } from "@/modules/replenishment/types";
 import { buildComparison } from "./build/comparison";
-import { buildDailyLedger, buildDailySales, buildDailyStatement, type DailyInput } from "./build/daily";
+import { buildDailyLedger, buildDailySales, buildDailyStatement, effectiveRevision, type DailyInput } from "./build/daily";
 import { buildInventory } from "./build/inventory";
 import type { AboutInfo } from "./build/about";
 import type { Period } from "./families";
@@ -47,7 +48,7 @@ function figureRecords(days: BranchDay[]): string[] {
 async function loadComparison(period: Period, branches: string[]): Promise<Loaded> {
   const query = parseComparisonQuery(period.mode === "week"
     ? { mode: "weekly", current: period.current, prior: period.prior, branches }
-    : { mode: "monthly", month: period.mode === "month" ? period.month : undefined, branches });
+    : { mode: "monthly", month: period.mode === "month" ? period.month : undefined, branches }, await readBusinessToday());
   if (query.invalid) throw new ExportDataError("invalid_period");
   const page = await getComparison(query, "export");
   const view = page.view;
@@ -83,7 +84,7 @@ async function loadDaily(family: "daily_sales" | "daily_statement" | "daily_ledg
   }
   const input: DailyInput = { branch, period, includeDrafts, report: first, details };
   const model = family === "daily_sales" ? buildDailySales(input) : family === "daily_statement" ? buildDailyStatement(input) : buildDailyLedger(input);
-  const revisions = Object.entries(details).map(([day, d]) => `${day}:r${d.revision}:${d.state}`).sort();
+  const revisions = Object.entries(details).map(([day, d]) => `${day}:r${effectiveRevision(d)}:${d.state}`).sort();
   const states = first.days.map((d) => `${d.date}:${d.state}`);
   return {
     model,
@@ -107,12 +108,11 @@ async function loadInventory(period: Period, snapshotAt: string): Promise<Loaded
   for (const day of dates) mixes.push(await readProductMix(day));
   const from = dates[0] ?? firstDate;
   const to = dates[dates.length - 1] ?? firstDate;
-  const list = await readOrders(500);
-  const touches = (o: OrderJson) => [o.business_date, o.expected?.date, o.original_expected?.date, ...o.receipt_dates]
-    .some((d) => !!d && d >= from && d <= to);
+  // The whole period, as the orders sheet shows it: a delivery may be expected later in the current month.
+  const orderEnd = period.mode === "day" ? period.date : daysInMonth(period.month).at(-1)!;
   const orders: OrderJson[] = [];
-  for (const o of list.orders.filter(touches)) {
-    const full = await readOrder(o.id);
+  for (const id of await readOrderIds(from, orderEnd)) {
+    const full = await readOrder(id);
     if (full) orders.push(full);
   }
   const units = await readUnits();

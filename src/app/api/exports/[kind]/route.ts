@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { toDecimalString } from "@/lib/money";
+import { readBusinessToday } from "@/lib/database-time";
 import { isBusinessDate, isMonth } from "@/lib/dates";
 import { readOperatingReport, ReportBasisNotFound, usesDemoFixtures } from "@/modules/closing/operations";
 import { getRepository } from "@/lib/repository";
@@ -101,6 +102,9 @@ export async function GET(request: NextRequest, context: { params: Promise<{ kin
   }
 
   if (kind === "comparison") {
+    // Signed in first (the default date is read from the database), then the permission for the branches.
+    const signedIn = await authorizeRequest();
+    if (!signedIn.ok) return signedIn.response;
     const params = request.nextUrl.searchParams;
     const query = parseComparisonQuery({
       mode: params.get("mode") ?? undefined,
@@ -108,7 +112,7 @@ export async function GET(request: NextRequest, context: { params: Promise<{ kin
       prior: params.get("prior") ?? undefined,
       month: params.get("month") ?? undefined,
       branches: params.getAll("branches").length > 0 ? params.getAll("branches") : undefined,
-    });
+    }, await readBusinessToday());
     // Exporting needs comparison.export for EVERY branch the file covers; viewing does not grant it.
     const requirements: Requirement[] = query.branches.map((branch) => ({ permission: "comparison.export", branch }));
     const decision = await authorizeRequest(requirements);

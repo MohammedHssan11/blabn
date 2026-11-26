@@ -42,7 +42,9 @@
     "test:phase8:browser": "node scripts/phase8/browser-check.mjs",
     "db:check:phase9": "node scripts/phase3/db-check.mjs phase9_checks.sql",
     "test:phase9": "node scripts/phase9/e2e.mjs",
-    "test:phase10": "node scripts/phase10/e2e.mjs"
+    "test:phase10": "node scripts/phase10/e2e.mjs",
+    "db:check:audit": "node scripts/phase3/db-check.mjs audit_phases6_10_checks.sql",
+    "test:audit:snapshot": "node scripts/audit/snapshot-check.mjs"
   },
   "dependencies": {
     "@fontsource-variable/noto-sans-arabic": "^5.3.0",

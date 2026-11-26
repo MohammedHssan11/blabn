@@ -321,7 +321,7 @@ Abdo can understand a replenishment suggestion, its dates and assumptions, appro
 - Receiving 4 and then 6 units from a 10-unit order adds 10 total units to stock with no duplicate receipt.
 - Insufficient history produces a review state while a manual purchase order remains available.
 
-Implementation status and evidence (merged in PR #14, applied to the hosted project): [Phase 8 planning, purchase orders and receiving](phase8/REPLENISHMENT.md) and the [handover](HANDOFF.md#phase-8-status). The minimum number of observations, safety stock, pack sizes, supplier minimums, shelf life, cut-off times, exceptions to the two-day rule and the after-midnight business day still wait for Abdo; each is a setting that starts empty.
+Implementation status and evidence (merged in PR #14, applied to the hosted project): [Phase 8 planning, purchase orders and receiving](phase8/REPLENISHMENT.md) and the [handover](HANDOFF.md#phase-8-status). The minimum number of observations, pack sizes, supplier minimums, shelf life, cut-off times and exceptions to the two-day rule still wait for Abdo; each is a setting that starts empty. Safety stock (20 % of the coverage-period forecast, editable) and the 02:00 business day are [decided](phase10/DECISION_REVIEW.md).
 
 ## Phase 9 — The five Excel report families
 
@@ -361,7 +361,7 @@ Abdo can select a day or period and download consistent reports from saved appli
 - Download fails after the requester loses the relevant permission.
 - Historical reporting figures appear only in the reports that need them and do not change any live balance.
 
-Implementation status and evidence (local branch `phase-9/excel-reports`, not yet pushed, merged or applied to the hosted project): [Phase 9 Excel reports](phase9/EXCEL_REPORTS.md) and the [handover](HANDOFF.md#phase-9-status). Who besides Abdo may export, whether Maarif figures before the first live date are needed, and the pending P1-19/P1-28/P1-31/P1-32 rules still wait for Abdo.
+Implementation status and evidence (merged in PR #16; see the handover for the hosted deployment): [Phase 9 Excel reports](phase9/EXCEL_REPORTS.md) and the [handover](HANDOFF.md#phase-9-status). Who besides Abdo may export, whether Maarif figures before the first live date are needed, and the pending P1-19/P1-28/P1-31/P1-32 rules still wait for Abdo.
 
 ## Phase 10 — End-to-end web validation in Arabic and English
 

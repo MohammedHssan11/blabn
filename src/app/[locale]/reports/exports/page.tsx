@@ -10,7 +10,7 @@ import { ResultMessages } from "@/components/Messages";
 import { ALL_BRANCH_CODES, OPERATING_BRANCH_CODE } from "@/modules/access/catalog";
 import { requireAccess } from "@/modules/access/guard";
 import { holds, type ActiveAccess } from "@/modules/access/session";
-import { defaultToday } from "@/modules/comparisons/service";
+import { readBusinessToday } from "@/lib/database-time";
 import { requestExportAction, retryExportAction } from "@/modules/exports/actions";
 import { isReportExportOwner } from "@/modules/exports/access";
 import { DAY_FAMILIES, DRAFT_FAMILIES, FAMILIES, familyPermissions } from "@/modules/exports/families";
@@ -89,8 +89,7 @@ export default async function ExportsPage({ params, searchParams }: { params: Pr
   // and the action, the database and the download check that permission again.
   const access = await requireAccess({ locale, path });
   const t = createTranslator(locale);
-  const today = defaultToday();
-  const [isOwner, exports, names] = await Promise.all([isReportExportOwner(), readExports(50), readBranchNames()]);
+  const [today, isOwner, exports, names] = await Promise.all([readBusinessToday(), isReportExportOwner(), readExports(50), readBranchNames()]);
   const offered = isOwner
     ? FAMILIES.map((family) => ({ family, branches: exportableBranches(access, family) })).filter((f) => f.branches.length > 0)
     : [];
@@ -128,7 +127,8 @@ export default async function ExportsPage({ params, searchParams }: { params: Pr
                     <td><ExportStatusBadge status={e.status} t={t} /></td>
                     <td>
                       {e.allowed && e.status === "complete" ? <a href={`/api/report-exports/${e.id}`} data-link="download">{t("exports.download")}</a> : null}
-                      {e.allowed && (e.status === "failed" || e.status === "pending") ? (
+                      {/* "Building" too: an interrupted build is taken over after 10 minutes; before that the database answers "busy". */}
+                      {e.allowed && e.status !== "complete" ? (
                         <form action={retryExportAction} data-form="retry" style={{ display: "inline" }}>
                           <input type="hidden" name="locale" value={locale} />
                           <input type="hidden" name="export" value={e.id} />

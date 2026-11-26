@@ -47,6 +47,14 @@ function stateKey(row: DayRow | undefined, day: string, today: string, drafts: b
 
 const draftStyle = (state: DayState): Row["style"] => (CLOSED.includes(state) ? undefined : "draft");
 
+/**
+ * The revision a day's figures come from. A proposed or rejected correction is a later revision that
+ * changes nothing; `record.revision` is that latest one, while the figures are the effective one's.
+ */
+export function effectiveRevision(record: OperatingDay): number {
+  return record.history.find((h) => h.command !== "propose" && h.command !== "reject")?.revision ?? record.revision;
+}
+
 // ------------------------------------------------------------------ Daily Sales (DS)
 
 export function buildDailySales(input: DailyInput): WorkbookModel {
@@ -80,6 +88,7 @@ export function buildDailySales(input: DailyInput): WorkbookModel {
   const remitted = included.reduce((t, d) => t + d.summary.remittances, 0);
   const remittance = remitted > 0 ? remitted : null;
   const started = daysInMonth(month).filter((d) => d <= today).length;
+  const withoutOrders = included.filter((d) => d.orders === null && (d.sales ?? 0) > 0).length;
   rows.push({
     cells: [L("ds.totalRow"), blank, money(sales), int(orders), money(averageMinor(sales, orders)), money(expenses),
       money(remittance), ratio(remittance === null ? null : ratioBp(remittance, sales)), money(card), ratio(ratioBp(card, sales)),
@@ -100,6 +109,8 @@ export function buildDailySales(input: DailyInput): WorkbookModel {
       },
       { kind: "gap" },
       { kind: "title", cells: [L("ds.periodAverageRule")] },
+      // As on the daily-close page: sales without an order count make the period average too high.
+      ...(withoutOrders > 0 ? [{ kind: "title" as const, cells: [L("ds.ordersMissing", { days: withoutOrders })] }] : []),
     ],
   };
   return { family: "daily_sales", draft: input.includeDrafts, sheets: [sheet], fields: ["DS-01", "DS-02", "DS-03", "DS-04", "DS-05", "DS-06", "DS-07", "DS-08", "DS-09", "DS-10", "DS-11"] };
@@ -268,7 +279,7 @@ function ledgerSheet(input: DailyInput, day: string, record: OperatingDay | unde
   const blocks: SheetModel["blocks"] = [
     { kind: "title", size: "large", cells: [titleCell("lg.title", input)] },
     { kind: "kv", rows: [[L("common.branch"), branchName(input)], [L("common.date"), date(day), L(weekdayKey(day))],
-      [L("common.state"), L(stateKey(row, day, today, input.includeDrafts))], ...(record ? [[L("common.revision"), int(record.revision)]] : [])] },
+      [L("common.state"), L(stateKey(row, day, today, input.includeDrafts))], ...(record ? [[L("common.revision"), int(effectiveRevision(record))]] : [])] },
   ];
   if (!record || !row || !isIncluded(row.state, input.includeDrafts)) {
     blocks.push({ kind: "gap" }, { kind: "title", cells: [L("st.notIncluded")] });

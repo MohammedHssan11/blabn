@@ -164,6 +164,7 @@ export const LABELS = {
   "ds.cardRatio": { ar: "نسبه الفيزا", en: "Card ratio" },
   "ds.totalRow": { ar: "الإجمالي", en: "Total" },
   "ds.periodAverageRule": { ar: "متوسط الفترة = إجمالي المبيعات ÷ إجمالي الطلبات، والنسب محسوبة على الإجماليات.", en: "Period average = total sales ÷ total orders; ratios are calculated on the totals." },
+  "ds.ordersMissing": { ar: "أيام مشمولة فيها مبيعات من غير عدد طلبات: {days}، لذلك قد يكون متوسط الفترة أعلى من الحقيقي.", en: "Included days with sales but no order count: {days}, so the period average may be overstated." },
 
   // ---------------------------------------------------------------- daily statement (ST-01–ST-09)
   "st.index": { ar: "الأيام", en: "Days" },

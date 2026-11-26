@@ -4,7 +4,8 @@
 //                  the Phase 2 and Phase 3 checks;
 //   B. fresh     - rebuild from scratch (all migrations + seed) and run the same checks;
 //   C. equality  - the upgraded and the freshly built schemas are identical.
-//   D-I. later upgrade paths (migration 08 with a flagged account; Phase 4 -> 5; 5 -> 6; 6 -> 7; 7 -> 8; 8 -> 9).
+//   D-K. later upgrade paths (migration 08 with a flagged account; Phase 4 -> 5; 5 -> 6; 6 -> 7; 7 -> 8; 8 -> 9;
+//        9 -> safety-stock percentage; Phase 10 -> audit fixes).
 // Usage: npm run db:upgrade-test   (Docker running, `npx supabase start` done)
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
@@ -503,6 +504,70 @@ step("its schema, table privileges and function privileges equal the fresh build
 step("a fresh build passes the Phase 9 checks too", () => {
   supabase(["db", "reset"]);
   return runSqlFile("phase9_checks.sql");
+});
+
+console.log("K. Upgrade from the Phase 10 head to the audit fixes (20261128090000)");
+const PHASE10_HEAD = "20261127090000";
+const SAVED_K = `select json_build_array(
+  (select coalesce(json_agg(to_jsonb(m) order by id), '[]') from public.stock_movements m),
+  (select coalesce(json_agg(to_jsonb(p) order by id), '[]') from public.stock_postings p),
+  (select coalesce(json_agg(to_jsonb(i) order by id), '[]') from public.catalog_items i))::text`;
+let savedK = "";
+step(`reset to migration ${PHASE10_HEAD} (Phase 10 head)`, () => {
+  supabase(["db", "reset", "--version", PHASE10_HEAD]);
+  if (psql("select to_regprocedure('public.app_business_today()') is null") !== "t") throw new Error("audit functions exist at the Phase 10 head");
+  return runSqlFile("phase9_checks.sql");
+});
+step("stock saved before the upgrade, including an entry dated before an opening that the old rules allowed", () => {
+  const item = "(select id from public.catalog_items where stock_tracked and kind <> 'sold' and base_unit is not null order by name_ar limit 1)";
+  psql(`begin;
+    insert into auth.users(id, email) values ('a9c00000-0000-4000-8000-000000000001', 'upgrade.admin@audit.test');
+    insert into public.employees(id, organization_id, full_name) select 'a9c00000-0000-4000-8000-000000000001', organization_id, 'Upgrade admin' from public.branches where code = 'maarif';
+    insert into public.staff_accounts(user_id, employee_id, organization_id, email) select id, id, organization_id, 'upgrade.admin@audit.test' from public.employees where id = 'a9c00000-0000-4000-8000-000000000001';
+    insert into public.staff_group_assignments(staff_id, branch_id, group_key) values ('a9c00000-0000-4000-8000-000000000001', null, 'system_admin');
+    select set_config('request.jwt.claims', '{"sub":"a9c00000-0000-4000-8000-000000000001","role":"authenticated"}', true);
+    set local role authenticated;
+    select public.app_stock_command('maarif', '2026-11-10', 'opening', 'a9c00000-0000-4000-8000-0000000000d1',
+      jsonb_build_object('item', ${item}, 'quantity', '10', 'local', '2026-11-10T08:00'));
+    select public.app_stock_command('maarif', '2026-11-09', 'propose_adjustment', 'a9c00000-0000-4000-8000-0000000000d2',
+      jsonb_build_object('item', ${item}, 'quantity', '1', 'direction', '-1', 'local', '2026-11-09T22:00', 'reason', 'before the opening'));
+    commit;`);
+  savedK = psql(SAVED_K);
+  return `${psql("select count(*) from public.stock_movements")} movement, ${psql("select count(*) from public.stock_adjustments")} earlier adjustment`;
+});
+step("apply 20261128090000 (supabase migration up)", () => {
+  supabase(["migration", "up"]);
+  return psql("select max(version) from supabase_migrations.schema_migrations");
+});
+step("saved stock and catalog rows unchanged; the earlier adjustment can still be rejected", () => {
+  if (psql(SAVED_K) !== savedK) throw new Error("saved stock or catalog rows changed during the upgrade");
+  const status = psql(`begin;
+    select set_config('request.jwt.claims', '{"sub":"a9c00000-0000-4000-8000-000000000001","role":"authenticated"}', true);
+    set local role authenticated;
+    select public.app_stock_command('maarif', '2026-11-09', 'decide_adjustment', 'a9c00000-0000-4000-8000-0000000000d3',
+      jsonb_build_object('adjustment', (select id from public.stock_adjustments), 'decision', 'reject'));
+    select status from public.stock_adjustments;
+    rollback;`).split("\n").pop();
+  if (status !== "rejected") throw new Error(`earlier adjustment: ${status}`);
+  psql(`set session_replication_role = replica;
+    delete from public.stock_adjustments; delete from public.stock_movements; delete from public.stock_postings;
+    delete from public.audit_log where actor_id = 'a9c00000-0000-4000-8000-000000000001';
+    delete from public.staff_group_assignments where staff_id = 'a9c00000-0000-4000-8000-000000000001';
+    delete from public.staff_accounts where user_id = 'a9c00000-0000-4000-8000-000000000001'; delete from public.employees where id = 'a9c00000-0000-4000-8000-000000000001';
+    delete from auth.users where id = 'a9c00000-0000-4000-8000-000000000001';
+    set session_replication_role = origin;`);
+  return "data identical; earlier adjustment rejected";
+});
+step("Phase 2 to 9 and audit checks after the upgrade", () =>
+  ["phase2_checks.sql", "phase3_checks.sql", "phase4_checks.sql", "phase5_checks.sql", "phase6_checks.sql", "phase7_checks.sql", "phase8_checks.sql", "phase9_checks.sql", "audit_phases6_10_checks.sql"].map(runSqlFile).join("; "));
+step("its schema, table privileges and function privileges equal the fresh build", () => {
+  const again = schemaDump();
+  if (again !== fresh) {
+    const a = again.split("\n");
+    const b = fresh.split("\n");
+    const at = a.findIndex((line, i) => line !== b[i]);
+    throw new Error(`first difference at line ${at + 1}:\n  upgraded: ${a[at]}\n  fresh:    ${b[at]}`);
+  }
 });
 step("leave a fresh database (db reset)", () => {
   supabase(["db", "reset"]);
