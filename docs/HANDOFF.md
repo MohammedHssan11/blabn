@@ -339,13 +339,15 @@ Not done on the hosted project: the Phase 2–6 SQL acceptance files. They creat
 
 **Audited commit:** `11af5dd7000323d3bdd13454ea4ddc12489a0dcf` (`origin/main`, Phase 10 merged in [PR #17](https://github.com/MohammedHssan11/blabn/pull/17)), branch `audit/phases-6-10`. [PR #18](https://github.com/MohammedHssan11/blabn/pull/18) (deployment record) was open and was not merged. The audit ran on 25 and 26 November on Windows 11 with Node 22.21 (time-zone data 2025b), Python 3.10 with openpyxl 3.1.5, Supabase CLI 2.122.1, PostgreSQL 17.11, Microsoft Edge and Docker. All database, HTTP and browser checks used a separate copy, `abdo-audit610-validation`, with its own disposable stack `balaban-a610` (ports 60320–60329). `balaban-dev` and the hosted project were not touched: no push, SQL or account change. The Phase 10 rehearsal read the private workbook reference from `outputs\phase10\`.
 
+**Deployment record:** The earlier Phase 9 and Phase 10 status paragraphs above predate the release and are superseded by [PR #18](https://github.com/MohammedHssan11/blabn/pull/18). Phase 10 was merged in PR #17 and the hosted Phase 9 and safety-stock migrations were applied through `20261127090000`; no production staff account was found, so Abdo was not designated for Excel. Audit migration `20261128090000` remains unapplied.
+
 **Baseline.** Before any change, all 22 requested commands passed on the audited commit. The defects below are not covered by those checks.
 
 ### Defects found and fixed
 
-Each was reproduced on the audited code first. Database changes are in the new migration `20261128090000_audit_phases6_10_fixes.sql`; no applied migration was edited.
+All 17 were reproduced before the audit commit. All except B7 were reproduced on unchanged audited code; B7 was reproduced on a build that already included the B5 fix. Several fixes, including B2–B4 and B11–B15, were drafted from code inspection before reproduction. Database changes are in the new migration `20261128090000_audit_phases6_10_fixes.sql`; no applied migration was edited.
 
-| # | Phase | Defect (reproduced first) | Fix | Regression coverage |
+| # | Phase | Defect | Fix | Regression coverage |
 |---|---|---|---|---|
 | B1 | 6, 8 | **The history page of any item received through a purchase order crashed** (HTTP 500, both languages): the movement source `purchase_order` had no label. The page also offered a reversal that the database always refuses. | Both labels added; no reversal offered for those receipts. | Unit test (every source the database allows is translated); `test:phase8` §11 |
 | B2 | 6 | **Changing an item's base unit reinterpreted saved stock** (5 kg received became 5 g). The Phase 5 guard looked only at approved recipes and conversions. | The unit is kept once the item has movements, counts, adjustments, order lines or planning quantities. | Audit SQL §2; 4 mutations |
@@ -445,6 +447,8 @@ All commands ran in the disposable copy. "Baseline" is the unchanged audited com
 | Desktop Excel 16, opened read-only: the 22 rehearsal workbooks | not run | all open; correct direction; A4 fitted to width; no formula, error cell or external link |
 
 New checks run against the **unchanged** code: all 10 new unit tests failed; the new `test:phase8` section failed 9 checks (123 run); `test:phase9` stopped at the missing Retry button.
+
+**Next.js documentation review (26 November 2026).** The local `node_modules/next/dist/docs/` guides were not read before the audit code was changed, as `AGENTS.md` requires. Afterwards, the changed pages, Server Actions and export route were checked against the installed version's page, mutating-data, Route Handler, redirect and data-security guides. The changed pages await `params` and `searchParams`; changed actions and the export route check access; redirects in the changed actions are outside `try` blocks. No incompatibility was found in those reviewed Next.js conventions. This review does not replace the functional checks or the remaining live acceptance work.
 
 The first full run with the fixes had two failures, both rerun above. The new `test:phase8` section left an 8-day lead time configured, so four `test:phase8:browser` checks failed; the section now removes it. One `db:upgrade-test` reset step failed because Windows could not start Docker (`EPERM … uv_spawn 'docker'`).
 
