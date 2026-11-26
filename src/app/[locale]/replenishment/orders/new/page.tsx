@@ -11,7 +11,9 @@ import { isCatalogId } from "@/modules/catalog/forms";
 import { readUnits } from "@/modules/catalog/data";
 import { itemName, unitName } from "@/modules/catalog/ui";
 import { readStockOptions } from "@/modules/inventory/stock";
-import { readPlan } from "@/modules/replenishment/data";
+import { readPlan, readSettings } from "@/modules/replenishment/data";
+import { SOURCES } from "@/modules/replenishment/forms";
+import { addDays } from "@/lib/dates";
 import type { ItemPlanJson } from "@/modules/replenishment/types";
 import { DateText, PoForm, Qty, ReplenishmentTabs } from "@/modules/replenishment/ui";
 
@@ -21,6 +23,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 }
 
 const MANUAL_ROWS = 5;
+
+const asSource = (value: string | undefined) => SOURCES.find((s) => s === value) ?? null;
 
 /** A decimal the quantity field accepts, when the suggestion has one; otherwise blank. */
 function decimalInput(value: { num: string; den: string } | null): string {
@@ -49,8 +53,18 @@ export default async function NewOrderPage({ params, searchParams }: { params: P
   const access = await requireAccess({ locale, path, require: { permission: "purchase_order.propose", branch: OPERATING_BRANCH_CODE } });
   const t = createTranslator(locale);
   const chosen = [...new Set((Array.isArray(sp.item) ? sp.item : sp.item ? [sp.item] : []).filter(isCatalogId).map((x) => x.toLowerCase()))].slice(0, 30);
-  const [plan, options, units] = await Promise.all([readPlan(null), readStockOptions(), readUnits()]);
-  const planned: ItemPlanJson[] = chosen.map((id) => plan.items.find((i) => i.item_id === id)).filter((i): i is ItemPlanJson => Boolean(i));
+  const [defaultPlan, options, units, settings] = await Promise.all([readPlan(null), readStockOptions(), readUnits(), readSettings()]);
+  const pick = (plan: typeof defaultPlan) => chosen.map((id) => plan.items.find((i) => i.item_id === id)).filter((i): i is ItemPlanJson => Boolean(i));
+  // The suggestions must be the ones creation will compute: for the order's expected date, which follows
+  // the longest lead time of the sources on it. After a refused submission the address names the sources
+  // that were chosen ("lead" for every line, "source.<item>" to keep each selection).
+  const sourceOf = (item: ItemPlanJson) => asSource(first(sp[`source.${item.item_id}`])) ?? item.source ?? "factory";
+  const submitted = [sp.lead ?? []].flat().map(asSource).filter((s) => s !== null);
+  const orderSources = submitted.length > 0 ? submitted : pick(defaultPlan).map(sourceOf);
+  const lead = orderSources.length > 0 ? Math.max(...orderSources.map((s) => settings.sources.find((x) => x.source === s)?.lead_days ?? 2)) : 2;
+  const expected = addDays(defaultPlan.order_date, lead);
+  const plan = pick(defaultPlan).every((i) => i.expected === expected) ? defaultPlan : await readPlan(expected);
+  const planned = pick(plan);
   const back = `${path}${chosen.length ? `?${chosen.map((id) => `item=${id}`).join("&")}` : ""}`;
   const rows = planned.length + MANUAL_ROWS;
 
@@ -62,7 +76,7 @@ export default async function NewOrderPage({ params, searchParams }: { params: P
       <ResultMessages t={t} error={first(sp.error)} notice={first(sp.notice)} />
       <p data-section="new-dates">
         {t("replenishment.new.dates")}{" "}
-        <DateText date={plan.order_date} locale={locale} /> → <strong data-default-expected={plan.default_expected}><DateText date={plan.default_expected} locale={locale} /></strong>
+        <DateText date={plan.order_date} locale={locale} /> → <strong data-default-expected={expected}><DateText date={expected} locale={locale} /></strong>
       </p>
 
       <PoForm command="create" locale={locale} back={back} label={t("replenishment.new.title")}>
@@ -80,7 +94,7 @@ export default async function NewOrderPage({ params, searchParams }: { params: P
                 : t("replenishment.new.reviewLine")}
             </p>
             <label>{t("replenishment.col.source")}
-              <select name={`source.${i}`} defaultValue={item.source ?? "factory"} required>
+              <select name={`source.${i}`} defaultValue={sourceOf(item)} required>
                 <option value="factory">{t("replenishment.source.factory")}</option>
                 <option value="store">{t("replenishment.source.store")}</option>
               </select>
@@ -92,7 +106,8 @@ export default async function NewOrderPage({ params, searchParams }: { params: P
               </select>
             </label>
             <label>{t("replenishment.new.final")}
-              <input name={`quantity.${i}`} inputMode="decimal" dir="ltr" autoComplete="off" defaultValue={decimalInput(item.suggested)} />
+              {/* A suggestion of 0 stays blank (the line is skipped): 0 is not an orderable quantity. */}
+              <input name={`quantity.${i}`} inputMode="decimal" dir="ltr" autoComplete="off" defaultValue={item.suggested?.num === "0" ? "" : decimalInput(item.suggested)} />
             </label>
             {item.status === "recommend" ? (
               <label>{t("replenishment.new.reason")} ({t("replenishment.new.reasonHint")})<input name={`reason.${i}`} maxLength={500} /></label>

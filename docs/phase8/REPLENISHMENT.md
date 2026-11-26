@@ -24,7 +24,7 @@ All data used to build and test it is synthetic. No workbook figure, supplier de
 | `purchase_order_receipt_lines` | One received quantity of one line and the **one** stock movement it created (`movement_id` is `not null` and unique), with an over-receipt reason when more than the outstanding quantity was accepted. |
 | `purchase_order_cancellations` | The unreceived rest of a line, cancelled with a reason. It creates no stock. |
 | `purchase_order_events` | Every accepted request: command, request identifier and hash, actor, business date, time and the result returned. A retry returns that result and writes nothing. |
-| `replenishment_settings`, `replenishment_item_settings`, `replenishment_source_settings` | The open decisions: minimum observations and days covered by one delivery (branch); safety stock, pack size, supplier minimum, shelf life and default source (item); a lead-time exception and the order cut-off (source). All blank at the start. Changes keep a revision number and are audited before/after. |
+| `replenishment_settings`, `replenishment_item_settings`, `replenishment_source_settings` | The settings: minimum observations, days covered by one delivery and the safety-stock percentage (branch); pack size, supplier minimum, shelf life and default source (item); a lead-time exception and the order cut-off (source). The open ones start blank; the percentage starts at 20. The Phase 8 per-item safety quantity is kept as history only. Changes keep a revision number and are audited before/after. |
 
 Every order and receipt table is append-only: triggers refuse UPDATE, DELETE and TRUNCATE, even by the table owner. The one exception is the single decision of an order (`proposed` → `approved` or `rejected`, nothing else). Phase 6's `stock_movements.source` gains the value `purchase_order`; no existing row changes (upgrade path H compares every column).
 
@@ -80,6 +80,7 @@ Abdo's own example (P1-35 voice note): closing with 10, with 190 ordered for tom
 - **Changing the expected date** needs a reason; the date must be on or after the order business date (at most 60 days later) and differ from the current one. Both dates are kept (revisions) and audited. A closed, rejected or historical order cannot change.
 - **The actual receipt date** comes only from receiving: the business date of the arrival time entered (not in the future, not before the order was created, to the minute).
 - Event times on the order pages (creation, decision, revisions, history) are formatted by PostgreSQL in branch time, so they agree with the business date. (Node's time-zone data still differs for Casablanca in November; see the Phase 2 caveat in the handover.)
+- The new-order page shows each suggestion for the expected date the order will get (the longest lead time of the chosen sources). When a different source changes that date, the first send is refused (`CT802`) and the page comes back with the new suggestion for the chosen sources. A suggestion of 0 is left blank, so the line is skipped.
 
 ### Purchase orders and receiving
 

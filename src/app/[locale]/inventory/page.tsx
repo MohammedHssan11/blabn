@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { isLocale, type Locale } from "@/i18n/config";
 import { createTranslator, type MessageKey, type Translator } from "@/i18n/dictionary";
 import { formatBusinessDate } from "@/i18n/format";
-import { businessDateOf } from "@/lib/dates";
+import { readBusinessToday } from "@/lib/database-time";
 import { first, type SearchParams } from "@/lib/search-params";
 import { ResultMessages } from "@/components/Messages";
 import { OPERATING_BRANCH_CODE } from "@/modules/access/catalog";
@@ -32,8 +32,8 @@ export default async function StockPage({ params, searchParams }: { params: Prom
   const path = `/${locale}/inventory`;
   const access = await requireAccess({ locale, path, require: { permission: "inventory.view", branch: OPERATING_BRANCH_CODE } });
   const t = createTranslator(locale);
-  // Default view only; the database decides the business date of every write.
-  const date = isStockDate(requested) ? requested : businessDateOf(new Date(), "Africa/Casablanca", "02:00");
+  // Default view only, from the database's clock; it also decides the business date of every write.
+  const date = isStockDate(requested) ? requested : await readBusinessToday();
   const [day, options, units] = await Promise.all([readStockDay(date), readStockOptions(), readUnits()]);
   const back = `${path}?date=${date}`;
   const can = (permission: Parameters<typeof holds>[1]) => holds(access, permission, OPERATING_BRANCH_CODE);
@@ -41,7 +41,8 @@ export default async function StockPage({ params, searchParams }: { params: Prom
     const permission = stockPermission("movement", kind);
     return permission !== null && can(permission);
   });
-  const defaultLocal = `${date}T${date === day.today ? day.local.slice(11) : "20:00"}`;
+  // For today, now as it is: after midnight the clock is already on the next calendar day of this business date.
+  const defaultLocal = date === day.today ? day.local : `${date}T20:00`;
   const counted = day.items.filter((i) => i.status === "counted").length;
   const missing = day.items.filter((i) => i.status === "missing").length;
 

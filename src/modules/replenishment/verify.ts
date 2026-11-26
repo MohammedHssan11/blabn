@@ -45,7 +45,11 @@ function postedToday(item: ItemPlanJson): Q {
   if (!first || first.basis !== "forecast_remaining") return ZERO;
   const full = parseQ(first.observations.forecast);
   const remaining = parseQ(first.consumption);
-  return full && remaining ? { n: full.n * remaining.d - remaining.n * full.d, d: full.d * remaining.d } : ZERO;
+  if (!full || !remaining) return ZERO;
+  // With a forecast of 0 nothing remains whatever was posted, so the amount cannot be recovered; the
+  // database's "forecast_remaining" basis says something was, and any amount above 0 gives its figures.
+  if (full.n === 0n) return q(1);
+  return { n: full.n * remaining.d - remaining.n * full.d, d: full.d * remaining.d };
 }
 
 function same(a: Q | null, b: Q | null): boolean {

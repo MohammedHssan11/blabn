@@ -380,6 +380,149 @@ Earlier attempts in the same session failed. The Supabase CLI's stored login ret
 
 Not done on the hosted project: the Phase 2–6 SQL acceptance files. They create synthetic staff and roll back, but they are meant for disposable databases and were not run against the shared project. The HTTP or browser checks were not run against a hosted deployment either. The Auth settings, `SITE_URL`, SMTP and Abdo's account remain part of production provisioning (Next steps, item 2).
 
+## Independent audit of Phases 6–10 (26 November 2026)
+
+**Audited commit:** `11af5dd7000323d3bdd13454ea4ddc12489a0dcf` (`origin/main`, Phase 10 merged in [PR #17](https://github.com/MohammedHssan11/blabn/pull/17)), branch `audit/phases-6-10`. [PR #18](https://github.com/MohammedHssan11/blabn/pull/18) (deployment record) was open and was not merged. The audit ran on 25 and 26 November on Windows 11 with Node 22.21 (time-zone data 2025b), Python 3.10 with openpyxl 3.1.5, Supabase CLI 2.122.1, PostgreSQL 17.11, Microsoft Edge and Docker. All database, HTTP and browser checks used a separate copy, `abdo-audit610-validation`, with its own disposable stack `balaban-a610` (ports 60320–60329). `balaban-dev` and the hosted project were not touched: no push, SQL or account change. The Phase 10 rehearsal read the private workbook reference from `outputs\phase10\`.
+
+**Deployment record:** The earlier Phase 9 and Phase 10 status paragraphs above predate the release and are superseded by [PR #18](https://github.com/MohammedHssan11/blabn/pull/18). Phase 10 was merged in PR #17 and the hosted Phase 9 and safety-stock migrations were applied through `20261127090000`; no production staff account was found, so Abdo was not designated for Excel. Audit migration `20261128090000` remains unapplied.
+
+**Baseline.** Before any change, all 22 requested commands passed on the audited commit. The defects below are not covered by those checks.
+
+### Defects found and fixed
+
+All 17 were reproduced before the audit commit. All except B7 were reproduced on unchanged audited code; B7 was reproduced on a build that already included the B5 fix. Several fixes, including B2–B4 and B11–B15, were drafted from code inspection before reproduction. Database changes are in the new migration `20261128090000_audit_phases6_10_fixes.sql`; no applied migration was edited.
+
+| # | Phase | Defect | Fix | Regression coverage |
+|---|---|---|---|---|
+| B1 | 6, 8 | **The history page of any item received through a purchase order crashed** (HTTP 500, both languages): the movement source `purchase_order` had no label. The page also offered a reversal that the database always refuses. | Both labels added; no reversal offered for those receipts. | Unit test (every source the database allows is translated); `test:phase8` §11 |
+| B2 | 6 | **Changing an item's base unit reinterpreted saved stock** (5 kg received became 5 g). The Phase 5 guard looked only at approved recipes and conversions. | The unit is kept once the item has movements, counts, adjustments, order lines or planning quantities. | Audit SQL §2; 4 mutations |
+| B3 | 6 | **Recipe consumption and adjustments could be dated before the opening stock** (opening 10, then consumption of 6 posted for the day before: book 4). Only manual movements and order receipts were refused. | Refused on every path (`CT007`, with a message in both languages). A reversed opening no longer blocks. | Audit SQL §3; 3 mutations; upgrade path K |
+| B4 | 6 | A direct adjustment decision without `decision` **rejected** the adjustment. The screen always sends one. | The command requires approve or reject. | Audit SQL §4; 1 mutation |
+| B5 | 6, 7, 9 | **Between 01:00 and 02:00 Casablanca time, pages opened on the next business date.** Node's time-zone data is an hour ahead of PostgreSQL's. Seen live at 01:38 on 26 November: stock, Product Mix, comparison and export pages showed 26 November while the business date was 25; the default export was refused. | Pages ask the database (`app_business_today`). Rechecked live in the same window. | Unit test; audit SQL §1; `test:phase8` §11; 1 mutation |
+| B6 | 6, 7 | Posting times on the item history showed one hour later than the database's times beside them. The comparison history formatted entry times the same way (from the code). | Formatted from the database's local time (`app_local_times`). | Unit test; audit SQL §1; `test:phase8` §11; 1 mutation |
+| B7 | 6 | **After midnight, the default time on stock and Product Mix forms was a day early** (today's business date joined to the clock time), so saving the default was refused. Seen live with B5 already fixed. | The database's current local date and time is the default. | Unit test; `test:phase8` §11 |
+| B8 | 7 | **Total order counts silently left out a branch that had sales but no order count** (weekly, monthly day and period; screen, CSV and Excel). | The total is blank, as the difference already was. | Unit tests |
+| B9 | 9 | The Daily Sales workbook's period average was too high, with no warning, when an included day had sales but no order count. The daily-close page warns. | A warning row. Template `daily_sales@1.0.1`, calculation rules `p9-calc-2026.11.25`. | Unit test |
+| B10 | 9 | A pending or rejected correction's revision number was recorded as the source of the **effective** figures (Yawmeya "Revision" and `sources.day_revisions`). | The effective revision is recorded. | Unit test |
+| B11 | 8, 9 | **The inventory workbook omitted purchase orders:** any older than the newest 500, and orders of an earlier month expected later in the current month. | `app_purchase_orders_in_period` over the whole period. | Audit SQL §5; `test:phase9` §6b; 1 mutation |
+| B12 | 9 | An interrupted build stayed "Building" with **no Retry button**, although the database allows a takeover after 10 minutes. | Retry is offered for every unfinished export. | `test:phase9` §6b |
+| B13 | 9 | **An export's data snapshot could precede the commit of a stock write already in progress**, so figures "as of" the snapshot changed during the build (0 movements, then 1). | The claim waits for the branch lock before taking the instant. | `test:audit:snapshot` (two sessions); audit SQL §6; 1 mutation |
+| B14 | 8 | A planned line with a suggestion of 0 was pre-filled "0", so **the whole order was refused**. | Left blank; the line is skipped. | `test:phase8` §11 |
+| B15 | 8 | With a source lead-time exception, an order made from the plan could be refused as "suggestion changed" **every time**. The exceptions are empty today. | The page uses the expected date creation will use; a refused send returns with the chosen sources. | `test:phase8` §11 |
+| B16 | 8 | The plan page reported a false database/application difference when today's forecast was 0 and some consumption was already posted. Reproduced with a plan shaped as the database function returns it. | The cross-check handles a zero forecast. | Unit test |
+| B17 | 10 | `test:phase10` without `P10_OUTPUT_DIR` crashed in its scenarios (`TypeError`, 65 checks, 1 failure). | A temporary folder by default. | Run without the variable |
+
+Candidates investigated and **not** defects:
+
+- **Replacing a stored export file.** Through the Storage API, a signed upload link with overwrite was refused; a link without it could be made during a running attempt but was refused once the file existed; direct overwrite and removal were refused. The completed file stayed byte-identical.
+- **Idempotency.** Stock, comparison, purchase-order and export requests return the first result for a repeated identifier and refuse reuse with other content (traced in the migrations; covered by the SQL and HTTP suites).
+- **Safety stock.** The database and TypeScript use the same rule; `build_safety_migration.py --check` confirms the migration differs from the Phase 8 functions only as generated. The percentage is refused above 100 or with more than two decimals, including `0.000`.
+
+### Results by phase
+
+"Pass" means on the audited commit plus these fixes, in the local environment above.
+
+| Phase | Acceptance item | Result | Traced to |
+|---|---|---|---|
+| 6 | 10 + 5 − 4 = 11; a count of 10 gives −1 | **Pass** | `stock_day` (exact fractions: opening, day movements, expected at count, variance); `phase6_checks.sql` §3; `test:phase6`, browser |
+| 6 | Retrying a consumption post or receipt creates one movement | **Pass** | `stock_postings unique (branch_id, request_id)` with actor and payload hash under the branch lock; `stock_consumption_lines unique (mix_line_id, attempt)`; one reversal per posting and movement; SQL and HTTP resend |
+| 6 | Products, add-ons and packaging consume once | **Pass** | `post_consumption` takes only lines without an unreversed consumption line, through `catalog_consumption`; one name per section; SQL §3 |
+| 6 | Blank count incomplete; explicit zero counts | **Pass** | `parse_count`, no row for a blank; `status` counted / missing / not_due; `normalizeCountInput`; SQL §3, §5; browser |
+| 6 | Section totals reconcile without inflating the day | **Pass** | `mix_reconciliation` (lines = section = net = daily close) required by `mix_lock`; section totals are never movements; lock and detail triggers |
+| 6 | Figures follow the Phase 1 outcomes and Abdo's decisions | **Partial** | Count schedule (P1-24), units (P1-31) and the date gate (P1-32) hold. The carried-count rule of INV-04 is not implemented (open item 1) |
+| 6 | Permissions and append-only history (work items) | **Pass after B1–B4, B6, B7** | `stock_command` permission per command and per reversed posting; RLS on `inventory.view`, select-only grants; triggers against update, delete and truncate; page and action guards |
+| 7 | Al Quds, Maarif, Bourgogne, then Total | **Pass** | `BRANCH_ORDER`, `orderBranches`, export builder; unit, SQL, HTTP, browser |
+| 7 | 120 vs 100: 20, 120 %, growth 20 % | **Pass** | `calc.ts` (centimes, basis points); the Excel builder takes the same result; unit, HTTP, browser |
+| 7 | Missing days and zero prior are safe | **Pass after B8** | Reasons instead of ratios; totals over different branches give none; sales and orders blank, never 0 |
+| 7 | Maarif entered once appears everywhere | **Pass** | `comparison_closed_days` reads the effective closed revision and suppresses entries for that date; `phase7_checks.sql` §4; `test:phase7` |
+| 7 | No access, no Al Quds or Bourgogne figure | **Pass** | `comparison_entries_read`; `app_comparison_report` checks view or export per branch; internal functions are outside the exposed schemas; page, export route and database separately |
+| 7 | Revisions, one active value, entry / view / export separate | **Pass** | `comparison_entries_one_active`, guard trigger, `app_comparison_save` (owner, dates, request hash, branch lock); SQL §2–3 and mutations recorded in Phase 7 |
+| 8 | Wednesday evening → Friday; 02:00 business day | **Pass** | `purchase_order_command` takes only the database clock; `business_date_of`; `phase8_checks.sql` §3 |
+| 8 | 10 + 190 − 150 = 50; stock only from receipts | **Pass** | `replenishment_item_plan` bridge; deferred receipt-line trigger; SQL §7; unit |
+| 8 | 20 + 5 − 7 − 3 = 15; floor at 0 | **Pass** | Plan function and `planning.ts` agree (the page cross-check, B16); with the default 20 % the same case gives 14 |
+| 8 | 20 % safety stock, editable, 0 allowed | **Pass** | `20261127090000`: default 20, 0–100 with two decimals, added once before usable and incoming, then minimum and pack; per-item quantity refused; saved lines keep their plan; upgrade path J |
+| 8 | Incoming outside the window excluded, never twice | **Pass** | Buckets overdue / before receipt / window / after window; SQL §8; unit |
+| 8 | Changed expected date keeps original and reason, shows effect | **Pass** | Append-only revisions; `set_expected`; SQL §9; HTTP, browser |
+| 8 | 4 then 6 = 10 as two movements, no duplicate; over-receipt | **Pass** | `purchase_order_receipt_lines_one_movement`, line guard (`CT801`), request hash; `scripts/phase8/mutation-check.mjs` |
+| 8 | Insufficient history → review, manual order possible | **Pass after B14, B15** | Review reasons; no safety stock in review; manual line; HTTP §3, §9, §11 |
+| 8 | Create, approve, receive separate | **Pass** | Command permission map and RLS; SQL §5. The date-change form action asks only `inventory.view`; the database then requires propose or approve |
+| 9 | Every family opens and prints clearly in Excel | **Pass** (22 workbooks opened and paginated in desktop Excel 16; not printed on paper) | `xlsx.ts`, `scan.ts`; `test:phase9`, `test:phase10` |
+| 9 | Shared values consistent | **Pass** | One revision basis per file; `test:phase9` §4 |
+| 9 | Earlier export reviewable with its source revision | **Pass after B10, B13** | Completed rows frozen by trigger; no storage update or delete policy; checksum checked at download; §5 |
+| 9 | Partial months and missing values keep their meaning | **Pass after B8, B9** | Typed blanks; days included "n of m"; unit tests, §3–4 |
+| 9 | Failed export retryable, no duplicate completed file | **Pass after B12** | Attempt claim, path per attempt, stale attempts refused; §6, §6b |
+| 9 | Download fails after the permission is lost | **Pass** | Route, `app_report_export_download` and the storage policy each recheck the designated account and every branch; signed links refused; §7 |
+| 9 | Historical figures only where needed; no live change | **Pass** | Only `comparison_entries`; §10 |
+| 9 | One designated exporter, private bucket, values only, Arabic right to left | **Pass** | `app_private.report_export_owners` (no API grant); private 25 MiB XLSX bucket, insert and authenticated-read policies only; scan; orders complete after B11 |
+| 10 | One day entered once produces the five families | **Pass (technical)** | `test:phase10` on the private reference |
+| 10 | Results match independent calculations and agreed rules | **Partial** | `compare_reports.py`: 994 comparisons, the same 5 differences as Phase 10 (D-1, D-2); inventory values not compared (D-6) and open item 1 |
+| 10 | Each material difference has a documented resolution | **Partial** | D-1 to D-6 are documented with owners and still open |
+| 10 | Arabic and English give the same values | **Pass** | One model for both languages, identical numeric cells (`test:phase9`), browser checks |
+| 10 | Abdo accepts the workflow | **Not done** | Walkthrough not run |
+| 10 | P1-19 field-map fix; safety-percentage validation | **Pass** | Builder honours agreed outcomes (`fieldmap:check`); browser and database refuse more than two decimals |
+
+### Commands and results
+
+All commands ran in the disposable copy. "Baseline" is the unchanged audited commit; "with fixes" is the final code.
+
+| Command | Baseline | With fixes |
+|---|---|---|
+| `npm ci` | pass | pass, 0 vulnerabilities |
+| `npm run check` | `tsc` clean; 297/297; build | `tsc` clean; **307/307** in 17 files; build |
+| `npm run seed:check`, `seed:catalog:check`, `fieldmap:check` | pass | pass |
+| `extract_catalog.py --check`, `build_safety_migration.py --check` | not run | pass |
+| `npm run db:check`, `db:check:phase3` … `db:check:phase9` (fresh database) | pass | pass |
+| `npm run db:check:audit` (new) | fails: the new functions do not exist | pass |
+| `node scripts/audit/mutation-check.mjs` (new) | — | control passes; all 12 mutations caught |
+| `node scripts/phase8/mutation-check.mjs` | not run | every mutation caught |
+| `npm run db:upgrade-test` | pass, paths A–J | pass, paths A–K (new path K: Phase 10 head with saved stock → audit fixes) |
+| `npm run test:audit:snapshot` (new) | fails: 0 movements when claimed, 1 afterwards | 2/2 |
+| `npm run test:smoke`, `test:concurrency` | not run | 69/69; pass |
+| `npm run test:phase3`, `test:browser` | not run | 372/372; 105/105 |
+| `npm run test:phase4` (after a reset) | not run | 30/30 |
+| `npm run test:phase5`, `test:phase5:browser` | not run | 147/147; 71/71 |
+| `npm run test:phase6`, `test:phase6:browser` | 70/70; 21/21 | 70/70; 21/21 |
+| `npm run test:phase7`, `test:phase7:browser` | 130/130; 71/71 | 130/130; 71/71 |
+| `npm run test:phase8` | 112/112 | 124/124 |
+| `npm run test:phase8:browser` | 112/112 | 112/112 |
+| `npm run test:phase9` | 124/124 | 128/128 |
+| `npm run test:phase10` | 78/78 | 78/78, with and without `P10_OUTPUT_DIR` |
+| `scripts/phase10/compare_reports.py` | not run | 994 comparisons, 5 differences: D-1 (four cells) and D-2 (one), as recorded in Phase 10 |
+| `node scripts/phase10/browser-check.mjs` | 35/35 | 35/35 |
+| Desktop Excel 16, opened read-only: the 22 rehearsal workbooks | not run | all open; correct direction; A4 fitted to width; no formula, error cell or external link |
+
+New checks run against the **unchanged** code: all 10 new unit tests failed; the new `test:phase8` section failed 9 checks (123 run); `test:phase9` stopped at the missing Retry button.
+
+**Next.js documentation review (26 November 2026).** The local `node_modules/next/dist/docs/` guides were not read before the audit code was changed, as `AGENTS.md` requires. Afterwards, the changed pages, Server Actions and export route were checked against the installed version's page, mutating-data, Route Handler, redirect and data-security guides. The changed pages await `params` and `searchParams`; changed actions and the export route check access; redirects in the changed actions are outside `try` blocks. No incompatibility was found in those reviewed Next.js conventions. This review does not replace the functional checks or the remaining live acceptance work.
+
+The first full run with the fixes had two failures, both rerun above. The new `test:phase8` section left an 8-day lead time configured, so four `test:phase8:browser` checks failed; the section now removes it. One `db:upgrade-test` reset step failed because Windows could not start Docker (`EPERM … uv_spawn 'docker'`).
+
+Live grants on the final database: nothing for anonymous callers; every `public` table has row-level security; the only writes open to signed-in people are the two intended inserts (the Phase 3 `inventory_adjustments` and the checked `comparison_figures` view); every `security definer` function fixes its search path.
+
+### Not verified
+
+- The hosted project. Migration `20261128090000` is **not applied** there.
+- A printed paper copy, Excel for Mac, Excel on another machine, LibreOffice, Safari or a physical phone.
+- Abdo's walkthrough and acceptance.
+- B8, B9, B10 and B16 are shown by unit tests, not on a live page or in a downloaded file. For B6, the item history was checked over HTTP; the comparison history only by the source check and the database function.
+- Workbook values were not compared by hand with the source workbooks beyond `compare_reports.py`.
+
+### Open items (owner, next action)
+
+1. **Stock counts and the next day's opening — Abdo, then developer.** The field map (INV-04, agreed by the team; correction P1-24) says the next day opens at the physical count, or at the book balance when not counted. The application's opening is every earlier movement; a count never changes it unless an adjustment is approved (the Phase 6 design). Reproduced: opening 10, count 9, next day with no movement and count 9 gives opening 10 and variance −1 again. The inventory workbook's cumulative and month deviation add the daily variances, so **one unadjusted shortage of 1 is reported as −2 after two counts, and grows with every count** (from the builder's code). Not changed: it decides saved figures, like D-1 for cash. Question: «يا عبده، في الجرد: لو عدّيت صنف وطلع غير الرصيد الدفتري، «أول المدة» لليوم اللي بعده تبقى رقم العد الفعلي (زي ملف الإكسل المصحح)، ولا تفضل على الدفتري لحد ما حد يعتمد تسوية؟» Settle it before the first live inventory month.
+2. **Deployment — project owner.** Apply `20261128090000` to the hosted project **before** running this code against it: item and comparison history and the inventory export call its functions. The dry run must list only that migration and no seeds.
+3. **Open business decisions — Abdo.** D-1 cash carry-forward, D-2 purchasing custody, D-3 cancellation and hospitality columns, D-5 back-filling skipped days (also D-4 rounding, D-6 inventory values); P1-32 November recipe start date; minimum observations; pack sizes, supplier minimums, shelf life, cut-off times and lead-time exceptions. None was decided or changed.
+4. **Developer (later).**
+   - The orders page lists the newest 200 orders only; an older open order is reachable only by its link.
+   - The audit and staff pages (Phase 3) still convert times with Node's time-zone data.
+   - The two export audit actions have no label (the code is shown).
+   - Product Mix and purchase orders in an inventory export are read as they are at build time, not as of the snapshot.
+   - The export's checksum and sources are supplied by the requester's own session; the database verifies only that the file exists with that size.
+   - Product Mix reconciliation with the daily close is checked when locking; a later close correction shows a mismatch but does not reopen the report.
+   - After a wrong opening is reversed, a new opening cannot be recorded; the correction is an adjustment.
+   - The Phase 4 concurrent-save timeout on PostgREST v14.18 was not re-run.
+5. **Repository visibility — project owner.** Still public (Phases 1–5 audit, open item 1).
+
 ## Independent audit of Phases 1–5 (23 November 2026)
 
 **Audited commit:** `3145a38` (`origin/main`, Phase 5 merged in PR #8), checked out fresh as branch `audit/phases-1-5`. The previous checkout was still at `1502722`. Its one untracked file (an older `docs/ARCHITECTURE_REVIEW.md`) was kept in a local Git stash and not committed. Every check below was rerun on this commit in a Windows 11 checkout with Git's default `core.autocrlf=true`, Node 24.15, Python 3.10 with openpyxl 3.1.5, desktop Excel 2019 (16.0), and Docker Desktop. The two disposable local Supabase stacks used Supabase CLI 2.122.1 and PostgreSQL image 17.11.0.006. Nothing ran against a hosted project. No real reference day was entered. All accounts and data were synthetic.

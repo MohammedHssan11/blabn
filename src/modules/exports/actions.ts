@@ -1,10 +1,10 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { readBusinessToday } from "@/lib/database-time";
 import { localeField, textField } from "@/modules/access/forms";
 import { requireAccess } from "@/modules/access/guard";
 import { isCatalogId } from "@/modules/catalog/forms";
-import { defaultToday } from "@/modules/comparisons/service";
 import { exportRequirements, validateRequest, type Period } from "./families";
 import { mapExportError, readExport, requestExport, runExport } from "./service";
 
@@ -30,11 +30,9 @@ export async function requestExportAction(data: FormData): Promise<void> {
   const family = textField(data, "family");
   const branches = data.getAll("branches").map(String).filter(Boolean);
   const includeDrafts = textField(data, "drafts") === "1";
-  const checked = validateRequest({ family, branches, period: periodFrom(data), includeDrafts, today: defaultToday() });
-  if (!checked.ok) {
-    await requireAccess({ locale, path: back });
-    redirect(`${back}?error=export_invalid`);
-  }
+  await requireAccess({ locale, path: back });
+  const checked = validateRequest({ family, branches, period: periodFrom(data), includeDrafts, today: await readBusinessToday() });
+  if (!checked.ok) redirect(`${back}?error=export_invalid`);
   await requireAccess({ locale, path: back, require: exportRequirements(checked.family, checked.branches, includeDrafts) });
   const request = textField(data, "request");
   const workbookLocale = textField(data, "workbook_locale") === "en" ? "en" : "ar";

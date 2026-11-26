@@ -7,7 +7,8 @@
 // each figure ONCE through the daily-close, stock, comparison and replenishment commands the pages use, then
 // exports the five report families in Arabic and English and keeps the files for the comparison step.
 import { createHash } from "node:crypto";
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import JSZip from "jszip";
 import { container } from "../phase3/db-check.mjs";
@@ -16,7 +17,8 @@ import { addDays, cents, context, denominations, readJson, secret } from "./lib.
 
 const PORT = process.env.E2E_PORT ?? "3220";
 const BASE = `http://127.0.0.1:${PORT}`;
-const OUT = process.env.P10_OUTPUT_DIR ?? null;
+// The scenarios read the downloaded files back, so there is always a folder (a temporary one by default).
+const OUT = process.env.P10_OUTPUT_DIR ?? mkdtempSync(path.join(os.tmpdir(), "balaban-phase10-"));
 const REFERENCE = process.env.P10_REFERENCE_FILE;
 const noReset = process.argv.includes("--no-reset");
 if (!REFERENCE) throw new Error("Set P10_REFERENCE_FILE to the private workbook-reference.json (see scripts/phase10/extract_reference.py).");

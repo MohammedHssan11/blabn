@@ -44,6 +44,9 @@ Every table is append-only, except two rules. A Product Mix may be edited while 
 - **Counts and adjustments are separate.** A count is an observation. Replacing or withdrawing one needs a reason and keeps the original. An adjustment needs a reason and approval (`inventory.adjust_approve`). Once approved, it moves the book while the count and its variance stay as observed.
 - **Corrections are reversals.** Reversing a posting writes opposite movements with the original business date and time, and needs a reason. If the posting was a consumption posting, its lines return to pending and can be posted again as attempt 2.
 - **Reproducible figures.** `app_stock_day(branch, date, as_of)` returns the figures from what had been posted by an earlier instant.
+- **Nothing before the opening stock** (migration `20261128090000`). Once an item has an opening, no movement, recipe consumption or adjustment can be dated before it (`CT007` for consumption and adjustments). A reversed opening no longer blocks.
+- **The base unit is kept** once an item has movements, counts, adjustments, order lines or planning quantities, because they are all stored in that unit.
+- **Open: counts and the next opening.** The field map (INV-04, P1-24) says the next day opens at the count, or at the book balance when not counted. The application never carries a count forward. See the [audit record](../HANDOFF.md#independent-audit-of-phases-610-26-november-2026).
 
 ## Permissions
 

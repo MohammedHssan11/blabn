@@ -5,6 +5,7 @@ import { isLocale, type Locale } from "@/i18n/config";
 import { createTranslator, type MessageKey, type Translator } from "@/i18n/dictionary";
 import { formatBusinessDate, formatMonth } from "@/i18n/format";
 import { type SearchParams } from "@/lib/search-params";
+import { readBusinessToday } from "@/lib/database-time";
 import { ResultMessages } from "@/components/Messages";
 import { requireAccess } from "@/modules/access/guard";
 import { holds } from "@/modules/access/session";
@@ -298,8 +299,11 @@ export default async function ComparisonPage({ params, searchParams }: { params:
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   const sp = await searchParams;
-  const query = parseComparisonQuery(sp);
   const base = `/${locale}/comparison`;
+  // Signed in first (the default date is read from the database), then the permission for the branches.
+  const asked = new URLSearchParams(Object.entries(sp).flatMap(([k, v]) => [v ?? []].flat().map((x): [string, string] => [k, x])));
+  await requireAccess({ locale, path: asked.size > 0 ? `${base}?${asked}` : base });
+  const query = parseComparisonQuery(sp, await readBusinessToday());
   // Viewing needs comparison.view for EVERY selected branch; the database checks it again.
   const access = await requireAccess({
     locale,

@@ -4,7 +4,8 @@ import { notFound } from "next/navigation";
 import { isLocale } from "@/i18n/config";
 import { createTranslator, type MessageKey } from "@/i18n/dictionary";
 import { formatBusinessDate, formatEventDateTime } from "@/i18n/format";
-import { addDays, businessDateOf } from "@/lib/dates";
+import { addDays } from "@/lib/dates";
+import { readBusinessToday, readLocalTimes } from "@/lib/database-time";
 import { first, type SearchParams } from "@/lib/search-params";
 import { ResultMessages } from "@/components/Messages";
 import { OPERATING_BRANCH_CODE } from "@/modules/access/catalog";
@@ -29,10 +30,14 @@ export default async function StockItemPage({ params, searchParams }: { params: 
   const path = `/${locale}/inventory/items/${id}`;
   const access = await requireAccess({ locale, path, require: { permission: "inventory.view", branch: OPERATING_BRANCH_CODE } });
   const t = createTranslator(locale);
-  const to = isStockDate(first(sp.date)) ? (first(sp.date) as string) : businessDateOf(new Date(), "Africa/Casablanca", "02:00");
+  const to = isStockDate(first(sp.date)) ? (first(sp.date) as string) : await readBusinessToday();
   const from = addDays(to, -30);
   const [history, units] = await Promise.all([readItemHistory(id, from, to), readUnits()]);
   if (!history.item) notFound();
+  // Posting times as the database's branch-local wall clock, like the entry times beside them.
+  const posted = [...history.movements, ...history.counts];
+  const local = await readLocalTimes(posted.map((x) => x.posted_at));
+  const postedAt = new Map(posted.map((x, i) => [x.id, `${local[i]}:00Z`]));
   const back = `${path}?date=${to}`;
   const canReverseManual = (kind: string) =>
     holds(access, kind === "waste" ? "inventory.waste" : kind === "hospitality" ? "inventory.hospitality"
@@ -67,8 +72,9 @@ export default async function StockItemPage({ params, searchParams }: { params: 
                   <td dir="auto">{m.entered ? `${m.entered} ${unitName(m.unit, units, locale)}` : "—"}
                     {m.recipe_quantity ? <div className="legend">{t("stock.history.recipeLine")}: <FractionValue value={m.recipe_quantity} t={t} /> {unitName(m.recipe_unit, units, locale)}</div> : null}</td>
                   <td>{t(`stock.source.${m.source}` as MessageKey)}{m.reference ? ` · ${m.reference}` : ""}{m.note ? <div className="legend">{m.note}</div> : null}</td>
-                  <td>{m.actor}<div className="legend">{formatEventDateTime(m.posted_at, locale, "Africa/Casablanca")}</div></td>
-                  <td>{!m.reversed && !m.reverses && m.kind !== "consumption" && canReverseManual(m.kind) ? (
+                  <td>{m.actor}<div className="legend">{formatEventDateTime(postedAt.get(m.id) ?? null, locale, "UTC")}</div></td>
+                  <td>{/* A purchase-order receipt cannot be reversed here (the database refuses it). */}
+                    {!m.reversed && !m.reverses && m.kind !== "consumption" && m.source !== "purchase_order" && canReverseManual(m.kind) ? (
                     <StockForm command="reverse" date={m.date} locale={locale} back={back} className="inline">
                       <input type="hidden" name="posting" value={m.posting} />
                       <label>{t("stock.form.reason")}<input name="reason" required maxLength={500} /></label>
@@ -96,7 +102,7 @@ export default async function StockItemPage({ params, searchParams }: { params: 
                   <td>{formatBusinessDate(c.date, locale, "short")}<div className="legend" dir="ltr">{c.local.replace("T", " ")}</div></td>
                   <td className="numeric"><SignedQuantity value={c.quantity} t={t} /></td>
                   <td dir="auto">{c.entered} {unitName(c.unit, units, locale)}{c.replaces ? <div className="legend">{t("stock.history.replaces")}</div> : null}</td>
-                  <td>{c.actor}<div className="legend">{formatEventDateTime(c.posted_at, locale, "Africa/Casablanca")}</div></td>
+                  <td>{c.actor}<div className="legend">{formatEventDateTime(postedAt.get(c.id) ?? null, locale, "UTC")}</div></td>
                   <td>{c.voided ? <span className="badge bad" title={c.voided}>{t("stock.history.voided")}: {c.voided}</span> : canCount ? (
                     <StockForm command="void_count" date={c.date} locale={locale} back={back} className="inline">
                       <input type="hidden" name="count" value={c.id} />

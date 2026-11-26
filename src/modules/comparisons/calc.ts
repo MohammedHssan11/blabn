@@ -162,6 +162,15 @@ function sumPresent(values: ReadonlyArray<Blank<number>>): Blank<number> {
   return present.length === 0 ? null : present.reduce((a, b) => a + b, 0);
 }
 
+/**
+ * The order total of the branches whose sales are counted. Blank when any of them has no order count:
+ * adding only the ones that have it would read as the total and treat the missing count as 0.
+ */
+function orderTotal(days: ReadonlyArray<{ sales: Blank<Minor>; orders: Blank<number> }>): Blank<number> {
+  const counted = days.filter((d) => d.sales !== null);
+  return counted.some((d) => d.orders === null) ? null : sumPresent(counted.map((d) => d.orders));
+}
+
 /** Weekly comparison of the selected branches over ONE shared current/prior date pair. */
 export function weeklyComparison(data: ComparisonData, currentDate: BusinessDate, priorDate: BusinessDate): WeeklyComparison {
   const rows: WeeklyRow[] = data.branches.map((branch) => {
@@ -184,8 +193,8 @@ export function weeklyComparison(data: ComparisonData, currentDate: BusinessDate
   const currentSales = sumPresent(rows.map((r) => r.current.sales));
   const priorSales = sumPresent(rows.map((r) => r.prior.sales));
   // Orders are totalled over the branches whose sales count, so both totals describe the same set.
-  const currentOrders = sumPresent(rows.filter((r) => r.current.sales !== null).map((r) => r.current.orders));
-  const priorOrders = sumPresent(rows.filter((r) => r.prior.sales !== null).map((r) => r.prior.orders));
+  const currentOrders = orderTotal(rows.map((r) => r.current));
+  const priorOrders = orderTotal(rows.map((r) => r.prior));
   const sameBranches = rows.every((r) => (r.current.sales === null) === (r.prior.sales === null));
   const ordersComparable = rows.every((r) => (r.current.sales === null) === (r.prior.sales === null)
     && (r.current.sales === null || (r.current.orders !== null && r.prior.orders !== null)));
@@ -308,7 +317,7 @@ function monthSide(data: ComparisonData, date: BusinessDate | null): MonthSide {
     date,
     days,
     sales: sumPresent(days.map((d) => d.sales)),
-    orders: sumPresent(days.filter((d) => d.sales !== null).map((d) => d.orders)),
+    orders: orderTotal(days),
     present,
     complete,
     status,

@@ -43,7 +43,7 @@ Migrated data: every existing `comparison_figures` row became revision 1 of each
   - in monthly mode, the missing days, the days before the first live date, and whether the month is still in progress.
 
   Days that have not started are "not started", not missing.
-- **Totals (CMP-08).** Totals cover the selected branches and dates only. A total with a missing branch is marked incomplete with its coverage. When the two dates cover different branches, the total gives no ratio or difference.
+- **Totals (CMP-08).** Totals cover the selected branches and dates only. A total with a missing branch is marked incomplete with its coverage. When the two dates cover different branches, the total gives no ratio or difference. A total order count is blank when a branch counted in the sales total has no order count.
 - **Maarif comes from saved business days.**
   - The figure is the effective revision of a closed or corrected Phase 4 day (`operating_day_revisions`). Nothing is entered again, and the database refuses comparison entry for Maarif (the `comparison.enter` permission is limited to comparison branches).
   - A closed day wins over any entered figure for the same branch and date.

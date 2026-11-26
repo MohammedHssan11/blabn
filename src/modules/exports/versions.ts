@@ -13,7 +13,7 @@ import type { Family } from "./model";
  */
 export const TEMPLATE_VERSIONS: Readonly<Record<Family, string>> = {
   sales_comparison: "sales_comparison@1.0.0",
-  daily_sales: "daily_sales@1.0.0",
+  daily_sales: "daily_sales@1.0.1",
   daily_statement: "daily_statement@1.0.0",
   daily_ledger: "daily_ledger@1.0.0",
   inventory: "inventory@1.0.0",
@@ -28,4 +28,4 @@ export const TEMPLATE_FINGERPRINTS: Readonly<Record<Family, string>> = {
   inventory: "403a37dcca648b93",
 };
 
-export const CALC_RULES_VERSION = "p9-calc-2026.11.24";
+export const CALC_RULES_VERSION = "p9-calc-2026.11.25";

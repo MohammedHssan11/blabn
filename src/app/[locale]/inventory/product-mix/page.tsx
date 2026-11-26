@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { isLocale } from "@/i18n/config";
 import { createTranslator, type MessageKey } from "@/i18n/dictionary";
 import { formatMad } from "@/i18n/format";
-import { businessDateOf } from "@/lib/dates";
+import { readBusinessToday } from "@/lib/database-time";
 import { first, type SearchParams } from "@/lib/search-params";
 import { ResultMessages } from "@/components/Messages";
 import { OPERATING_BRANCH_CODE } from "@/modules/access/catalog";
@@ -30,7 +30,7 @@ export default async function ProductMixPage({ params, searchParams }: { params:
   const path = `/${locale}/inventory/product-mix`;
   const access = await requireAccess({ locale, path, require: { permission: "inventory.view", branch: OPERATING_BRANCH_CODE } });
   const t = createTranslator(locale);
-  const date = isStockDate(requested) ? requested : businessDateOf(new Date(), "Africa/Casablanca", "02:00");
+  const date = isStockDate(requested) ? requested : await readBusinessToday();
   const [mix, units, day] = await Promise.all([readProductMix(date), readUnits(), readStockDay(date)]);
   const back = `${path}?date=${date}`;
   const canEdit = holds(access, "inventory.consume", OPERATING_BRANCH_CODE);
@@ -38,7 +38,8 @@ export default async function ProductMixPage({ params, searchParams }: { params:
   const draft = report?.state === "draft";
   const lines = (mix.sections ?? []).flatMap((s) => s.lines);
   const pending = lines.filter((l) => !l.posted);
-  const defaultLocal = `${date}T${date === day.today ? day.local.slice(11) : "23:00"}`;
+  // For today, now as it is: after midnight the clock is already on the next calendar day of this business date.
+  const defaultLocal = date === day.today ? day.local : `${date}T23:00`;
 
   return (
     <>

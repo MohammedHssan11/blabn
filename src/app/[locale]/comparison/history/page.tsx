@@ -5,6 +5,7 @@ import { isLocale } from "@/i18n/config";
 import { createTranslator, type MessageKey } from "@/i18n/dictionary";
 import { formatBusinessDate, formatCount, formatEventDateTime, formatMad } from "@/i18n/format";
 import { isBusinessDate } from "@/lib/dates";
+import { readLocalTimes } from "@/lib/database-time";
 import { first, type SearchParams } from "@/lib/search-params";
 import { ALL_BRANCH_CODES } from "@/modules/access/catalog";
 import { requireAccess } from "@/modules/access/guard";
@@ -28,6 +29,8 @@ export default async function ComparisonHistoryPage({ params, searchParams }: { 
   const t = createTranslator(locale);
   const history = await readHistory(branch, date);
   const rows = history.rows;
+  // Entry times as the database's branch-local wall clock (the time-zone authority).
+  const entered = await readLocalTimes(rows.map((r) => r.enteredAt));
 
   return (
     <>
@@ -50,7 +53,7 @@ export default async function ComparisonHistoryPage({ params, searchParams }: { 
               </tr>
             </thead>
             <tbody>
-              {rows.map((r) => (
+              {rows.map((r, i) => (
                 <tr key={r.id} data-revision={r.revision} data-metric={r.metric} data-active={r.active ? "true" : "false"}>
                   <td>{t(`comparison.historyPage.metric.${r.metric}` as MessageKey)} · <code dir="ltr">{r.source}</code></td>
                   <td className="num">{r.revision}</td>
@@ -61,7 +64,7 @@ export default async function ComparisonHistoryPage({ params, searchParams }: { 
                   <td><span className={`badge ${r.active ? "ok" : ""}`}>{r.active ? t("comparison.historyPage.active") : t("comparison.historyPage.retired")}</span></td>
                   <td>{r.reason ?? ""}</td>
                   <td>{r.actor}</td>
-                  <td>{formatEventDateTime(r.enteredAt, locale, "Africa/Casablanca")}</td>
+                  <td data-col="entered-at">{formatEventDateTime(`${entered[i]}:00Z`, locale, "UTC")}</td>
                 </tr>
               ))}
             </tbody>

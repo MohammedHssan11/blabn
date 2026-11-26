@@ -380,6 +380,61 @@ async function main() {
   check("one event per accepted request", psql("select count(*) from public.purchase_order_events") === psql("select count(*) from public.audit_log where action like 'purchase_order.%'"));
   const { error } = await adminDb.from("purchase_orders").update({ note: "x" }).eq("id", incomingOrder);
   check("the API cannot change an order directly", Boolean(error) || psql(`select coalesce(note, '') from public.purchase_orders where id = '${incomingOrder}'`) === "");
+
+  section("11. Audit regressions: item history after receipts, database dates, a suggestion of 0, lead-time exceptions");
+  for (const [locale, label] of [["en", "Purchase-order receipt"], ["ar", "استلام طلبية"]]) {
+    const history = await get(keeper.jar, `/${locale}/inventory/items/${Z}?date=${D}`);
+    const rows = history.html.match(/<tr[^>]*data-source="purchase_order"[\s\S]*?<\/tr>/g) ?? [];
+    check(`/${locale}: the history of an item received through orders opens and names those receipts`,
+      history.status === 200 && rows.length === 3 && rows.every((row) => row.includes(label)), `${history.status}, ${rows.length} rows`);
+    check(`/${locale}: no reversal is offered for them (the database refuses it)`, rows.every((row) => !row.includes('data-form="reverse"')));
+  }
+  {
+    const history = await get(keeper.jar, `/en/inventory/items/${Z}?date=${D}`);
+    const posted = psql(`select to_char(p.posted_at at time zone 'Africa/Casablanca', 'HH24:MI') from public.stock_movements m
+      join public.stock_postings p on p.id = m.posting_id where m.item_id = '${Z}' order by p.posted_at limit 1`);
+    const first = (history.html.match(/<tr[^>]*data-source="purchase_order"[\s\S]*?<\/tr>/) ?? [""])[0];
+    check("posting times are the database's branch-local clock", plainText(first).includes(posted), `${posted} in ${plainText(first).slice(-80)}`);
+    const stock = await get(keeper.jar, "/en/inventory");
+    const today = psql("select public.business_date_of(now(), timezone, business_day_rollover) from public.branches where code = 'maarif'");
+    const shown = /name="local"[^>]*value="(\d{4}-\d{2}-\d{2}T\d{2}:\d{2})"/.exec(stock.html)?.[1] ?? "";
+    // Within three minutes of the database's branch-local clock, so not a day or an hour away.
+    check("the stock page opens on the database's business date, with the database's wall clock as the default time",
+      new RegExp(`name="date" value="${today}"`).test(stock.html) && shown !== ""
+      && psql(`select abs(extract(epoch from '${shown}'::timestamp - (now() at time zone 'Africa/Casablanca'))) < 180`) === "t", `${today} ${shown}`);
+  }
+  const settings = await get(admin, "/en/replenishment/settings");
+  await post(admin, "/en/replenishment/settings", settings.html, "branch-settings", { min_observations: "3", coverage_days: "1" });
+  {
+    const path = `/en/replenishment/orders/new?item=${Z}`;
+    const page = await get(keeper.jar, path);
+    check("a suggestion of 0 is left blank", /name="suggested.0" value="0\/1"/.test(page.html) && /name="quantity.0"[^>]*value=""/.test(page.html));
+    const r = await post(keeper.jar, path, page.html, "po-create", { "item.1": other, "quantity.1": "2", "source.1": "factory", "source.0": "factory", "unit.0": "" });
+    check("so the other lines of the order can be saved", r.to.includes("notice=po_create")
+      && psql(`select count(*) from public.purchase_order_lines l where l.order_id = '${r.to.split("/orders/")[1]?.split("?")[0]}'`) === "1", r.to);
+  }
+  {
+    await post(admin, "/en/replenishment/settings", (await get(admin, "/en/replenishment/settings")).html, "source-store", { lead_days: "8", cutoff: "" });
+    const path = `/en/replenishment/orders/new?item=${X}`;
+    const first = await get(keeper.jar, path);
+    const set = { "source.0": "store", "unit.0": "", "quantity.0": "4", "reason.0": "E8 audit: store delivery" };
+    const refusedOnce = await post(keeper.jar, path, first.html, "po-create", set);
+    check("choosing a source with a longer lead time changes the suggestion, so the first send is refused for review",
+      refusedOnce.to.includes("error=po_plan_changed") && refusedOnce.to.includes("lead=store"), refusedOnce.to);
+    const review = await get(keeper.jar, refusedOnce.to);
+    check("the review shows the suggestion for the store's expected date, with the store still selected",
+      review.html.includes(`data-default-expected="${addDays(D, 8)}"`) && /<option value="store" selected="">/.test(review.html));
+    const saved = await post(keeper.jar, refusedOnce.to, review.html, "po-create", set);
+    const orderId = saved.to.split("/orders/")[1]?.split("?")[0];
+    check("sending the reviewed order saves it for that date", saved.to.includes("notice=po_create")
+      && psql(`select expected_date from public.purchase_order_expected_dates where order_id = '${orderId}'`) === addDays(D, 8), saved.to);
+  }
+  // Leave the settings as section 9 left them: the browser check builds on this data and the two-day rule.
+  await post(admin, "/en/replenishment/settings", (await get(admin, "/en/replenishment/settings")).html, "source-store", { lead_days: "", cutoff: "" });
+  await post(admin, "/en/replenishment/settings", (await get(admin, "/en/replenishment/settings")).html, "branch-settings", { min_observations: "4", coverage_days: "1" });
+  check("the test lead-time exception is removed again",
+    psql("select count(*) from public.replenishment_source_settings where source = 'store' and lead_days is not null") === "0"
+    && psql("select min_observations from public.replenishment_settings") === "4");
 }
 
 main()

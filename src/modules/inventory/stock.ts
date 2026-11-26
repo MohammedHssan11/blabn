@@ -139,7 +139,7 @@ export async function readStockOptions(): Promise<StockOption[]> {
 
 export type StockErrorCode =
   | "forbidden" | "invalid_input" | "unavailable" | "stock_stale" | "stock_duplicate" | "stock_unit"
-  | "stock_not_reconciled" | "stock_nothing_eligible" | "stock_recipe_posted";
+  | "stock_not_reconciled" | "stock_nothing_eligible" | "stock_recipe_posted" | "stock_before_opening";
 
 export function mapStockError(code: string | undefined): StockErrorCode {
   switch (code) {
@@ -150,6 +150,7 @@ export function mapStockError(code: string | undefined): StockErrorCode {
     case "CT005": return "stock_not_reconciled";
     case "CT006": return "stock_nothing_eligible";
     case "CT004": return "stock_recipe_posted";
+    case "CT007": return "stock_before_opening";
     default: return code && (code.startsWith("22") || code.startsWith("23")) ? "invalid_input" : "unavailable";
   }
 }

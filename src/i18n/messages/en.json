@@ -461,6 +461,7 @@
     "stock_not_reconciled": "The Product Mix does not reconcile, so it cannot be locked.",
     "stock_nothing_eligible": "No line is eligible yet. Each blocked line says what it needs.",
     "stock_recipe_posted": "Consumption is already posted through that recipe on a later date.",
+    "stock_before_opening": "The opening stock of one of these items starts after this date, so nothing can be recorded for it on this day.",
     "catalog_recipe_posted": "Consumption is already posted through the current recipe on those dates. Start the new version after the last posted day.",
     "comparison_not_owner": "Only the configured entry owner can enter this branch's figures.",
     "comparison_stale": "The settings changed since you opened the page. Open it again and repeat the change.",
@@ -1214,7 +1215,8 @@
       "product_mix": "Product Mix × recipe",
       "adjustment": "Approved adjustment",
       "opening": "Opening stock",
-      "reversal": "Reversal"
+      "reversal": "Reversal",
+      "purchase_order": "Purchase-order receipt"
     },
     "adjustments": {
       "title": "Adjustments of the day",
