@@ -76,6 +76,11 @@ export default async function LocaleLayout({
           ...(holds(access, "inventory.adjust", OPERATING_BRANCH_CODE)
             ? [{ href: `/${locale}/inventory/adjustments`, label: t("nav.inventoryAdjustments") }]
             : []),
+          // Phases 13-14: attendance administration, and the kiosk screen for a kiosk device account.
+          ...(holds(access, "attendance.view", OPERATING_BRANCH_CODE) ? [{ href: `/${locale}/attendance`, label: t("nav.attendance") }] : []),
+          // The kiosk screen is for kiosk device accounts only, not for the people who administer attendance.
+          ...(holds(access, "attendance.event.create", OPERATING_BRANCH_CODE) && !holds(access, "attendance.view", OPERATING_BRANCH_CODE)
+            ? [{ href: `/${locale}/kiosk`, label: t("nav.kiosk") }] : []),
           ...(holds(access, "recipes.manage") ? [{ href: `/${locale}/catalog`, label: t("nav.catalog") }] : []),
           ...(holds(access, "admin.users.manage") ? [{ href: `/${locale}/admin/staff`, label: t("nav.staff") }] : []),
           ...(holds(access, "admin.audit.view") ? [{ href: `/${locale}/admin/audit`, label: t("nav.audit") }] : []),

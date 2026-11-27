@@ -12,6 +12,8 @@ Phase 4 acceptance is complete locally. It adds the [daily close, cash reconcili
 
 Phases 6–8 (stock and variance, cross-branch comparison, replenishment) are merged. Phase 9, the [five Excel report families](docs/phase9/EXCEL_REPORTS.md), is implemented and verified locally on `phase-9/excel-reports` and waits for review.
 
+Phases 13–14, [camera attendance](docs/phase13_14/ATTENDANCE.md) (employee IDs, kiosk devices, face enrollment, live verification, worked time, corrections and the attendance Excel report), were built locally ahead of Phases 11–12 at the owner's request. They are **not committed or deployed**; the real-camera trial and the owner decisions listed in the handover record remain.
+
 The bilingual interface uses B.Laban’s blue and white palette across sign-in, the workspace, and operational screens. See the [brand references](docs/BRAND_DESIGN.md).
 
 ## Product scope
@@ -52,6 +54,7 @@ The bilingual interface uses B.Laban’s blue and white palette across sign-in, 
 - [Abdo's workflow decisions for Phases 5–11](docs/ABDO_WORKFLOW_DECISIONS.md)
 - [Phase 5 catalog, units and recipes](docs/phase5/CATALOG_AND_RECIPES.md)
 - [Phase 9 Excel reports](docs/phase9/EXCEL_REPORTS.md)
+- [Phases 13–14 camera attendance](docs/phase13_14/ATTENDANCE.md) and the [attendance verifier](services/attendance-verifier/README.md)
 
 ## Repository rules
 
