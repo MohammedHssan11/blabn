@@ -205,6 +205,10 @@ Verifier processing 1.2–1.6 s per attempt; the rest is the 5.6 s capture.
 
 ## 11. Open owner decisions
 
+**Confirmed by the project owner, 27 November 2026:** A completed shift that spans midnight uses the actual elapsed time between its recorded check-in and check-out; 22:00 to 06:00 is eight hours. This does not decide whether the report attributes the shift to the check-in date, a business date, or both dates. Break, rounding, overtime and lateness rules remain unconfirmed.
+
+The owner delegated biometric handling: use the encrypted face reference and the existing authorized deletion interface when a reference is no longer needed, including after confirmed departure. Deactivation itself does not delete it. A tested policy and procedure for removing replay-guard fingerprints and handling backups remains open; deleting fingerprints reduces detection of old exact-byte replays.
+
 1. **Reporting period of an overnight shift**: check-in date (current, provisional), business day with the 02:00 rollover, or split at midnight?
 2. **Forgotten check-out**: refuse the next check-in until a manager corrects it (current), or record the new check-in and flag the old shift?
 3. **Retention of face references** after an employee leaves or is deactivated (delete at once, after N days, or keep).
