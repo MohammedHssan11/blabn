@@ -1,5 +1,6 @@
 import "server-only";
 import { createUserClient } from "@/lib/supabase/server";
+import { isBusinessDate, type BusinessDate } from "@/lib/dates";
 import { parseEvents, type AttendanceEvent } from "./hours";
 
 /**
@@ -46,6 +47,14 @@ export interface AttendanceReport {
 
 const num = (v: unknown) => (typeof v === "number" && Number.isFinite(v) ? v : null);
 const str = (v: unknown) => (typeof v === "string" ? v : null);
+
+/** Attendance periods use the branch calendar date, without the business-day rollover. */
+export async function readAttendanceToday(): Promise<BusinessDate> {
+  const db = await createUserClient();
+  const { data, error } = await db.rpc("app_attendance_today");
+  if (error || !isBusinessDate(data)) throw new Error(`attendance date unavailable (${error?.code ?? "empty"})`);
+  return data;
+}
 
 export async function readReport(branch: string, from: string, to: string, purpose: "view" | "export", locale?: string): Promise<AttendanceReport> {
   const db = await createUserClient();

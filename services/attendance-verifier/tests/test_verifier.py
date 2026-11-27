@@ -154,8 +154,8 @@ class CryptoTests(unittest.TestCase):
     def test_canonical_messages_match_the_database_format(self):
         msg = crypto.attempt_message(attempt_id="A", nonce="AB", employee_id="E", reference_id="R", action="check_in",
                                      challenge=["left", "up"], outcome="failure", reason="face_mismatch", engine="eng",
-                                     issued_at_ms=1700000000000, key_id="k1")
-        self.assertEqual(msg, "balaban-attendance|attempt|v1|a|ab|e|r|check_in|left,up|failure|face_mismatch|eng|1700000000000|k1")
+                                     issued_at_ms=1700000000000, key_id="k1", capture_hash="abcd")
+        self.assertEqual(msg, "balaban-attendance|attempt|v2|a|ab|e|r|check_in|left,up|abcd|failure|face_mismatch|eng|1700000000000|k1")
         msg = crypto.enroll_message(enrollment_id="N", nonce="AB", employee_id="E", ciphertext_sha256="FF", engine="eng",
                                     issued_at_ms=1, key_id="k1")
         self.assertEqual(msg, "balaban-attendance|enroll|v1|n|ab|e|ff|success|eng|1|k1")
@@ -183,7 +183,7 @@ class DecisionTests(unittest.TestCase):
         msg = crypto.attempt_message(attempt_id=material["attempt_id"], nonce=material["nonce"], employee_id=self.emp,
                                      reference_id=material["reference_id"], action="check_in", challenge=material["challenge"],
                                      outcome=r["outcome"], reason=r.get("reason"), engine=r["engine"],
-                                     issued_at_ms=int(r["issued_at_ms"]), key_id="r1")
+                                     issued_at_ms=int(r["issued_at_ms"]), key_id="r1", capture_hash=r["capture_hash"])
         self.assertEqual(out["signature"], crypto.sign(self.keys.result_key, msg))
 
     def test_enrolled_person_performing_the_challenge_succeeds(self):

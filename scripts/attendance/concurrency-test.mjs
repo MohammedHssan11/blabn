@@ -60,20 +60,21 @@ insert into public.staff_group_assignments (staff_id, branch_id, group_key) sele
   unnest(array['${KIOSK1}'::uuid, '${KIOSK2}'::uuid]) s where b.code = 'maarif';
 insert into public.attendance_devices (organization_id, branch_id, user_id, label) select b.organization_id, b.id, s, 'Kiosk ' || right(s::text, 1)
   from public.branches b, unnest(array['${KIOSK1}'::uuid, '${KIOSK2}'::uuid]) s where b.code = 'maarif';
-create or replace function public.cc_verdict(p_attempt uuid) returns jsonb language plpgsql security definer set search_path = '' as $$
-declare a public.attendance_attempts; ms text := (floor(extract(epoch from now()) * 1000))::bigint::text; msg text;
+create or replace function public.cc_verdict(p_attempt uuid, p_capture text default null) returns jsonb language plpgsql security definer set search_path = '' as $$
+declare a public.attendance_attempts; ms text := (floor(extract(epoch from now()) * 1000))::bigint::text; msg text; capture text;
 begin
   select * into a from public.attendance_attempts where id = p_attempt;
-  msg := concat_ws('|', 'balaban-attendance', 'attempt', 'v1', a.id::text, encode(a.nonce, 'hex'), a.employee_id::text, a.reference_id::text,
-                   a.action, array_to_string(a.challenge, ','), 'success', '', 'opencv-test-engine', ms, 'cc-k1');
-  return jsonb_build_object('result', jsonb_build_object('outcome', 'success', 'engine', 'opencv-test-engine', 'issued_at_ms', ms, 'key_id', 'cc-k1'),
+  capture := coalesce(p_capture, encode(extensions.digest(p_attempt::text, 'sha256'), 'hex'));
+  msg := concat_ws('|', 'balaban-attendance', 'attempt', 'v2', a.id::text, encode(a.nonce, 'hex'), a.employee_id::text, a.reference_id::text,
+                   a.action, array_to_string(a.challenge, ','), capture, 'success', '', 'opencv-test-engine', ms, 'cc-k1');
+  return jsonb_build_object('result', jsonb_build_object('outcome', 'success', 'engine', 'opencv-test-engine', 'issued_at_ms', ms, 'key_id', 'cc-k1', 'capture_hash', capture),
     'signature', encode(extensions.hmac(convert_to(msg, 'UTF8'), decode(repeat('5a', 32), 'hex'), 'sha256'), 'hex'));
 end $$;
-grant execute on function public.cc_verdict(uuid) to authenticated;
-create or replace function public.cc_complete(p_attempt uuid) returns text language sql as $$
-  select (public.app_attendance_attempt_complete(p_attempt, public.cc_verdict(p_attempt)->'result', public.cc_verdict(p_attempt)->>'signature'))->>'status';
+grant execute on function public.cc_verdict(uuid, text) to authenticated;
+create or replace function public.cc_complete(p_attempt uuid, p_capture text default null) returns text language sql as $$
+  select (public.app_attendance_attempt_complete(p_attempt, public.cc_verdict(p_attempt, p_capture)->'result', public.cc_verdict(p_attempt, p_capture)->>'signature'))->>'status';
 $$;
-grant execute on function public.cc_complete(uuid) to authenticated;
+grant execute on function public.cc_complete(uuid, text) to authenticated;
 `);
 
 // Creates and enrolls an employee directly (the verifier is not part of this test).
@@ -164,6 +165,25 @@ async function main() {
   ]);
   check("both recorded", both.every((r) => r.out.endsWith("succeeded")) && Number(psql("select count(*) from public.attendance_events")) === before + 2,
     both.map((r) => r.out + r.err).join(" | "));
+
+  section("6. The same capture concurrently submitted for two employees");
+  const c = employee("Replay concurrent C");
+  const d = employee("Replay concurrent D");
+  enroll(c);
+  enroll(d);
+  const xc = start(KIOSK1, code(c), "check_in");
+  const xd = start(KIOSK2, code(d), "check_in");
+  const replayTime = at(1500);
+  const identicalCapture = "a".repeat(64);
+  const replayResults = await Promise.all([
+    session(`${as(KIOSK1)}\n${waitUntil(replayTime)}\nselect public.cc_complete('${xc.attempt_id}', '${identicalCapture}');`),
+    session(`${as(KIOSK2)}\n${waitUntil(replayTime)}\nselect public.cc_complete('${xd.attempt_id}', '${identicalCapture}');`),
+  ]);
+  const statuses = replayResults.map((r) => r.out.split("\n").pop()).sort();
+  check("one success and one refused replay, without a database error", replayResults.every((r) => r.code === 0)
+    && statuses.join(",") === "failed,succeeded", replayResults.map((r) => r.err + r.out).join(" | "));
+  check("one event and one replay reason", psql(`select count(*) from public.attendance_events where employee_id in ('${c}','${d}')`) === "1"
+    && psql(`select count(*) from public.attendance_attempts where id in ('${xc.attempt_id}','${xd.attempt_id}') and reason = 'capture_replayed'`) === "1");
 }
 
 main()

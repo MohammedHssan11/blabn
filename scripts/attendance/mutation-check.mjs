@@ -27,7 +27,9 @@ function reset() {
 
 const MUTATIONS = [
   ["accept a verdict without checking its signature", () => mutateFunction("public.app_attendance_attempt_complete(uuid,jsonb,text)",
-    "v_ok := v_expected is not null and v_expected = lower(coalesce(p_signature, ''))", "v_ok := true or v_expected = lower(coalesce(p_signature, ''))")],
+    "and v_expected is not null and v_expected = lower(coalesce(p_signature, ''))", "and true")],
+  ["accept an identical capture twice", () => mutateFunction("public.app_attendance_attempt_complete(uuid,jsonb,text)",
+    "if v_inserted is null then", "if false then")],
   ["accept an expired attempt", () => mutateFunction("public.app_attendance_attempt_complete(uuid,jsonb,text)",
     "if now() > a.expires_at then", "if false then")],
   ["let an over-privileged account act as a kiosk", () => mutateFunction("app_private.kiosk_problem(uuid)",
@@ -37,13 +39,17 @@ const MUTATIONS = [
   ["forget the state check (allow a second check-in)", () => mutateFunction("public.app_attendance_attempt_start(uuid,text,text)",
     "if p_action = 'check_in' and last.kind = 'check_in' then", "if false then")],
   ["skip the brute-force brake", () => mutateFunction("public.app_attendance_attempt_start(uuid,text,text)",
-    "'invalid_verifier_signature', 'poor_quality')) >= 5 then", "'invalid_verifier_signature', 'poor_quality')) >= 500 then")],
+    "'invalid_verifier_signature', 'capture_replayed', 'poor_quality')) >= 5 then", "'invalid_verifier_signature', 'capture_replayed', 'poor_quality')) >= 500 then")],
   ["keep the replaced face reference", () => mutateFunction("public.app_attendance_enrollment_complete(uuid,text,jsonb,text,text,boolean)",
     "set status = 'replaced', ciphertext = null,", "set status = 'replaced', ciphertext = ciphertext,")],
   ["let corrections change the original event's row", () => psql("drop trigger attendance_corrections_append_only on public.attendance_corrections;")],
 ];
 
 let failures = 0;
+const match = process.argv.includes("--match") ? process.argv[process.argv.indexOf("--match") + 1] : null;
+if (process.argv.includes("--match") && !match) throw new Error("--match requires a mutation name fragment");
+const selected = match ? MUTATIONS.filter(([name]) => name.includes(match)) : MUTATIONS;
+if (selected.length === 0) throw new Error(`No mutation matched: ${match}`);
 reset();
 try {
   console.log(`  ok   unmodified: ${runSqlFile("attendance_checks.sql")}`);
@@ -51,7 +57,7 @@ try {
   failures += 1;
   console.log(`  FAIL unmodified schema does not pass:\n${error.message}`);
 }
-for (const [name, apply] of MUTATIONS) {
+for (const [name, apply] of selected) {
   reset();
   apply();
   try {

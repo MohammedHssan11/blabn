@@ -1,6 +1,6 @@
 # Attendance verifier (Phases 13–14)
 
-An isolated service that decides whether the person at the attendance kiosk is the employee whose ID was typed, and whether the random live challenge was performed during this attempt. The web application cannot make that decision and the kiosk browser is never asked: the database accepts a check-in or check-out only with this service's HMAC-signed verdict.
+An isolated service that checks whether the face at the attendance kiosk matches the employee whose ID was typed and whether the submitted frames satisfy the movement challenge. It cannot establish that the frames were captured live during this attempt. The web application cannot make the verification decision and the kiosk browser is never asked: the database accepts a check-in or check-out only with this service's HMAC-signed verdict.
 
 Full design, trust model, limits and test results: [docs/phase13_14/ATTENDANCE.md](../../docs/phase13_14/ATTENDANCE.md).
 
@@ -13,6 +13,8 @@ Full design, trust model, limits and test results: [docs/phase13_14/ATTENDANCE.m
 | `POST /v1/verify` | the attempt's id, nonce, employee, reference, action, challenge and encrypted reference (from `app_attendance_attempt_material`); 8–40 JPEG frames | signed verdict: `success`, or `failure` with a reason, plus aggregate metrics |
 
 Every request needs `Authorization: Bearer <ATTENDANCE_VERIFIER_TOKEN>`. The service binds to `127.0.0.1` by default, keeps no state, writes no file, and logs one line per request (method, path, status, outcome code, duration) — never a frame, score list, template or key.
+
+Verification signs a digest of the ordered submitted frame bytes. The database keeps a separate keyed fingerprint for accepted captures and refuses byte-for-byte reuse in another attempt in the same organization. It cannot detect first-time playback, altered frames or a virtual camera. These privately stored fingerprints are biometric-derived metadata linked to attempts; retention and database fingerprint-key backup and rotation procedures remain to be decided. The verifier and migration `20261201090000_attendance_capture_replay.sql` use the v2 verdict protocol and must be deployed together after acceptance.
 
 ## Models
 

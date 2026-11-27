@@ -4,13 +4,12 @@ import { notFound } from "next/navigation";
 import { isLocale } from "@/i18n/config";
 import { createTranslator } from "@/i18n/dictionary";
 import { formatCount } from "@/i18n/format";
-import { readBusinessToday } from "@/lib/database-time";
 import { first, type SearchParams } from "@/lib/search-params";
 import { ResultMessages } from "@/components/Messages";
 import { OPERATING_BRANCH_CODE } from "@/modules/access/catalog";
 import { requireAccess } from "@/modules/access/guard";
 import { holds } from "@/modules/access/session";
-import { listEmployees, readReport } from "@/modules/attendance/data";
+import { listEmployees, readAttendanceToday, readReport } from "@/modules/attendance/data";
 import { parsePeriod } from "@/modules/attendance/forms";
 import { formatDuration } from "@/modules/attendance/hours";
 import { summarise } from "@/modules/attendance/summary";
@@ -27,7 +26,7 @@ export default async function AttendancePage({ params, searchParams }: { params:
   const sp = await searchParams;
   const access = await requireAccess({ locale, path: `/${locale}/attendance`, require: { permission: "attendance.view", branch: OPERATING_BRANCH_CODE } });
   const t = createTranslator(locale);
-  const today = await readBusinessToday();
+  const today = await readAttendanceToday();
   const period = parsePeriod(first(sp.from), first(sp.to), today);
   if (!period) {
     return (

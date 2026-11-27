@@ -1,20 +1,18 @@
-"""Security regression illustrating that attempt binding does not prove frame freshness.
+"""Synthetic checks for exact-capture fingerprinting. The database decides whether it was used.
 
-All frames are synthetic landmark descriptions; this test stores no biometric data. It is an
-expected failure until trusted capture or another effective replay defense is implemented.
+This does not establish freshness or protect against modified/re-encoded frames or camera injection.
 """
 import os
 import unittest
 import uuid
 
 from tests import synthetic
-from verifier import decide
+from verifier import crypto, decide
 from verifier.engines import SyntheticEngine
 
 
 class ReplayResistanceTests(unittest.TestCase):
-    @unittest.expectedFailure
-    def test_same_captured_frames_cannot_satisfy_a_fresh_attempt(self):
+    def test_same_captured_frames_have_the_same_signed_digest_across_attempts(self):
         engine = SyntheticEngine()
         keys = decide.Keys(template_keys={"template": os.urandom(32)}, template_key_id="template",
                            result_key=os.urandom(32), result_key_id="result")
@@ -30,6 +28,12 @@ class ReplayResistanceTests(unittest.TestCase):
                     "reference_id": reference, "action": "check_in", "challenge": ["left", "right"],
                     "ciphertext": enrolled["ciphertext"]}
 
-        self.assertEqual(decide.verify(engine, frames, attempt(), keys)["result"]["outcome"], "success")
-        # Required behavior: frames previously captured for a different attempt must not suffice.
-        self.assertEqual(decide.verify(engine, frames, attempt(), keys)["result"]["outcome"], "failure")
+        first = decide.verify(engine, frames, attempt(), keys)
+        second = decide.verify(engine, frames, attempt(), keys)
+        self.assertEqual(first["result"]["outcome"], "success")
+        self.assertEqual(first["result"]["capture_hash"], second["result"]["capture_hash"])
+        self.assertNotEqual(first["signature"], second["signature"])
+
+    def test_frame_order_and_boundaries_are_part_of_the_digest(self):
+        self.assertNotEqual(crypto.capture_digest([b"ab", b"c"]), crypto.capture_digest([b"a", b"bc"]))
+        self.assertNotEqual(crypto.capture_digest([b"a", b"b"]), crypto.capture_digest([b"b", b"a"]))

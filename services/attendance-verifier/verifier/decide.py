@@ -174,12 +174,13 @@ def verify(engine, frames: list[bytes], material: dict, keys: Keys, policy: Poli
 
     outcome = "success" if reason is None else "failure"
     issued = _now_ms()
+    capture_hash = crypto.capture_digest(frames)
     message = crypto.attempt_message(
         attempt_id=material["attempt_id"], nonce=material["nonce"], employee_id=material["employee_id"],
         reference_id=material["reference_id"], action=material["action"], challenge=challenge, outcome=outcome,
-        reason=reason, engine=engine.name, issued_at_ms=issued, key_id=keys.result_key_id)
+        reason=reason, engine=engine.name, issued_at_ms=issued, key_id=keys.result_key_id, capture_hash=capture_hash)
     result = {"outcome": outcome, "engine": engine.name, "issued_at_ms": str(issued), "key_id": keys.result_key_id,
-              "metrics": metrics}
+              "capture_hash": capture_hash, "metrics": metrics}
     if reason is not None:
         result["reason"] = reason
     return {"result": result, "signature": crypto.sign(keys.result_key, message)}

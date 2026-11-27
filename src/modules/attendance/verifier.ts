@@ -16,6 +16,7 @@ export interface VerifierVerdict {
     engine: string;
     issued_at_ms: string;
     key_id: string;
+    capture_hash?: string;
     metrics?: Record<string, unknown>;
     quality?: Record<string, unknown>;
   };

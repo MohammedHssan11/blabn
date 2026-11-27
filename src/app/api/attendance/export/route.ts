@@ -1,8 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { authorizeRequest } from "@/modules/access/guard";
 import { OPERATING_BRANCH_CODE } from "@/modules/access/catalog";
-import { readBusinessToday } from "@/lib/database-time";
-import { readReport } from "@/modules/attendance/data";
+import { readAttendanceToday, readReport } from "@/modules/attendance/data";
 import { attendanceFileName, attendanceWorkbook, XLSX_TYPE } from "@/modules/attendance/export";
 import { parsePeriod } from "@/modules/attendance/forms";
 
@@ -18,7 +17,7 @@ export async function GET(request: NextRequest) {
   if (!decision.ok) return decision.response;
   const locale = request.nextUrl.searchParams.get("lang") === "en" ? "en" : "ar";
   const period = parsePeriod(request.nextUrl.searchParams.get("from") ?? undefined, request.nextUrl.searchParams.get("to") ?? undefined,
-    await readBusinessToday());
+    await readAttendanceToday());
   if (!period) return NextResponse.json({ error: "invalid_period" }, { status: 400, headers: NO_STORE });
 
   const report = await readReport(branch, period.from, period.to, "export", locale);

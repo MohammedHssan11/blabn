@@ -119,7 +119,7 @@ export function isClientFailure(value: unknown): value is ClientFailure {
 export const KIOSK_REASONS = [
   "unknown_employee", "employee_inactive", "not_enrolled", "too_many_failures", "already_checked_in", "not_checked_in",
   "face_mismatch", "liveness_failed", "challenge_failed", "no_face", "multiple_faces", "face_inconsistent", "poor_quality",
-  "upload_invalid", "reference_unavailable", "invalid_verifier_signature", "expired", "state_changed", "device_inactive",
+  "upload_invalid", "reference_unavailable", "invalid_verifier_signature", "capture_replayed", "expired", "state_changed", "device_inactive",
   "camera_unavailable", "camera_permission_denied", "camera_stopped", "connection_lost", "verifier_unavailable",
   "models_unavailable", "cancelled", "timeout", "new_attempt", "reference_replaced", "reference_deleted",
 ] as const;

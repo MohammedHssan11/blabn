@@ -38,7 +38,7 @@ Decided with the owner: IDs 101–999; Abdo enters each person himself and enrol
 * **YuNet** (2023-03, MIT) finds the face and five landmarks (eyes, nose tip, mouth corners);
 * **SFace** (2021-12, Apache-2.0) turns an aligned face into a 128-number embedding; similarity is the cosine of two embeddings.
 
-The employee types an ID, so the system compares the live face with **that one employee's** reference only. There is no search across employees.
+The employee types an ID, so the system compares the submitted face with **that one employee's** reference only. There is no search across employees.
 
 ### Why this approach
 
@@ -53,16 +53,16 @@ The employee types an ID, so the system compares the live face with **that one e
 
 ### What "live" means here, and what it does not
 
-**Independent review, 27 November 2026 — release blocker:** The verifier accepts an identical synthetic frame sequence for two distinct attempts with different nonces when the challenge repeats. The HMAC binds the verdict, not the capture to the attempt. This is documented as an expected-failure security regression in `services/attendance-verifier/tests/test_replay_security.py`; it is not an effective replay defense. No real-person footage was used in that regression. Do not treat the feature as release-ready until a suitable defense and the outstanding real-camera attack tests have passed the agreed criteria.
+**Independent review, 27 November 2026 — release blocker:** Identical synthetic frames were accepted for distinct attempts with the same challenge. The verifier now signs a digest of the ordered frame bytes, and the database rejects the same byte-for-byte sequence after it has produced an accepted attendance event, even across employees or concurrent attempts in the same organization. A valid retry of the original settled attempt remains idempotent. This only detects exact reuse of a previously accepted sequence: unseen recordings, altered or re-encoded frames and injected feeds can still pass. No real-person footage was used in the regression. Do not treat the feature as release-ready until a suitable defense and the outstanding real-camera attack tests have passed the agreed criteria.
 
 A verification passes only when all of these hold for the 8–40 frames of this one attempt ([`decide.py`](../../services/attendance-verifier/verifier/decide.py), [`geometry.py`](../../services/attendance-verifier/verifier/geometry.py)):
 
 1. no frame shows a second person; at most 40 % of frames lack a face;
 2. the first frames face the camera (the baseline);
 3. **exactly the two movements** the database issued for this attempt — a left turn and a right turn in a cryptographically random order (2 possible sequences) — **in order**, each held for at least two frames. The verifier can also judge "look up", but the database no longer issues it: in the real-camera trial a deliberate upward tilt (largest reading 0.03–0.09) did not separate from the noise of plain turns (up to 0.115) against its 0.10 threshold;
-4. each movement shows **3-D parallax**: the nose moves differently from where a flat (affine) motion of the eyes and mouth would put it. A printed photo or a phone screen that is turned, tilted or moved stays flat;
+4. each movement shows **3-D parallax**: the nose moves differently from where a flat (affine) motion of the eyes and mouth would put it. This is intended to reject a flat printed photo or phone screen, but real-camera attack resistance has not been established;
 5. the face does not jump or change size abruptly between frames;
-6. the baseline frames match the enrolled reference (cosine ≥ 0.363, OpenCV's published SFace threshold) and **every** frame still resembles it (≥ 0.28), so a photo of the employee cannot be swapped for another person's live face mid-capture.
+6. the baseline frames match the enrolled reference (cosine ≥ 0.363, OpenCV's published SFace threshold) and **every** frame still resembles it (≥ 0.28), to reduce the chance of swapping the employee's photo for another person's face mid-capture. Effectiveness against actual attacks remains untested.
 
 **What it does not establish** (state these plainly to the owner):
 
@@ -81,7 +81,7 @@ Kiosk browser ──(ID, action)──▶ web server ──▶ PostgreSQL: app_a
        camera on, frames captured                   nonce + challenge + 90 s expiry)
        ──(frames)──▶ web server ──▶ PostgreSQL: app_attendance_attempt_material (own pending attempt only)
                               ──▶ verifier: decides, signs HMAC(attempt, nonce, employee, reference,
-                                            action, challenge, outcome, engine, time, key id)
+                                            action, challenge, capture hash, outcome, engine, time, key id)
                               ──▶ PostgreSQL: app_attendance_attempt_complete
                                    verifies the HMAC, locks employee + attempt, re-checks everything,
                                    writes ONE event at the database clock, audit row
@@ -92,8 +92,10 @@ Kiosk browser ──(ID, action)──▶ web server ──▶ PostgreSQL: app_a
 * **The web server cannot create an event either**: it does not hold the HMAC key. The kiosk's own Supabase session (which a person at the laptop could extract from the browser) can start attempts and read its own attempt's encrypted reference, but cannot forge a verdict.
 * **Binding**: the signed message names the attempt id, its random 128-bit nonce, the employee, the face reference, the action and the challenge. A verdict cannot be used for another attempt, employee, action or later event (tested).
 * **Single use**: an attempt moves once from *pending* to its outcome (trigger-enforced). Repeated or concurrent completions return the first result.
+* **Exact capture reuse**: the database stores an organization-scoped, keyed fingerprint for each accepted capture and refuses that exact byte sequence on another attempt. This does not establish that a capture is fresh or originates from a physical camera. The private fingerprint is biometric-derived metadata linked to the attempt. Retention/deletion and secure backup and rotation of the separate database fingerprint key must be decided before use; rotating that key without a migration strategy makes old fingerprints incomparable. The verifier and `20261201090000_attendance_capture_replay.sql` must be deployed together after acceptance.
 * **Expiry**: 90 seconds; the verdict's issue time must fall inside the attempt's life (±5 s).
 * **Idempotency**: the kiosk sends a request key per button press; a double press or a retry is the same attempt. A retry after success returns the same event.
+* **Report dates**: default attendance periods use the branch-local calendar date supplied by the database, matching how shifts and attempts are grouped, rather than the 02:00 business-day rollover used elsewhere.
 * **Lock order** (employee, then attempt) everywhere, so concurrent requests cannot deadlock (tested over 20 racing rounds).
 * **Brute-force brake**: 5 failed verifications for one ID within 15 minutes pause that ID (a security control; the numbers are adjustable and should be confirmed by the owner).
 * **Device**: a kiosk is a staff account holding **only** the Attendance Kiosk group at its branch, registered on the devices page. Every kiosk command re-checks the device, the account, the permission and least privilege; an account given any other right is refused until fixed. Deactivating the device or disabling its account stops it on the next request and fails its pending attempts.
@@ -103,10 +105,10 @@ Kiosk browser ──(ID, action)──▶ web server ──▶ PostgreSQL: app_a
 
 | Question | Answer |
 |---|---|
-| What is stored | One **face reference** per employee: the mean of the normalised SFace embeddings (128 numbers) of the frontal enrollment frames, **encrypted with AES-256-GCM by the verifier**. The associated data binds it to the employee and reference id. No photo, video or frame is stored anywhere. |
+| What is stored | One **face reference** per employee: the mean of the normalised SFace embeddings (128 numbers) of the frontal enrollment frames, **encrypted with AES-256-GCM by the verifier**. The associated data binds it to the employee and reference id. A keyed fingerprint of each accepted frame sequence is stored privately and linked to the attempt until removed under a future retention policy. No photo, video or frame is stored by the application. |
 | Where | `app_private.attendance_face_references` (PostgreSQL, not exposed by the Data API; no API role, not even the service role, has any privilege on it). The decryption key exists only in the verifier's environment. |
 | Who can use it | Only the verifier can decrypt. The kiosk command hands the ciphertext of **its own pending attempt's** reference to the web server, which forwards it to the verifier. Administrators see only the status, date, enroller and the type of identity document checked. |
-| Enrollment | Only a person holding `attendance.enroll` for the branch (Abdo), with the employee present, after recording which identity document was checked (not its number) and the employee's consent. The enrollment itself must pass the movement and parallax checks, so a photo cannot be enrolled. |
+| Enrollment | Only a person holding `attendance.enroll` for the branch (Abdo), with the employee present, after recording which identity document was checked (not its number) and the employee's consent. Enrollment must pass movement and parallax checks; resistance to enrolling a photo has not been validated with real-camera attacks. |
 | Replacement | Re-enrollment replaces the reference and **erases the old ciphertext** in the same transaction. |
 | Deletion | "Delete face reference" (reason required) erases the ciphertext and cancels pending attempts. Audited. |
 | Deactivation | Deactivating an employee blocks attendance at once but **keeps** the reference until it is deleted. Retention after an employee leaves is **an owner decision** (see open items). |

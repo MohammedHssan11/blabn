@@ -69,12 +69,21 @@ def sign(key: bytes, message: str) -> str:
     return hmac.new(key, message.encode("utf-8"), hashlib.sha256).hexdigest()
 
 
+def capture_digest(frames: list[bytes]) -> str:
+    """Digest the exact ordered frame bytes with unambiguous lengths; no pixels are retained here."""
+    digest = hashlib.sha256(b"balaban-attendance-capture-v1\x00")
+    for frame in frames:
+        digest.update(len(frame).to_bytes(8, "big"))
+        digest.update(frame)
+    return digest.hexdigest()
+
+
 def attempt_message(*, attempt_id: str, nonce: str, employee_id: str, reference_id: str, action: str,
                     challenge: list[str], outcome: str, reason: str | None, engine: str, issued_at_ms: int,
-                    key_id: str) -> str:
+                    key_id: str, capture_hash: str) -> str:
     return "|".join([
-        "balaban-attendance", "attempt", "v1", attempt_id.lower(), nonce.lower(), employee_id.lower(),
-        reference_id.lower(), action, ",".join(challenge), outcome, reason or "", engine, str(issued_at_ms), key_id,
+        "balaban-attendance", "attempt", "v2", attempt_id.lower(), nonce.lower(), employee_id.lower(),
+        reference_id.lower(), action, ",".join(challenge), capture_hash.lower(), outcome, reason or "", engine, str(issued_at_ms), key_id,
     ])
 
 

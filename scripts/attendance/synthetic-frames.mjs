@@ -2,6 +2,8 @@
 // landmarks projected from a 3-D head model, plus an identity label. No image of any person exists in
 // these tests. Mirrors services/attendance-verifier/tests/synthetic.py.
 
+import { randomUUID } from "node:crypto";
+
 const HEAD = [
   [-32, 0, 0], // subject's right eye (image left)
   [32, 0, 0], // subject's left eye
@@ -39,8 +41,9 @@ function box(landmarks) {
   return [mx - w / 2, Math.min(...ys) - h * 0.35, w, h];
 }
 
-function frame(faces) {
-  const doc = { synthetic: 1, faces: faces.map(({ landmarks, identity }) => ({ box: box(landmarks), landmarks: landmarks.map(([x, y]) => [Math.round(x * 100) / 100, Math.round(y * 100) / 100]), score: 0.98, identity })) };
+function frame(faces, capture) {
+  // Each generated synthetic capture represents a new camera capture, not a replay.
+  const doc = { synthetic: 1, capture, faces: faces.map(({ landmarks, identity }) => ({ box: box(landmarks), landmarks: landmarks.map(([x, y]) => [Math.round(x * 100) / 100, Math.round(y * 100) / 100]), score: 0.98, identity })) };
   return Buffer.from(JSON.stringify(doc)).toString("base64");
 }
 
@@ -52,6 +55,7 @@ const POSE = { left: [28, 0], right: [-28, 0], up: [0, 22] };
  */
 export function framesFor(steps, { identity = "employee-a", flat = false, moveIdentity = null, neutral = 4, extra = false, scale = 1 } = {}) {
   const points = flat ? flatPhoto() : HEAD;
+  const capture = randomUUID();
   const poses = Array.from({ length: neutral }, () => [0, 0]);
   for (const step of steps) {
     const [yaw, pitch] = POSE[step].map((v) => v * scale);
@@ -61,6 +65,6 @@ export function framesFor(steps, { identity = "employee-a", flat = false, moveId
     const who = i >= neutral && moveIdentity ? moveIdentity : identity;
     const faces = [{ landmarks: project(points, { yaw, pitch }), identity: who }];
     if (extra && i === neutral + 1) faces.push({ landmarks: project(HEAD, { cx: 470 }), identity: "visitor" });
-    return frame(faces);
+    return frame(faces, capture);
   });
 }

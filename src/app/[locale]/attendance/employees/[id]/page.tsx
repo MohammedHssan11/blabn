@@ -4,14 +4,13 @@ import { notFound } from "next/navigation";
 import { randomUUID } from "node:crypto";
 import { isLocale } from "@/i18n/config";
 import { createTranslator, type MessageKey } from "@/i18n/dictionary";
-import { readBusinessToday } from "@/lib/database-time";
 import { first, type SearchParams } from "@/lib/search-params";
 import { ResultMessages } from "@/components/Messages";
 import { OPERATING_BRANCH_CODE } from "@/modules/access/catalog";
 import { requireAccess } from "@/modules/access/guard";
 import { holds } from "@/modules/access/session";
 import { correctEventAction, deleteReferenceAction, renameEmployeeAction, setEmployeeActiveAction } from "@/modules/attendance/actions";
-import { readEmployee, readReport } from "@/modules/attendance/data";
+import { readAttendanceToday, readEmployee, readReport } from "@/modules/attendance/data";
 import { isUuid, parsePeriod } from "@/modules/attendance/forms";
 import { formatDuration } from "@/modules/attendance/hours";
 import { summarise } from "@/modules/attendance/summary";
@@ -31,7 +30,8 @@ export default async function AttendanceEmployeePage({ params, searchParams }: {
   const t = createTranslator(locale);
   const employee = await readEmployee(id.toLowerCase());
   if (!employee || employee.branchCode !== OPERATING_BRANCH_CODE) notFound();
-  const period = parsePeriod(first(sp.from), first(sp.to), await readBusinessToday()) ?? parsePeriod(undefined, undefined, await readBusinessToday())!;
+  const today = await readAttendanceToday();
+  const period = parsePeriod(first(sp.from), first(sp.to), today) ?? parsePeriod(undefined, undefined, today)!;
   const report = await readReport(OPERATING_BRANCH_CODE, period.from, period.to, "view");
   const mine = summarise({ ...report, employees: report.employees.filter((e) => e.id === employee.id),
     events: report.events.filter((e) => e.employeeId === employee.id) });

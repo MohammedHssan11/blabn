@@ -215,7 +215,21 @@ async function main() {
   r = await start(kiosk.jar, codeA, "check_in");
   check("a repeated check-in shows the current state and records nothing", r.json?.status === "refused" && r.json?.reason === "already_checked_in"
     && r.json?.current_state?.kind === "check_in" && count("select count(*) from public.attendance_events") === 1, r.text);
-  check("the kiosk never sees the nonce, the reference or a signature", !/nonce|ciphertext|signature|reference_id|match_score/.test(first.text + v1.text + v2.text));
+  check("the kiosk never sees the nonce, the reference, the capture hash or a signature", !/nonce|ciphertext|signature|reference_id|match_score|capture_hash/.test(first.text + v1.text + v2.text));
+
+  // Replay the first capture against a new check-out attempt when the same challenge recurs.
+  let replayStart = null;
+  for (let i = 0; i < 32; i += 1) {
+    const candidate = await start(kiosk.jar, codeA, "check_out");
+    if (JSON.stringify(candidate.json?.challenge) === JSON.stringify(challenge)) { replayStart = candidate; break; }
+    await api(kiosk.jar, "POST", `/api/attendance/kiosk/attempts/${candidate.json.attempt_id}/fail`, { reason: "cancelled" });
+  }
+  check("a new attempt with the same challenge was obtained for the replay check", Boolean(replayStart));
+  if (replayStart) {
+    const replay = await verify(kiosk.jar, replayStart.json.attempt_id, okFrames);
+    check("identical frames are refused on a new signed attempt", replay.json?.status === "failed"
+      && replay.json?.reason === "capture_replayed" && count("select count(*) from public.attendance_events") === 1, replay.text);
+  }
 
   section("5. Attacks and failures create no event (employee C)");
   const before = count("select count(*) from public.attendance_events");

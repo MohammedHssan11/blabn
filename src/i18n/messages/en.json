@@ -1778,6 +1778,7 @@
       "upload_invalid": "The camera pictures could not be read. Please try again.",
       "reference_unavailable": "The enrolled face is not available. Please see the manager.",
       "invalid_verifier_signature": "The verification result was not accepted. Nothing was recorded.",
+      "capture_replayed": "This camera capture was already used. Please start a new attempt.",
       "expired": "The attempt took too long and expired. Please start again.",
       "state_changed": "Your attendance changed during this attempt. Nothing new was recorded.",
       "device_inactive": "This kiosk has been switched off by the manager.",

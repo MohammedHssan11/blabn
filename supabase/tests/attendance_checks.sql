@@ -40,27 +40,28 @@ insert into app_private.attendance_signing_keys (key_id, secret, retired_at) val
 -- Plays the verifier: signs a verdict for an attempt with the test key, from the attempt's own facts.
 create function public.att_verdict(p_attempt uuid, p_outcome text, p_reason text default null,
                                    p_engine text default 'opencv-test-engine', p_key text default 'att-test-k1',
-                                   p_issued timestamptz default now())
+                                   p_issued timestamptz default now(), p_capture text default null)
 returns jsonb language plpgsql security definer set search_path = '' as $$
 declare
   a public.attendance_attempts;
   ms text := (floor(extract(epoch from p_issued) * 1000))::bigint::text;
   k bytea := (select secret from app_private.attendance_signing_keys where key_id = p_key);
   msg text;
+  capture text := coalesce(p_capture, encode(extensions.digest(p_attempt::text, 'sha256'), 'hex'));
 begin
   select * into a from public.attendance_attempts where id = p_attempt;
-  msg := concat_ws('|', 'balaban-attendance', 'attempt', 'v1', a.id::text, encode(a.nonce, 'hex'), a.employee_id::text,
-                   a.reference_id::text, a.action, array_to_string(a.challenge, ','), p_outcome, coalesce(p_reason, ''),
+  msg := concat_ws('|', 'balaban-attendance', 'attempt', 'v2', a.id::text, encode(a.nonce, 'hex'), a.employee_id::text,
+                   a.reference_id::text, a.action, array_to_string(a.challenge, ','), capture, p_outcome, coalesce(p_reason, ''),
                    p_engine, ms, p_key);
   return jsonb_build_object(
     'result', jsonb_strip_nulls(jsonb_build_object('outcome', p_outcome, 'reason', p_reason, 'engine', p_engine,
-                                                   'issued_at_ms', ms, 'key_id', p_key,
+                                                   'issued_at_ms', ms, 'key_id', p_key, 'capture_hash', capture,
                                                    'metrics', jsonb_build_object('match_score', 0.71, 'parallax', 0.12,
                                                                                  'embedding', jsonb_build_array(1, 2, 3)))),
     'signature', encode(extensions.hmac(convert_to(msg, 'UTF8'), k, 'sha256'), 'hex'));
 end;
 $$;
-grant execute on function public.att_verdict(uuid, text, text, text, text, timestamptz) to authenticated;
+grant execute on function public.att_verdict(uuid, text, text, text, text, timestamptz, text) to authenticated;
 
 -- Plays the verifier for enrollment: fake ciphertext bytes (never a template) and their signature.
 create function public.att_enroll(p_employee uuid, p_engine text default 'opencv-test-engine', p_bad boolean default false)
@@ -155,9 +156,16 @@ begin
     assert not has_table_privilege('authenticated', 'app_private.' || t, 'select'), t || ': private to the API';
     assert not has_table_privilege('service_role', 'app_private.' || t, 'select'), t || ': private to the service role';
   end loop;
+  foreach t in array array['attendance_capture_secret', 'attendance_used_captures'] loop
+    assert (select relrowsecurity from pg_class where oid = ('app_private.' || t)::regclass), t || ': row-level security';
+    assert not has_table_privilege('anon', 'app_private.' || t, 'select,insert,update,delete'), t || ': no anon access';
+    assert not has_table_privilege('authenticated', 'app_private.' || t, 'select,insert,update,delete'), t || ': no staff access';
+    assert not has_table_privilege('service_role', 'app_private.' || t, 'select,insert,update,delete'), t || ': no service access';
+  end loop;
   assert not has_column_privilege('authenticated', 'public.attendance_attempts', 'nonce', 'select'), 'the attempt nonce is not readable';
   assert has_column_privilege('authenticated', 'public.attendance_attempts', 'status', 'select');
   assert not has_function_privilege('anon', 'public.app_attendance_attempt_start(uuid, text, text)', 'execute'), 'anon cannot start';
+  assert not has_function_privilege('anon', 'public.app_attendance_today()', 'execute'), 'anon cannot read the attendance date';
   assert not has_function_privilege('service_role', 'public.app_attendance_attempt_complete(uuid, jsonb, text)', 'execute'), 'service role cannot complete';
   assert not has_function_privilege('authenticated', 'app_private.attendance_hmac(text, text)', 'execute'), 'nobody may compute the HMAC';
   assert (select array_agg(permission_key order by permission_key) from public.group_permissions where group_key = 'attendance_kiosk')
@@ -179,6 +187,8 @@ begin
   perform public.att_act_as('a1300000-0000-4000-8000-000000000002');
   perform public.att_expect('42501', $q$select public.app_attendance_employee_create('maarif', 'Nobody', gen_random_uuid())$q$);
   perform public.att_act_as('a1300000-0000-4000-8000-000000000001');
+  assert public.app_attendance_today() = (now() at time zone 'Africa/Casablanca')::date,
+    'attendance uses the branch calendar date, including before the business-day rollover';
   r := public.app_attendance_employee_create('maarif', '  Synthetic Employee A  ', req);
   r2 := public.app_attendance_employee_create('maarif', 'Synthetic Employee A', req);
   assert r->>'employee_id' = r2->>'employee_id' and (r2->>'replayed')::boolean, 'a repeated request creates one employee';
@@ -403,6 +413,18 @@ begin
   assert (r->'event'->>'local') ~ '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$', 'confirmation shows the local time';
   r2 := public.app_attendance_attempt_complete(att, v->'result', v->>'signature');
   assert (r2->>'replayed')::boolean and r2->'event'->>'occurred_at' = r->'event'->>'occurred_at', 'a retry returns the same event';
+  -- A newly signed verdict for a fresh attempt with the same capture is refused.
+  r2 := public.app_attendance_attempt_start(gen_random_uuid(), code_a, 'check_out');
+  att2 := (r2->>'attempt_id')::uuid;
+  vb := public.att_verdict(att2, 'success', p_capture => v->'result'->>'capture_hash');
+  r2 := public.app_attendance_attempt_complete(att2, vb->'result', vb->>'signature');
+  assert r2->>'status' = 'failed' and r2->>'reason' = 'capture_replayed', 'same capture cannot create a second event';
+  assert public.att_event_count() = 1, 'replayed capture creates no event';
+  r2 := public.app_attendance_attempt_start(gen_random_uuid(), code_a, 'check_out');
+  att2 := (r2->>'attempt_id')::uuid;
+  vb := public.att_verdict(att2, 'success');
+  r2 := public.app_attendance_attempt_complete(att2, jsonb_set(vb->'result', '{capture_hash}', to_jsonb(repeat('a', 64))), vb->>'signature');
+  assert r2->>'reason' = 'invalid_verifier_signature', 'a capture digest cannot be altered after signing';
   -- A verdict for this attempt cannot be replayed on the employee's next attempt.
   assert public.att_event_count() = 1, 'exactly one event';
   r := public.app_attendance_attempt_start(gen_random_uuid(), code_a, 'check_in');
