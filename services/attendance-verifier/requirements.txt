@@ -1,0 +1,6 @@
+# Versions the verifier was built and tested with (Phases 13-14). Install into a dedicated virtual
+# environment on the verifier host; pin hashes in production (pip install --require-hashes).
+opencv-python-headless==4.10.0.84
+numpy==1.26.4
+cryptography==50.0.0
+Pillow==12.3.0

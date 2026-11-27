@@ -86,7 +86,51 @@ describe("every route handler checks access", () => {
     expect(read("src/app/api/inventory/adjustments/route.ts")).toMatch(/isSameOrigin\(request\)/);
   });
 
+  it("Phases 13-14: kiosk and enrollment routes refuse cross-site requests and identify the kiosk in the database", () => {
+    for (const route of ["src/app/api/attendance/kiosk/attempts/route.ts", "src/app/api/attendance/kiosk/attempts/[id]/verify/route.ts",
+      "src/app/api/attendance/kiosk/attempts/[id]/fail/route.ts", "src/app/api/attendance/enrollments/route.ts"]) {
+      const source = read(route);
+      expect(source, route).toMatch(/isSameOrigin\(request\)/);
+      expect(source.indexOf("authorizeRequest("), route).toBeLessThan(source.indexOf("isSameOrigin("));
+    }
+    for (const route of ["src/app/api/attendance/kiosk/attempts/route.ts", "src/app/api/attendance/kiosk/attempts/[id]/verify/route.ts",
+      "src/app/api/attendance/kiosk/attempts/[id]/fail/route.ts"]) {
+      expect(read(route), route).toMatch(/await authorizeKiosk\(\)/);
+    }
+    expect(read("src/modules/attendance/routes.ts")).toMatch(/authorizeRequest\(\{ permission: "attendance\.event\.create", branch: context\.branchCode \}\)/);
+    expect(read("src/app/api/attendance/enrollments/route.ts")).toMatch(/authorizeRequest\(\{ permission: "attendance\.enroll", branch: employee\.branchCode \}\)/);
+    expect(read("src/app/api/attendance/export/route.ts")).toMatch(/authorizeRequest\(\{ permission: "attendance\.export", branch \}\)/);
+    expect(read("src/app/[locale]/kiosk/page.tsx")).toMatch(/permission: "attendance\.event\.create", branch: context\.branchCode/);
+  });
+
+  it("Phases 13-14: the browser never reports a verification outcome; only the verifier's signed verdict completes an attempt", () => {
+    const kiosk = read("src/modules/attendance/kiosk.ts");
+    expect(kiosk).toMatch(/p_result: call\.verdict\.result, p_signature: call\.verdict\.signature/);
+    // The only kiosk route reading a body field besides frames and the request, code and action is the failure route.
+    expect(read("src/app/api/attendance/kiosk/attempts/[id]/verify/route.ts")).not.toMatch(/body\??\.(outcome|result|matched|liveness|signature)/);
+    expect(read("src/components/attendance/KioskScreen.tsx")).not.toMatch(/outcome|signature|matched/);
+  });
+
+  it("Phases 13-14: camera code keeps no frame: no storage, no download, no console", () => {
+    for (const file of ["src/components/attendance/camera.ts", "src/components/attendance/KioskScreen.tsx", "src/components/attendance/EnrollCapture.tsx"]) {
+      // Code only: the privacy comments name these APIs to say they are not used.
+      const source = read(file).replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, "");
+      expect(source, file).not.toMatch(/localStorage|sessionStorage|indexedDB|caches\.|MediaRecorder|createObjectURL|console\./);
+    }
+    for (const file of sourceFiles.filter((f) => /attendance/.test(f)).map(rel)) {
+      expect(read(file), file).not.toMatch(/console\.\w+\([^)]*(frame|ciphertext|nonce|signature|embedding)/i);
+      expect(read(file), file).not.toMatch(/writeFile|createWriteStream/);
+    }
+    const verifier = read("src/modules/attendance/verifier.ts");
+    expect(verifier).toMatch(/import "server-only"/);
+    for (const file of sourceFiles.filter((f) => /^\s*["']use client["']/.test(readFileSync(f, "utf8")))) {
+      expect(readFileSync(file, "utf8"), rel(file)).not.toMatch(/ATTENDANCE_VERIFIER|ATTENDANCE_RESULT_KEY|ATTENDANCE_TEMPLATE/);
+    }
+  });
+
   it("downloads are never cached", () => {
+    expect(read("src/app/api/attendance/export/route.ts")).toMatch(/"Cache-Control": "no-store"/);
+    expect(read("src/modules/attendance/routes.ts")).toMatch(/"Cache-Control": "no-store"/);
     expect(read("src/app/api/exports/[kind]/route.ts")).toMatch(/"Cache-Control": "no-store"/);
     expect(read("src/app/api/report-exports/[id]/route.ts")).toMatch(/"Cache-Control": "no-store"/);
   });
@@ -110,7 +154,7 @@ describe("server actions authorize before they act", () => {
   }
 
   const GUARDED_FILES = ["src/modules/access/staff-actions.ts", "src/modules/inventory/actions.ts", "src/modules/replenishment/actions.ts",
-    "src/modules/exports/actions.ts"];
+    "src/modules/exports/actions.ts", "src/modules/attendance/actions.ts"];
   for (const file of GUARDED_FILES) {
     it(`${file}: every action calls requireAccess before anything that reads or writes`, () => {
       const list = actions(file);

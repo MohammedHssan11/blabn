@@ -26,11 +26,16 @@ The desktop application is a later client of the same backend:
 Desktop application (packaging selected in Phase 12) -> same server-side logic, Supabase data, and auth
 ```
 
-The attendance camera service is a later, isolated component:
+The attendance camera service is an isolated component (built in Phases 13–14, see [phase13_14/ATTENDANCE.md](phase13_14/ATTENDANCE.md)):
 
 ```text
-Attendance kiosk -> camera verification service -> attendance events in PostgreSQL
+Kiosk browser (frames only) -> Next.js route -> attendance verifier (Python, OpenCV YuNet + SFace)
+                                     |                  | HMAC-signed verdict
+                                     v                  v
+                              PostgreSQL commands verify the signature, then write one attendance event
 ```
+
+The verifier alone holds the face-reference encryption key; the database holds the verdict-signing key; the web server holds neither, so neither it nor the kiosk browser can record attendance without a genuine verdict.
 
 ## Technology choices
 
@@ -49,7 +54,7 @@ Attendance kiosk -> camera verification service -> attendance events in PostgreS
 | Unit tests | Vitest |
 | End-to-end tests | Playwright |
 | Desktop application, later | Separately installable client of the same backend; packaging selected in Phase 12 after the target operating systems are confirmed |
-| Attendance service, later | Isolated camera-verification service only if required after a real device test |
+| Attendance verifier | Isolated Python service (OpenCV DNN with the YuNet and SFace models, pinned by SHA-256); see `services/attendance-verifier` |
 
 ## Why PostgreSQL
 
@@ -67,7 +72,7 @@ Core entities:
 - `products`, `product_mix_lines`, `units`, `inventory_items`, `inventory_movements`, `inventory_counts`
 - `recipes`, `recipe_lines`, `purchase_orders`, `purchase_order_lines`, `demand_plans`, `demand_plan_lines`
 - `report_exports`, `import_jobs`, `audit_logs`
-- Later: `attendance_devices`, `attendance_events`, `attendance_adjustments`, `face_templates`
+- Attendance (Phases 13–14): `attendance_employees`, `attendance_devices`, `attendance_attempts`, `attendance_events`, `attendance_corrections`; private `app_private.attendance_enrollments`, `attendance_face_references`, `attendance_signing_keys`
 
 ## Security rules
 

@@ -473,3 +473,151 @@ dl.kv { display: grid; grid-template-columns: minmax(8rem, max-content) 1fr; gap
 dl.kv dt { font-weight: 600; }
 dl.kv dd { margin: 0; min-width: 0; }
 @media (max-width: 480px) { dl.kv { grid-template-columns: 1fr; } dl.kv dd { margin-bottom: 6px; } }
+
+/* ------------------------------------------------------------------ site-wide refinements (design pass) */
+/* Presentation only: no selector used by the application logic changes meaning. */
+.site-header { box-shadow: 0 6px 18px rgb(20 56 126 / 6%); }
+/* The header stays visible while scrolling on wide screens only (on phones it would take too much room);
+   jumps to an anchor leave room for it. */
+@media (min-width: 900px) {
+  .site-header { position: sticky; top: 0; z-index: 20; }
+  html { scroll-padding-top: 150px; }
+}
+.site-nav a { transition: background-color 0.15s, color 0.15s; }
+main > h1:first-child, main > p:first-child + h1 { margin-top: 4px; }
+main > h2 { border-inline-start: 4px solid var(--accent); padding-inline-start: 10px; }
+.card { box-shadow: 0 1px 2px rgb(20 56 126 / 5%); }
+.card:has(> form), form.card { transition: box-shadow 0.15s; }
+.card:focus-within { box-shadow: var(--shadow); }
+
+.table-wrap { box-shadow: 0 1px 2px rgb(20 56 126 / 5%); }
+th { position: sticky; top: 0; z-index: 1; font-size: 0.85rem; letter-spacing: 0.01em; }
+th, td { padding: 10px 12px; }
+tbody tr { transition: background-color 0.12s; }
+tbody tr:hover td { background: #f7faff; }
+td.numeric, th.numeric { font-variant-numeric: tabular-nums; white-space: nowrap; }
+tr[data-total="true"] td, tr[data-total="true"] th { background: var(--surface-2); border-top: 2px solid var(--border); }
+
+input, select { transition: border-color 0.15s, box-shadow 0.15s; }
+input:hover, select:hover { border-color: #b7cbea; }
+input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); outline: none; }
+input:focus-visible, select:focus-visible { outline: none; }
+button, .primary-link { transition: background-color 0.15s, transform 0.08s; }
+button:active:not(:disabled), .primary-link:active { transform: translateY(1px); }
+button:disabled { cursor: not-allowed; opacity: 0.55; }
+button.secondary { border: 1px solid var(--border); }
+button.secondary:hover { background: var(--surface-2); }
+button.danger:hover { background: #87201a; }
+details > summary { font-weight: 650; padding: 4px 0; }
+.notice { line-height: 1.5; }
+.badge { font-weight: 650; }
+
+@media (max-width: 640px) {
+  main { padding-top: 18px; }
+  h1 { font-size: 1.5rem; }
+  th, td { padding: 8px 9px; }
+  .mini-form button, .mini-form .primary-link { width: 100%; justify-content: center; }
+}
+
+/* ------------------------------------------------------------------ attendance kiosk (Phases 13-14) */
+/* The kiosk screen stands alone: no menu, no sign-out link for passers-by. */
+body:has(.kiosk-screen) .site-header,
+body:has(.kiosk-screen) .banner { display: none; }
+body:has(.kiosk-screen) main { max-width: 1240px; padding-top: 18px; }
+.kiosk-screen { display: grid; gap: 16px; }
+.kiosk-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px; font-size: 1.2rem; color: var(--blue-deep); }
+.kiosk-layout { display: grid; gap: 20px; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); align-items: start; }
+@media (max-width: 860px) { .kiosk-layout { grid-template-columns: minmax(0, 1fr); } }
+.kiosk-camera { display: grid; gap: 12px; justify-items: center; }
+.kiosk-frame {
+  position: relative; width: 100%; aspect-ratio: 4 / 3; border-radius: 24px; overflow: hidden;
+  background: radial-gradient(circle at 50% 40%, #1d3a8f, #0b1f5c); box-shadow: var(--shadow);
+  outline: 4px solid transparent; transition: outline-color 0.2s;
+}
+.kiosk-frame.is-capturing { outline-color: var(--accent); }
+.kiosk-video {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  /* A mirror view: the person's left is on the left of the screen. The frames sent are not mirrored. */
+  transform: scaleX(-1);
+}
+.kiosk-placeholder { position: absolute; inset: 0; display: grid; place-items: center; color: rgb(255 255 255 / 30%); font-size: 9rem; }
+.kiosk-oval {
+  position: absolute; left: 50%; top: 47%; width: 44%; height: 70%; transform: translate(-50%, -50%);
+  border: 4px dashed rgb(255 255 255 / 85%); border-radius: 50%; box-shadow: 0 0 0 999px rgb(8 20 60 / 35%);
+  pointer-events: none;
+}
+.kiosk-arrow-big {
+  position: absolute; top: 50%; transform: translateY(-50%); font-size: clamp(4rem, 9vw, 7rem); color: white;
+  text-shadow: 0 4px 18px rgb(0 0 0 / 45%); direction: ltr; pointer-events: none;
+}
+/* The preview is a mirror, so "your left" points to the screen's left. */
+.kiosk-arrow-big.step-left { left: 6%; animation: kiosk-nudge-left 0.9s ease-in-out infinite; }
+.kiosk-arrow-big.step-right { right: 6%; animation: kiosk-nudge-right 0.9s ease-in-out infinite; }
+.kiosk-arrow-big.step-up { left: 50%; top: 12%; transform: translateX(-50%); }
+@keyframes kiosk-nudge-left { 50% { translate: -14px 0; } }
+@keyframes kiosk-nudge-right { 50% { translate: 14px 0; } }
+@media (prefers-reduced-motion: reduce) { .kiosk-arrow-big { animation: none; } }
+.kiosk-instruction { font-size: clamp(1.25rem, 2.6vw, 1.8rem); font-weight: 800; text-align: center; margin: 0; color: var(--blue-deep); }
+.kiosk-progress { display: flex; gap: 10px; list-style: none; margin: 0; padding: 0; direction: ltr; }
+.kiosk-progress li {
+  display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; font-size: 1.5rem;
+  background: var(--surface); border: 2px solid var(--border); color: var(--muted);
+}
+.kiosk-progress li.current { border-color: var(--accent); color: var(--accent); }
+.kiosk-progress li.done { background: var(--ok); border-color: var(--ok); color: white; }
+.kiosk-spinner {
+  display: inline-block; width: 1em; height: 1em; vertical-align: -0.15em; border-radius: 50%;
+  border: 3px solid var(--accent-soft); border-top-color: var(--accent); animation: kiosk-spin 0.8s linear infinite;
+}
+@keyframes kiosk-spin { to { transform: rotate(360deg); } }
+.kiosk-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: clamp(16px, 2.5vw, 26px); box-shadow: var(--shadow); }
+.kiosk-form { display: grid; gap: 14px; min-width: 0; }
+.kiosk-panel, .kiosk-camera, .kiosk-form > * { min-width: 0; }
+.kiosk-id { display: grid; gap: 6px; color: var(--muted); font-weight: 650; }
+.kiosk-id input {
+  font-size: clamp(2.2rem, 5vw, 3rem); font-weight: 800; text-align: center; letter-spacing: 0.3em;
+  min-height: 76px; border-width: 2px; color: var(--blue-deep); font-family: var(--font-mono);
+  width: 100%; min-width: 0;
+}
+.kiosk-keypad { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.kiosk-keypad .key {
+  min-width: 0; padding-inline: 0; min-height: 64px; font-size: 1.7rem; font-weight: 750; background: var(--surface-2); color: var(--blue-deep);
+  border: 1px solid var(--border); border-radius: 16px;
+}
+.kiosk-keypad .key:hover:not(:disabled) { background: var(--accent-soft); }
+.kiosk-keypad .key:active:not(:disabled) { transform: scale(0.97); }
+.kiosk-keypad .key-soft { color: var(--muted); font-size: 1.4rem; }
+.kiosk-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.kiosk-actions button { min-width: 0; padding-inline: 8px; min-height: 78px; font-size: 1.6rem; font-weight: 800; border-radius: 18px; }
+.kiosk-actions .kiosk-in { background: var(--ok); border-color: var(--ok); }
+.kiosk-actions .kiosk-out { background: var(--accent); border-color: var(--accent); }
+.kiosk-actions button:disabled { opacity: 0.45; }
+.kiosk-privacy { text-align: center; margin: 0; font-size: 0.9rem; }
+.kiosk-result { text-align: center; padding: 22px 16px; border-radius: 20px; display: grid; gap: 10px; justify-items: center; }
+.kiosk-result.ok { background: var(--ok-soft); color: var(--ok); }
+.kiosk-result.bad { background: var(--bad-soft); color: var(--bad); }
+.kiosk-result-icon {
+  display: grid; place-items: center; width: 84px; height: 84px; border-radius: 50%; font-size: 2.8rem; font-weight: 900;
+  color: white; background: currentColor;
+}
+.kiosk-result.ok .kiosk-result-icon { background: var(--ok); }
+.kiosk-result.bad .kiosk-result-icon { background: var(--bad); }
+.kiosk-hello { font-size: clamp(1.5rem, 3vw, 2.1rem); font-weight: 850; margin: 0; }
+.kiosk-result-title { font-size: clamp(1.25rem, 2.6vw, 1.75rem); font-weight: 800; margin: 0; }
+.kiosk-hint { margin: 0; font-weight: 700; color: var(--warn); background: var(--warn-soft); padding: 8px 14px; border-radius: 12px; }
+
+/* ------------------------------------------------------------------ enrollment and attendance home */
+.enroll-capture .kiosk-frame { max-width: 560px; }
+.enroll-number {
+  display: grid; justify-items: center; gap: 4px; padding: 18px; border-radius: 20px;
+  background: var(--accent); color: white; text-align: center;
+}
+.enroll-number strong { font-size: clamp(3.2rem, 8vw, 5rem); line-height: 1; letter-spacing: 0.08em; font-family: var(--font-mono); }
+.enroll-number span { opacity: 0.9; }
+.stat-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); margin: 8px 0 18px; }
+.stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; display: grid; gap: 6px; }
+.stat-card h2 { margin: 0; font-size: 1rem; color: var(--muted); }
+.stat-card .stat-value { font-size: 1.9rem; font-weight: 820; color: var(--blue-deep); line-height: 1.2; }
+.stat-card ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; }
+.stat-card li { display: flex; justify-content: space-between; gap: 8px; }
+.quick-links { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 14px; }

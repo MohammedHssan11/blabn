@@ -113,6 +113,7 @@ export type ErrorCode =
   | "self_disable"
   | "not_found"
   | "invalid_access"
+  | "attendance_number_locked"
   | "unavailable"
   | "unexpected";
 
@@ -135,6 +136,8 @@ export function mapCommandError(error: DatabaseError | null | undefined): ErrorC
     if (/employee_number/.test(text)) return "employee_number_in_use";
     return "email_in_use";
   }
+  // Phase 13: the employee ID of a person registered for attendance is stable.
+  if (message === "employee_number_locked") return "attendance_number_locked";
   if (error?.code === "23514" || error?.code === "23503") return "invalid_access";
   return "unexpected";
 }

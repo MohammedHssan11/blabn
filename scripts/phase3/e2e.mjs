@@ -499,7 +499,8 @@ async function main() {
     check("and every download", (await text(jar, "/api/exports/daily-close-draft")).status === 403 && (await text(jar, "/api/exports/comparison")).status === 403);
     const home = await text(jar, "/en");
     const nav = [...home.html.matchAll(/<a[^>]*href="(\/en\/[a-z/-]+)"/g)].map((m) => m[1]);
-    check("its menu has no work screens (it only creates attendance events, in a later phase)", home.status === 200 && nav.length === 0, nav.join(","));
+    // Phases 13-14: the kiosk's only screen is the kiosk itself (its page then checks the device registration).
+    check("its menu has no work screens, only the attendance kiosk", home.status === 200 && nav.join(",") === "/en/kiosk", nav.join(","));
   }
 
   // ============================================================ 8. permissions change under an open session

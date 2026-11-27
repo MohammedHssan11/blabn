@@ -2,7 +2,7 @@
  * The permission catalog: which permissions exist and which groups hold them.
  *
  * The database is the authority (migration 20261121000005 seeds, and later migrations such as
- * 20261123120000_phase6_stock and 20261125090000_phase8_replenishment add to, `permissions`, `permission_groups`
+ * 20261123120000_phase6_stock, 20261125090000_phase8_replenishment and 20261129090000_attendance add to, `permissions`, `permission_groups`
  * and `group_permissions`; every decision is made there). This file mirrors it for the screens:
  * it names the keys the code asks about and lists what a group grants so the staff screen can
  * show it. tests/access-catalog.test.ts fails if this file and the migration differ, and
@@ -36,6 +36,13 @@ export const PERMISSIONS = [
   { key: "comparison.view", scope: "branch", branchKind: "any" },
   { key: "comparison.export", scope: "branch", branchKind: "any" },
   { key: "attendance.event.create", scope: "branch", branchKind: "operational" },
+  // Phases 13-14 (migration 20261129090000_attendance): Abdo's attendance administration.
+  { key: "attendance.view", scope: "branch", branchKind: "operational" },
+  { key: "attendance.employees.manage", scope: "branch", branchKind: "operational" },
+  { key: "attendance.enroll", scope: "branch", branchKind: "operational" },
+  { key: "attendance.devices.manage", scope: "branch", branchKind: "operational" },
+  { key: "attendance.correct", scope: "branch", branchKind: "operational" },
+  { key: "attendance.export", scope: "branch", branchKind: "operational" },
 ] as const;
 
 export type PermissionKey = (typeof PERMISSIONS)[number]["key"];

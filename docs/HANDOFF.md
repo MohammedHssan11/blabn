@@ -2,7 +2,7 @@
 
 Read this first in every session, then compare it with the actual repository state (`git status`, `git log -3`, `git fetch` and the PR list) before continuing. Update it after each meaningful task and before ending a session.
 
-_Last updated: 26 November 2026. [Phase 10](#phase-10-status) and the [Phases 6–10 audit](#independent-audit-of-phases-610-26-november-2026) are merged; both the local and hosted databases are at migration `20261128090000`. **Abdo's acceptance walkthrough is still pending.** At the last staff check on 25 November, no production staff account existed; provision and verify Abdo before Excel export designation. See the [hosted deployment record](#hosted-deployment)._
+_Last updated: 27 November 2026. **Phases 13–14 (camera attendance) are under review on `codex/phase-13-14-attendance` and are NOT ready to merge or deploy** — see [Phases 13–14 status](#phases-1314-status). The hosted project and `balaban-dev` were not touched and remain at `20261128090000`. Earlier: [Phase 10](#phase-10-status) and the [Phases 6–10 audit](#independent-audit-of-phases-610-26-november-2026) are merged. **Abdo's acceptance walkthrough is still pending.** At the last staff check on 25 November, no production staff account existed; provision and verify Abdo before Excel export designation. See the [hosted deployment record](#hosted-deployment)._
 
 The bilingual workspace uses the [B.Laban interface refresh](BRAND_DESIGN.md). Phase 4 implements the [confirmed daily close and Yawmeya workflow](phase4/OPERATING_CLOSE.md) on the signed-in person's Supabase session.
 
@@ -22,6 +22,95 @@ The bilingual workspace uses the [B.Laban interface refresh](BRAND_DESIGN.md). P
 | Local tooling | `npm ci` installs the pinned Supabase CLI 2.122.1. Use `npx supabase …`; an older global CLI cannot read `supabase/config.toml`. |
 | Phase 2 pull request | [PR #2](https://github.com/MohammedHssan11/blabn/pull/2), merged. |
 | Local-only material | `C:\Users\mh978\Downloads\abdo\abdo temp\`, `...\outputs\`, `...\archive\`, `...\screenshot\` — outside Git; keep them out of commits. |
+
+## Phases 13–14 status
+
+Design, trust model, biometric data handling and the trial: [phase13_14/ATTENDANCE.md](phase13_14/ATTENDANCE.md). Verifier: [services/attendance-verifier/README.md](../services/attendance-verifier/README.md). Phases 11 and 12 were deferred by the owner.
+
+**Independent release review, 27 November 2026 — BLOCKED:** A synthetic regression reproduced that the same captured frame sequence is accepted for two distinct attempts with different nonces when their challenge repeats. The service signs each attempt separately but cannot establish that the frames were captured for that attempt. `services/attendance-verifier/tests/test_replay_security.py` records the required rejection as an expected failure. Actual phone-photo/video and impostor camera tests, a validated defense, acceptance criteria and the owner decisions below remain outstanding. Do not merge or deploy this work as complete, or apply its hosted migrations, until the release criteria are met.
+
+| Item | Value |
+|---|---|
+| Working state | Review branch `codex/phase-13-14-attendance`, based on `main` at `dd33208`. The independent review found a release-blocking replay gap; no merge or deployment. |
+| Databases | Hosted project and `balaban-dev` **not touched**. All database work ran on the disposable stack **`balaban-p1314`** (API 61321, Postgres 61322, Studio 61323, mail 61324) in the validation copy `C:\Users\mh978\Downloads\abdo-p1314-validation\` (a local clone with only `project_id` and ports changed). |
+| Migrations | `20261129090000_attendance.sql` and `20261130090000_attendance_ids_and_hints.sql` (new, forward-only, after `20261128090000`). Applied only to the disposable stack. |
+| Verifier | Python, OpenCV 4.10 DNN, YuNet 2023-03 (MIT) + SFace 2021-12 (Apache-2.0); both model files match the official OpenCV Zoo SHA-256 values, pinned in code. `tmp/attendance-models/antispoof.onnx` and `tmp/attendance-venv` were **not used** (unverifiable provenance). |
+| Phase 13 | **Partial.** Employee IDs, devices, enrollment, least-privilege kiosk, deactivation and attempt records are done and tested. Real-camera trial: the enrolled person succeeded 6/6; **attack tests with the real camera (another person, phone photo, printed photo, phone video) were not completed**, so no attack result and no false-acceptance figure can be claimed. |
+| Phase 14 | **Implemented; its acceptance checks pass in automated tests** (worked time, overnight shifts, retries, binding/replay, missing check-outs, corrections, Excel = screen, kiosk isolation). Not releasable until the Phase 13 trial and the owner decisions below are settled. |
+
+### What was built
+
+* Migration `20261129090000_attendance.sql`: six permissions (System Admin only; the attendance export is separate from report exports); `attendance_employees` (stable generated ID, locked once registered), `attendance_devices` (a kiosk = staff account holding only the Attendance Kiosk group, registered for one branch), `attendance_attempts`, append-only `attendance_events` and `attendance_corrections`; private `attendance_enrollments`, `attendance_face_references` (AES-256-GCM ciphertext made by the verifier), `attendance_signing_keys`, `attendance_config`; commands `app_attendance_*` that verify the verifier's HMAC, bind each attempt to employee/device/branch/action/challenge/nonce with a 90-second expiry, take the employee lock first, and audit every change; readers for the screens and the Excel file.
+* `services/attendance-verifier`: enrollment and verification; liveness by random left/right turns + 3-D parallax + face continuity + identity consistency; bearer-token HTTP API on 127.0.0.1; no state, no files, one log line per request without images, embeddings or keys.
+* Web: `/attendance`, `/attendance/employees`, `/attendance/employees/<id>` (+ `/enroll`), `/attendance/devices`, `/kiosk`; routes `/api/attendance/kiosk/attempts`, `…/<id>/verify`, `…/<id>/fail`, `/api/attendance/enrollments`, `/api/attendance/export`. Arabic and English. Worked time in `src/modules/attendance/hours.ts`; the screen and the Excel file render the same summary.
+* Scripts: `scripts/attendance/` (e2e, browser check, concurrency test, mutation check, trial environment and trial report).
+* Earlier files changed: `src/modules/access/catalog.ts` (permissions), `src/modules/access/forms.ts` (clear message when a staff edit tries to change a locked attendance ID), `src/app/[locale]/layout.tsx` (menu), `src/app/globals.css` (kiosk), i18n catalogs, `tests/access-architecture.test.ts` (attendance guards), `scripts/phase3/upgrade-test.mjs` (path L), `scripts/phase3/e2e.mjs` (the kiosk account's menu now has exactly the kiosk entry), `.env.example`, `README.md`, `docs/ARCHITECTURE.md`, `src/modules/attendance/README.md`.
+
+### Tests run (final code unless noted)
+
+| Command | Result |
+|---|---|
+| `npx tsc --noEmit`, `npx vitest run` | clean; **351/351** tests in 20 files (297 before) |
+| `npm run build` (validation copy) | passes; 6 new pages, 5 new routes |
+| Verifier unit tests (`python -I`, synthetic 3-D head model, no images) | **27/27** |
+| `attendance_checks.sql` (11 sections) and the Phase 2–9 + audit SQL suites on a fresh database | **all pass** (attendance checks passed; Phase 2–9 and audit checks passed) |
+| `scripts/attendance/mutation-check.mjs` | **9/9 mutations detected** (unsigned verdict, expiry, over-privileged kiosk, append-only events and corrections, open read policy, double check-in, brute-force brake, kept replaced reference) |
+| `scripts/attendance/e2e.mjs` (production build + verifier with its synthetic engine) | **85/85** |
+| `scripts/attendance/browser-check.mjs` (Edge headless; kiosk 1366×768; admin 1366 and 375 px; Arabic and English) | **44/44** (the app has no favicon yet; that one 404 is excluded) |
+| `scripts/attendance/concurrency-test.mjs` (simultaneous database sessions) | **13/13** (0 deadlocks in 20 racing rounds) |
+| `scripts/phase3/upgrade-test.mjs`, paths A–L (L = audit head → attendance: saved data identical, schema and grants equal a fresh build) | **passed, 77/77 steps** |
+| Earlier phases (before the trial-driven challenge change, which touches only the attendance start command) | Phase 3 HTTP **372/372**, Phase 3 browser **105/105** (run with `SUPABASE_TEST_MAILPIT_URL=http://127.0.0.1:61324`; their default reads `balaban-dev`'s mail catcher), Phase 2 smoke **69/69**, Phase 3 concurrency pass |
+| Real camera | see the trial below |
+
+### Found and fixed during self-review and testing
+
+1. **Kiosk verification always failed**: PostgreSQL wraps base64 at 76 characters and the verifier accepts strict base64 only (found by the e2e).
+2. **Deadlock**: completing an attempt locked the attempt row before the employee, while a new attempt locked the employee before the attempt rows. The race test reproduced **13 deadlocks in 20 rounds** with the old order and **0** after the fix.
+3. **Duplicate correction race**: two identical correction requests at once made the second fail; the replay check now repeats after the lock.
+4. Request bodies were read whole before the size check (memory exhaustion by a chunked upload); now streamed with a hard cap.
+5. No client timeout on the kiosk upload (a hung connection froze the screen); now 45 s, then "send again".
+6. The geometry depended on the detector's left/right labels; landmarks are now ordered by image position.
+7. Test-quality fixes: "no event was created" assertions that passed only because RLS hid the rows from the kiosk; a brute-force count that would have paused an employee mid-test.
+8. From the trial: "look up" removed from the issued challenges; clearer turn instruction ("about a quarter turn").
+
+### Real-camera trial (26 November 2026, owner, this HP laptop)
+
+Enrollment succeeded on the fourth try; left/right verification succeeded 6/6 on one participant. "Look up" failed and was removed. A phone photo with another person in view was refused as multiple faces; this did not test either attack alone. **Not done:** another person alone, phone photo alone, printed photo, phone video, wrong movement, glasses and lighting. The face reference was erased and the disposable database reset after the trial. Detailed individual biometric measurements stay in a private local review copy. See [ATTENDANCE.md §10](phase13_14/ATTENDANCE.md#10-real-camera-trial-26-november-2026).
+
+### Interface update (26 November 2026, after the trial; local, uncommitted)
+
+Owner decisions: three-digit IDs 101–999 (never reused); Abdo adds each person himself and enrolls them on the spot; two kiosk buttons (حضور / انصراف); camera warms up while the ID is typed; attendance first, then the rest of the site. Details: [ATTENDANCE.md §1a](phase13_14/ATTENDANCE.md#1a-interface-update-26-november-2026-after-the-trial).
+
+* **Migration `20261130090000_attendance_ids_and_hints.sql`** (forward-only; `20261129090000` treated as applied): next ID = one more than the highest three-digit ID ever used, refused after 999 (`employee_ids_exhausted`); registration keeps only a fitting staff number; the kiosk view returns one advice code from the verifier.
+* **Kiosk**: on-screen keypad, camera warm-up while typing (off after 20 s idle), face oval, big animated arrows with progress circles, 2.9 s capture (was 5.6 s), green confirmation with the first name and time for 3 s, or one reason + a tip ("turn your head further", "come closer", "too dark", "one person only", "follow the arrows"). **Button to confirmation: 4.7 s** in the browser test with the synthetic engine (was 8–9 s); not re-measured on the real camera (add about 1 s of real verification).
+* **Enrollment**: "Add employee" goes straight to enrollment with the number shown large ("رقمك 107"); same oval and arrows; one automatic retry when the turns were too small.
+* **Attendance home**: cards for checked in now, missing check-outs to correct (with links), today and the period; quick links and Excel buttons. The kiosk menu entry is shown to kiosk accounts only.
+* **Site-wide design pass** (CSS only): sticky header, section accents, softer cards, readable tables, focus/hover states, phone spacing.
+* **Verifier**: failure advice codes; the 27 November review removed biometric match and movement measurements from verifier logs.
+
+| Command (final code, `balaban-p1314`) | Result |
+|---|---|
+| `tsc`, `vitest` | clean, 351/351 |
+| verifier unit tests | 28/28 |
+| `npm run build` | passes |
+| Phase 2–9, audit and `attendance_checks.sql` on a fresh database | all pass (new: IDs 101/102…, kept and replaced staff numbers, no reuse after a leaver, refusal after 999) |
+| `scripts/attendance/e2e.mjs` | 86/86 (new: IDs 101 and 102; the "turn more" hint) |
+| `scripts/attendance/browser-check.mjs` | 50/50 (new: enrollment number screen, four home cards, hint, warm camera, Arabic kiosk at 375 px, timing) |
+| `scripts/attendance/concurrency-test.mjs` | 13/13 |
+| `scripts/attendance/mutation-check.mjs` | 9/9 mutations detected |
+| `scripts/phase3/upgrade-test.mjs` A–M (M = four-digit IDs kept, the next new one is 101) | passed, 82/82 steps |
+| Phase 3 HTTP / browser, Phase 2 smoke | Phase 3 HTTP 372/372, Phase 3 browser 105/105, smoke 69/69 |
+| Phase 10 browser walk-through (design-pass regression; private reference file, disposable stack) | 35/35 (re-run after making the header sticky on wide screens only) |
+
+Screenshots for review (fake pattern camera, no person) are in `abdo-p1314-validation\tmp\attendance-browser\shots\` (ignored by Git).
+
+### Open items (owner, next action)
+
+1. **Owner and participants: finish the camera trial** — one attempt each with only one face in view: another person with the ID, a phone photo, a printed photo, a phone video of the enrolled person turning; then glasses and a darker or backlit setting. In the validation copy: `npm run build`, `node scripts/attendance/trial-env.mjs`, then `node scripts/attendance/trial-report.mjs`. If any attack succeeds, record it and do not release without a presentation-attack (anti-spoofing) model.
+2. **Abdo:** the reporting date of an overnight shift (check-in date is provisional); forgotten check-outs (the next check-in is refused until corrected); retention of face references after deactivation; the brute-force limit (5 per 15 minutes); who besides Abdo may view, correct or export attendance.
+3. **Owner (legal):** CNDP authorisation / legal basis for biometric attendance in Morocco and an employee notice — before any real employee is enrolled.
+4. **Developer:** evaluate a passive anti-spoofing model with verifiable source and licence; review the SFace training-data terms for commercial use; decide the verifier's production hosting (with Phase 11).
+5. **Reviewer:** inspect the diff (`git status`, `git diff`, the new files above); then decide whether to commit, push and open a PR, and separately whether to apply `20261129090000` to the hosted project (dry run first; it also needs a signing key inserted with psql and the verifier deployed — ATTENDANCE.md §8).
 
 ## Phase 10 status
 

@@ -5,7 +5,7 @@
 //   B. fresh     - rebuild from scratch (all migrations + seed) and run the same checks;
 //   C. equality  - the upgraded and the freshly built schemas are identical.
 //   D-K. later upgrade paths (migration 08 with a flagged account; Phase 4 -> 5; 5 -> 6; 6 -> 7; 7 -> 8; 8 -> 9;
-//        9 -> safety-stock percentage; Phase 10 -> audit fixes).
+//        9 -> safety-stock percentage; Phase 10 -> audit fixes; L. audit fixes -> Phases 13-14 attendance).
 // Usage: npm run db:upgrade-test   (Docker running, `npx supabase start` done)
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
@@ -569,6 +569,129 @@ step("its schema, table privileges and function privileges equal the fresh build
     throw new Error(`first difference at line ${at + 1}:\n  upgraded: ${a[at]}\n  fresh:    ${b[at]}`);
   }
 });
+console.log("\nL. Upgrade from the audit head (20261128090000) to Phases 13-14 attendance (20261129090000)");
+const AUDIT_HEAD = "20261128090000";
+// Staff identities, their numbers, groups and the audit history must survive the upgrade unchanged.
+const SAVED_L = `select md5(string_agg(x, '|' order by x)) from (
+  select 'e:' || id || ':' || full_name || ':' || coalesce(employee_number, '-') || ':' || is_active as x from public.employees
+  union all select 's:' || user_id || ':' || email || ':' || is_active from public.staff_accounts
+  union all select 'g:' || staff_id || ':' || group_key || ':' || coalesce(branch_id::text, '-') from public.staff_group_assignments
+  union all select 'a:' || id || ':' || action from public.audit_log
+  union all select 'p:' || group_key || ':' || permission_key from public.group_permissions where permission_key not like 'attendance.%') t`;
+let savedL = "";
+step(`reset to migration ${AUDIT_HEAD} (merged main)`, () => {
+  supabase(["db", "reset", "--version", AUDIT_HEAD]);
+  if (psql("select to_regclass('public.attendance_events') is null") !== "t") throw new Error("attendance tables exist before the upgrade");
+  return runSqlFile("audit_phases6_10_checks.sql");
+});
+step("a staff member with an employee number and the kiosk group, saved before the upgrade", () => {
+  psql(`begin;
+    insert into auth.users(id, email) values ('a1300000-0000-4000-8000-0000000000a1', 'upgrade.staff@att.test'), ('a1300000-0000-4000-8000-0000000000a2', 'upgrade.kiosk@att.test'),
+      ('a1300000-0000-4000-8000-0000000000a3', 'upgrade.admin@att.test');
+    insert into public.employees(id, organization_id, full_name, employee_number) select u.id, b.organization_id, 'Upgrade ' || split_part(u.email, '@', 1), case when u.email like 'upgrade.staff%' then '0042' end
+      from auth.users u cross join public.branches b where b.code = 'maarif' and u.email like 'upgrade.%@att.test';
+    insert into public.staff_accounts(user_id, employee_id, organization_id, email) select id, id, organization_id, (select email from auth.users where auth.users.id = employees.id)
+      from public.employees where id in ('a1300000-0000-4000-8000-0000000000a1', 'a1300000-0000-4000-8000-0000000000a2', 'a1300000-0000-4000-8000-0000000000a3');
+    insert into public.staff_group_assignments(staff_id, branch_id, group_key) values ('a1300000-0000-4000-8000-0000000000a3', null, 'system_admin');
+    insert into public.branch_memberships(staff_id, branch_id) select 'a1300000-0000-4000-8000-0000000000a2', id from public.branches where code = 'maarif';
+    insert into public.staff_group_assignments(staff_id, branch_id, group_key) select 'a1300000-0000-4000-8000-0000000000a2', id, 'attendance_kiosk' from public.branches where code = 'maarif';
+    commit;`);
+  savedL = psql(SAVED_L);
+  return `${psql("select count(*) from public.employees")} employees`;
+});
+step("apply 20261129090000 (supabase migration up)", () => {
+  supabase(["migration", "up"]);
+  return psql("select max(version) from supabase_migrations.schema_migrations");
+});
+step("saved people, groups, audit history and earlier grants unchanged; attendance starts empty and closed", () => {
+  if (psql(SAVED_L) !== savedL) throw new Error("saved rows changed during the upgrade");
+  const counts = psql(`select (select count(*) from public.attendance_employees) || ',' || (select count(*) from public.attendance_devices) || ',' ||
+    (select count(*) from public.attendance_events) || ',' || (select count(*) from app_private.attendance_signing_keys) || ',' ||
+    (select allow_synthetic_engine from app_private.attendance_config) || ',' ||
+    (select count(*) from public.group_permissions where permission_key like 'attendance.%' and group_key = 'system_admin') || ',' ||
+    (select count(*) from public.group_permissions where permission_key like 'attendance.%' and group_key not in ('system_admin', 'attendance_kiosk'))`);
+  if (counts !== "0,0,0,0,false,7,0") throw new Error(`unexpected attendance state ${counts}`);
+  // The existing number can be kept for attendance and is locked from then on.
+  const locked = psql(`begin;
+    select set_config('request.jwt.claims', '{"sub":"a1300000-0000-4000-8000-0000000000a3","role":"authenticated"}', true);
+    set local role authenticated;
+    select public.app_attendance_employee_register('a1300000-0000-4000-8000-0000000000a1', 'maarif', gen_random_uuid())->>'employee_code';
+    rollback;`).split("\n").pop();
+  // 20261130090000: a staff number that is not a three-digit attendance ID is replaced by the next ID.
+  if (locked !== "101") throw new Error(`expected the first three-digit ID, got ${locked}`);
+  psql(`set session_replication_role = replica;
+    delete from public.audit_log where actor_id = 'a1300000-0000-4000-8000-0000000000a3';
+    delete from public.staff_group_assignments where staff_id in ('a1300000-0000-4000-8000-0000000000a1', 'a1300000-0000-4000-8000-0000000000a2', 'a1300000-0000-4000-8000-0000000000a3');
+    delete from public.branch_memberships where staff_id in ('a1300000-0000-4000-8000-0000000000a1', 'a1300000-0000-4000-8000-0000000000a2', 'a1300000-0000-4000-8000-0000000000a3');
+    delete from public.staff_accounts where user_id in ('a1300000-0000-4000-8000-0000000000a1', 'a1300000-0000-4000-8000-0000000000a2', 'a1300000-0000-4000-8000-0000000000a3');
+    delete from public.employees where id in ('a1300000-0000-4000-8000-0000000000a1', 'a1300000-0000-4000-8000-0000000000a2', 'a1300000-0000-4000-8000-0000000000a3');
+    delete from auth.users where id in ('a1300000-0000-4000-8000-0000000000a1', 'a1300000-0000-4000-8000-0000000000a2', 'a1300000-0000-4000-8000-0000000000a3');
+    set session_replication_role = origin;`);
+  return "data identical; 7 attendance permissions for System Admin only; no key, no synthetic engine";
+});
+step("Phase 2 to 9, audit and attendance checks after the upgrade (L)", () =>
+  ["phase2_checks.sql", "phase3_checks.sql", "phase4_checks.sql", "phase5_checks.sql", "phase6_checks.sql", "phase7_checks.sql", "phase8_checks.sql",
+    "phase9_checks.sql", "audit_phases6_10_checks.sql", "attendance_checks.sql"].map(runSqlFile).join("; "));
+step("its schema, table privileges and function privileges equal the fresh build", () => {
+  const again = schemaDump();
+  if (again !== fresh) {
+    const a = again.split("\n");
+    const b = fresh.split("\n");
+    const at = a.findIndex((line, i) => line !== b[i]);
+    throw new Error(`first difference at line ${at + 1}:\n  upgraded: ${a[at]}\n  fresh:    ${b[at]}`);
+  }
+});
+console.log("\nM. Upgrade from 20261129090000 (attendance with four-digit IDs) to 20261130090000 (IDs 101-999)");
+let savedM = "";
+const SAVED_M = `select md5(string_agg(e.employee_number || ':' || e.full_name, '|' order by e.employee_number))
+  from public.employees e join public.attendance_employees a on a.employee_id = e.id`;
+step("reset to migration 20261129090000 and register two employees (IDs from 1001)", () => {
+  supabase(["db", "reset", "--version", "20261129090000"]);
+  const codes = psql(`begin;
+    insert into auth.users(id, email) values ('a1300000-0000-4000-8000-0000000000c1', 'upgrade.m@upgrade.test');
+    insert into public.employees(id, organization_id, full_name) select 'a1300000-0000-4000-8000-0000000000c1', organization_id, 'Upgrade M admin' from public.branches where code = 'maarif';
+    insert into public.staff_accounts(user_id, employee_id, organization_id, email) select id, id, organization_id, 'upgrade.m@upgrade.test' from public.employees where id = 'a1300000-0000-4000-8000-0000000000c1';
+    insert into public.staff_group_assignments(staff_id, branch_id, group_key) values ('a1300000-0000-4000-8000-0000000000c1', null, 'system_admin');
+    select set_config('request.jwt.claims', '{"sub":"a1300000-0000-4000-8000-0000000000c1","role":"authenticated"}', true);
+    set local role authenticated;
+    select public.app_attendance_employee_create('maarif', 'Before the ID rule A', gen_random_uuid())->>'employee_code';
+    select public.app_attendance_employee_create('maarif', 'Before the ID rule B', gen_random_uuid())->>'employee_code';
+    commit;`);
+  savedM = psql(SAVED_M);
+  return codes.split("\n").filter((l) => /^\d+$/.test(l)).join(", ");
+});
+step("apply 20261130090000 (supabase migration up)", () => {
+  supabase(["migration", "up"]);
+  return psql("select max(version) from supabase_migrations.schema_migrations");
+});
+step("existing IDs are kept; the next new employee gets 101", () => {
+  if (psql(SAVED_M) !== savedM) throw new Error("registered employees changed during the upgrade");
+  const next = psql(`begin;
+    select set_config('request.jwt.claims', '{"sub":"a1300000-0000-4000-8000-0000000000c1","role":"authenticated"}', true);
+    set local role authenticated;
+    select public.app_attendance_employee_create('maarif', 'After the ID rule', gen_random_uuid())->>'employee_code';
+    rollback;`).split("\n").pop();
+  if (next !== "101") throw new Error(`expected 101, got ${next}`);
+  return "1001 and 1002 kept; next is 101";
+});
+step("its schema, table privileges and function privileges equal the fresh build (M)", () => {
+  psql(`set session_replication_role = replica;
+    delete from public.audit_log where actor_id = 'a1300000-0000-4000-8000-0000000000c1';
+    delete from public.attendance_employees; delete from public.employees where full_name like 'Before the ID rule%';
+    delete from public.staff_group_assignments where staff_id = 'a1300000-0000-4000-8000-0000000000c1';
+    delete from public.staff_accounts where user_id = 'a1300000-0000-4000-8000-0000000000c1';
+    delete from public.employees where id = 'a1300000-0000-4000-8000-0000000000c1';
+    delete from auth.users where id = 'a1300000-0000-4000-8000-0000000000c1';
+    set session_replication_role = origin;`);
+  const again = schemaDump();
+  if (again !== fresh) {
+    const a = again.split("\n");
+    const b = fresh.split("\n");
+    const at = a.findIndex((line, i) => line !== b[i]);
+    throw new Error(`first difference at line ${at + 1}:\n  upgraded: ${a[at]}\n  fresh:    ${b[at]}`);
+  }
+});
+step("attendance checks after the upgrade (M)", () => runSqlFile("attendance_checks.sql"));
 step("leave a fresh database (db reset)", () => {
   supabase(["db", "reset"]);
 });
